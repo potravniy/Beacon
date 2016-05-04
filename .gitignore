@@ -5,7 +5,7 @@ package.json
 # Local folders
 /node_modules/
 /.vscode/
-.initial
+/.initial/
 
 # Windows image file caches
 Thumbs.db
