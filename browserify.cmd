@@ -1,0 +1,1 @@
+browserify app/main.js -t node-underscorify -o static/js/bundle.js
