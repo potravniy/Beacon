@@ -7,7 +7,7 @@ window.state = {
 	lngmin: 0,
 	lngmax: 0,
 	signsAfterDot: 0,
-	b_types: '1,2,3,4,5,69,96,777,911,1000',
+	b_types: '1,2,3,4,5,69,96,330,777,911,1000',
 	b_status: '0,1,2,3',
 	b_sources: '',
 	b_layer_type: '',
@@ -55,6 +55,7 @@ window.onload = function() {
 	window.markers = []
 	window.i = 0
 	window.geocoder = new google.maps.Geocoder()
+	window.infowindow = new google.maps.InfoWindow;
 	window.isMapListeningClick = false
 	window.mapListenerClick
 	window.initCity = searchCityInHash() 	//	https://potravny.od.ua/test_b/beacon.html?city=Львів
@@ -200,7 +201,7 @@ function createMarker(b_type, layer_type, layer_owner_id, index, title, id, lat,
 	})
 	if(draggable){
     markers[index].addListener('dragend',function(event) {
-			var createView = window.beaconCreateView || window.latLngView
+			var createView = window.beaconCreateView || window.objectCreateView.latLng.currentView
       createView.model.set({
 				'lat': +event.latLng.lat().toFixed(8),
 				'lng': +event.latLng.lng().toFixed(8)

@@ -1,4 +1,4 @@
-// var BeaconManager = new Marionette.Application();
+// var beaconApp = new Marionette.Application();
 
 
 MsgModel = Backbone.Model.extend({
@@ -30,7 +30,8 @@ BeaconModel = Backbone.Model.extend({
     b_img: "//:0",
     favorite: "0",
     ts: '0000-00-00 00:00:00',
-    chat: []
+    chat: [],
+    full: ''
   }
 });
 
@@ -89,12 +90,8 @@ BeaconsList = Backbone.Collection.extend({
   },
   parse: function(response) {
   	if (response.length < this.limit) this.hasMorePages = false
-    // var listID = _.map(response, function(item){
-    //   return item.id
-    // })
     var res = _.map(response, function(i){
       for (key in i){
-        // console.log(i[key])
         if(i[key]==='') {
           delete i[key]
         }
@@ -115,7 +112,7 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
   template: "#beacon_main_tpl",
   childView: MsgView,
   childViewContainer: '.sent-message__wrapper',
-  collection: BeaconModel,
+  collection: BeaconsList,
   className: function(){
     var index = _.indexOf(this.model.collection.models, this.model)
     return "ui-content ui-block-" + ((index % 2) ? "b" : "a")
@@ -127,14 +124,23 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
     var chat = this.model.get('chat')
     this.collection = new MsgGroup(chat);
   },
+  ui: {
+    expandBtn: '.expanding_view .btn_wrapper'
+  },
   events: {
     'click .share':  'onClickShare',
     'click .link':   'onClickLink',
-    'click .error': 'onClickError',
-    'click .star':  'onClickStar',
+    'click .error':  'onClickError',
+    'click .star':   'onClickStar',
     'click .add':    'onClickAdd',
     'click .header': 'onCompositeViewClick',
-    'click .beacon-content': 'onCompositeViewClick'
+    'click .beacon-content': 'onCompositeViewClick',
+    'click .expanding_btn': 'goToSingleView'
+  },
+  onBeforeShow: function(){
+    if(this.model.get('b_type') == '330'){
+      this.ui.expandBtn.show()
+    }
   },
   onDomRefresh: function(){
     this.$el.trigger("create")
@@ -162,8 +168,9 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
   isBouncing: false,
   onCompositeViewClick: function(e){
     var isPhoto = (e.target.className.search('photo') !== -1) 
-    var isStatusBtn = (e.target.className.search('beacon_status') !== -1) 
-    if(!isPhoto && !isStatusBtn) {
+    var isStatusBtn = (e.target.className.search('beacon_status') !== -1)
+    var isExpandBtn = (e.target.className.search('expanding_btn') !== -1) 
+    if(!isPhoto && !isStatusBtn && !isExpandBtn) {
       var id = this.model.get('id')
       var i = _.findIndex(markers, function(item){
         return item.beaconID === id
@@ -187,6 +194,10 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
         this.trigger("marker:bounce", this.model.get('id'));
       }
     }
+  },
+  goToSingleView: function(e){
+    console.log('goToSingleView', this.model.get('id'))
+    window.showBeaconFullView(this.model.get('id'))
   }
 });
 
@@ -610,6 +621,25 @@ LatLngView = Backbone.Marionette.ItemView.extend({
   },
   onLatLngChanges: function(){
     this.render()
+  },
+  onRender: function(){
+    this.addressLookUp()
+  },
+  addressLookUp: function geocodeLatLng() {
+    var latlng = {lat: this.model.get('lat'), lng: this.model.get('lng')};
+    window.geocoder.geocode({'location': latlng}, function(results, status) {
+      if (status === google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          console.log(results[0])
+          window.infowindow.setContent(results[0].formatted_address);
+          window.infowindow.open(window.state.map, window.markers[window.markers.length-1]);
+        } else {
+          window.alert('No results found');
+        }
+      } else {
+        window.alert('Geocoder failed due to: ' + status);
+      }
+    });
   }
 })
 TitleView = Backbone.Marionette.ItemView.extend({
@@ -620,17 +650,20 @@ TitleView = Backbone.Marionette.ItemView.extend({
 })
 MoneyModel = Backbone.Model.extend({
   defaults: {
-    label: 'Необхідна сума '
+    label: 'Необхідна сума'
   }
 })
 MoneyView = Backbone.Marionette.ItemView.extend({
-  model: MoneyModel,
   template: '#money__tpl'
 })
 CurrencyView = Backbone.Marionette.ItemView.extend({
   template: '#currency_only__tpl',
   id: 'currency_only',
   className: 'ui-field-contain'
+})
+AdmLevelView = Backbone.Marionette.ItemView.extend({
+  template: '#admin_level__tpl',
+  id: 'admin_level'
 })
 StartDateView = Backbone.Marionette.ItemView.extend({
   template: '#start_date__tpl',
@@ -716,7 +749,7 @@ DescriptionView = Backbone.Marionette.ItemView.extend({
   template: '#description_tpl',
   id: 'description_view',
   ui: {
-    'textarea': '#decription'
+    'textarea': '#description'
   }
 })
 TagsView = Backbone.Marionette.ItemView.extend({
@@ -752,7 +785,7 @@ TagsView = Backbone.Marionette.ItemView.extend({
         },
         success: function ( response ) {
           $.each( response, function ( i, val ) {
-            html += '<li>' + val.tag + '</li>';
+            html += '<li>' + val.tag.replace(/&amp;#39;/g, "'") + '</li>';
           });
           that.ui.tagUl.html( html );
           that.ui.tagUl.listview( "refresh" );
@@ -786,7 +819,7 @@ TagsView = Backbone.Marionette.ItemView.extend({
       })
       e.target.value = ''
     } else {
-      var filter = /^[A-ZА-ЯІЇЄa-zа-яіїє0-9 ]+$/
+      var filter = /^[A-ZА-ЯІЇЄa-zа-яіїє'0-9 ]+$/
       if(!filter.test(e.target.value)){
         e.target.value = _.filter(e.target.value, function(item){
           return filter.test(item)
@@ -852,11 +885,17 @@ PhotoView = Backbone.Marionette.ItemView.extend({
     this.ui.removePhotoBtn.hide()
   },
 })
+PhoneView = Backbone.Marionette.ItemView.extend({
+  template: '#phone_tpl',
+  className: 'phone_number ui-field-contain',
+  ui: {
+    'input': '#phone_num__input'
+  }
+})
 
 ObjectModel = Backbone.Model.extend();
 ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   template: '#object_create_tpl',
-  model: ObjectModel,
   id: 'object_create_dialog',
   className: 'project_create__wrapper',
   attributes: {
@@ -865,6 +904,7 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   regions: {
     latLng: '.wrapper__lat_lng',
     title: '.wrapper__title',
+    description: '.wrapper__description',
     money: '.wrapper__money',
     currency: '.wrapper__currency_only',
     startDate: '.wrapper__start_date',
@@ -872,9 +912,10 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     beneficiar: '.wrapper__beneficiar',
     programID: '.wrapper__programID',
     nco: '.wrapper__nco',
-    desr: '.wrapper__decription',
     tag: '.wrapper__tag',
-    photo: '.wrapper__photo'
+    photo: '.wrapper__photo',
+    phone: '.wrapper__phone',
+    admLevel: '.wrapper__admin_level'
   },
   ui: {
     submitBtn: '#submit_btn',
@@ -884,9 +925,25 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     form: '#object_create',
     closeBtn: '.header a'
   },
-  // onBeforeShow: function() {
-    
-  // },
+  onBeforeShow: function() {
+    if(this.model.get('latLng')) this.showChildView('latLng', new LatLngView());
+    var t = this.model.get('type')
+    if(t==2 || t==3 || t==4 || t==5 || t==330) this.addNewChild('title', TitleView, true)
+    if(t==2 || t==3 || t==4 || t==5 || t==330) this.addNewChild('description', DescriptionView, true)
+    if(        t==3 || t==4 || t==5          ) this.addNewChild('nco', NCOView, false)
+    if(t==2 || t==3 || t==4 || t==5 || t==330) this.addNewChild('photo', PhotoView, false)
+    if(t==2 || t==3 || t==4 || t==5          ) this.addNewChild('tag', TagsView, true)
+    if(                                t==330) this.addNewChild('tag', TagsView, false)
+    if(t==2                                  ) this.addNewChild('currency', CurrencyView, true)
+    if(        t==3 || t==4 || t==5          ) this.addNewChild('endDate', EndDateView, true)
+    if(                t==4                  ) this.addNewChild('startDate', StartDateView, true)
+    if(        t==3                          ) this.addNewChild('programID', ProgramIdView, true)
+    if(                        t==5          ) this.addNewChild('beneficiar', BeneficiarView, true)
+    if(                                t==330) this.addNewChild('phone', PhoneView, true)
+    if(        t==3 || t==4 || t==5          ) this.addNewChild('money', MoneyView, true)
+    if(                                t==330) this.addNewChild('money', MoneyView, true, 'Орієнтовна вартість проекту')
+    if(                                t==330) this.addNewChild('admLevel', AdmLevelView, true)
+  },
   onShow: function(){
     this.$el.trigger('create')
   },
@@ -900,7 +957,7 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       alert("Будь ласка, заповніть обов'язкові поля.")
       return
     }
-    var file = this.ui.photo[0].files[0]
+    var file = this.photo.currentView.ui.photo[0].files[0]
     if (file){
       var client = new XMLHttpRequest(),
           that = this
@@ -940,7 +997,7 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     // if(this.startDate.currentView) this.startDate.currentView.checkInput()
     // if(this.endDate.currentView) this.endDate.currentView.checkInput()
     var tags = ''
-    if(tags = this.getTags()) {
+    if(tags = this.tag.currentView.getTags()) {
       $('#tags').val(tags)
     } else {
       alert("Поле 'Додати тег' є обов'язковим.")
@@ -980,8 +1037,8 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       case 5:
         url = "https://gurtom.mobi/request_add.php"
         break;
-      case 40:
-        url = "https://gurtom.mobi/project_add.php"
+      case 330:
+        url = "https://gurtom.mobi/beacon_add.php"
         break;
     }
     var promise = $.ajax({
@@ -1013,31 +1070,132 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     setMultiBeaconMode()
     showBeaconsListView()
   },
-  addNewChild: function(region, viewItem, req){
-    var opt = { 'required': req ? 'required' : '' }
-    window.test = viewItem
-    console.log(region, viewItem, opt)
-    debugger
-    var inst = new (viewItem.extend({
-      model: new (Backbone.Model.extend(opt))
-    }))
-    this.showChildView(region, inst)
+  addNewChild: function(region, ViewItem, req, lab){
+    var ViewModel = Backbone.Model.extend()
+    var opt = {},
+        viewModel = null,
+        ViewItemExt = null,
+        viewItem = null
+    if(lab) {
+      opt = {
+        'required': req ? 'required' : '',
+        'label': lab
+      }
+    } else {
+      opt = {
+        'required': req ? 'required' : ''
+      }
+    }
+    if(region==='money'){
+      viewModel = new MoneyModel(opt)
+    } else {
+      viewModel = new ViewModel(opt)
+    }
+    ViewItemExt = ViewItem.extend({
+      model: viewModel
+    })
+    viewItem = new ViewItemExt()
+    this.showChildView(region, viewItem)
   }
 })
 //    Object Create End
 
+//    FullView start
+MsgCollectionView = Backbone.Marionette.CollectionView.extend({
+  collection: MsgGroup,
+  childView: MsgView,
+  childViewContainer: '.sent-message__wrapper',
+})
+ParticipBudgetModel = Backbone.Model.extend({
+  defaults: {
+    amount: '0',
+    curr: '980',
+    descr: ''
+  }
+})
+ExtentionView = Backbone.Marionette.ItemView.extend({
+  template: '#expand_to_full__tpl',
+  className: 'expand_to_full',
+  model: ParticipBudgetModel,
+})
+BeaconFullModel = BeaconModel.extend({
+  parse: function(response){
+    return response[0]
+  },
+  initialize: function(){
+    this.url = 'https://gurtom.mobi/beacon_cards.php?b_id=' + this.get('id')
+  }
+})
+BeaconFullView = Backbone.Marionette.LayoutView.extend({
+  model: BeaconModel,
+  baseUrl: 'https://gurtom.mobi/beacon_cards.php?b_id=',
+  template: '#beacon_main_tpl',
+  id: 'beacon_full_view',
+  className: 'ui-nodisc-icon',
+  attributes: {
+    "data-role": "content"
+  },
+  regions: {
+    extention: '.expanding_view',
+    chat: '.sent-message__wrapper'
+  },
+  events: {
+    'click .share':  'onClickShare',
+    'click .link':   'onClickLink',
+    'click .error':  'onClickError',
+    'click .star':   'onClickStar',
+    'click .add':    'onClickAdd',
+    'click .header': 'onLayoutViewClick',
+    'click .beacon-content': 'onLayoutViewClick',
+    'click .ui-icon-close': 'exit'
+  },
+  onDomRefresh: function(){
+    this.$el.trigger("create")
+  },
+  onClickShare: function (event) {
+    event.stopPropagation()
+    console.log('button "share" clicked id=' + this.model.get('id'))
+  },
+  onClickLink: function (event) {
+    event.stopPropagation()
+    console.log('button "link" clicked id=' + this.model.get('id'))
+  },
+  onClickError: function (event) {
+    event.stopPropagation()
+    console.log('button "error" clicked id=' + this.model.get('id'))
+  },
+  onClickStar: function (event) {
+    event.stopPropagation()
+    console.log('button "star" clicked id=' + this.model.get('id'))
+  },
+  onClickAdd: function (event) {
+    event.stopPropagation()
+    console.log('button "add" clicked id=' + this.model.get('id'))
+  },
+  onBeforeShow: function(){
+    var extModel = new ParticipBudgetModel(this.model.get('full')[0])
+    this.showChildView('extention', new ExtentionView({model: extModel}))
+    var chat = this.model.get('chat')
+    var chatCollection = new MsgGroup(chat)
+    this.showChildView('chat', new MsgCollectionView({collection: chatCollection}))
+  },
+  exit: function(){
+    showBeaconsListView()
+  },
+})
+//    FullView end
 
 //  Controller
 
-window.region = new Backbone.Marionette.Region({el: "#beacons-map__the-beacons"}) 
+window.rightRegion = new Backbone.Marionette.Region({el: "#beacons-map__the-beacons"})
 window.showBeaconsListView()
 
 function showBeaconsListView() {
   window.beaconsListView = new BeaconListView({
     collection: beaconsList,
   });
-  region.reset()
-  region.show(window.beaconsListView);
+  // rightRegion.reset()
+  window.rightRegion.show(window.beaconsListView);
 }
 
 function showBeaconCreateView(options) {
@@ -1045,123 +1203,57 @@ function showBeaconCreateView(options) {
   window.beaconCreateView = new BeaconCreateView({
     model: beaconModel
   })
-  region.reset()
-  region.show(beaconCreateView);
+  // rightRegion.reset()
+  window.rightRegion.show(beaconCreateView);
 }
 
 function showObjectCreateView(key, latLngB) {
   var View = null
-  var that = this
-  var req = { 'required': 'required' }
+  var titler = ''
   if(latLngB) {
     var latLngModel = new LatLngModel(latLngB)
-    latLngView = new LatLngView({
+    LatLngView = LatLngView.extend({
       model: latLngModel
     })
   }
   switch (key) {
     case 2:
-      View = ObjectCreateView.extend({
-        onBeforeShow: function() {
-          if(latLngB) this.showChildView('latLng', latLngView);
-          this.showChildView('title', new TitleView.extend({
-            model: Backbone.Model.extend(req)
-          }))
-          this.showChildView('decription', new DescriptionView.extend({
-            model: new Backbone.Model.extend(req)
-          }))
-          this.showChildView('photo', new PhotoView())
-          this.showChildView('tag', new TagsView.extend({
-            model: new Backbone.Model.extend(req)
-          }))
-          this.showChildView('currency', new CurrencyView.extend({
-            model: new Backbone.Model.extend(req)
-          }))
-        },
-        model: new ObjectModel({
-          title: 'програми',
-          type: key
-        })
-      })
+      titler = 'програми'
       break;
     case 3:
-      View = ObjectCreateView.extend({
-        onBeforeShow: function() {
-          if(latLngB) this.showChildView('latLng', window.latLngView);
-          this.addNewChild('nco', NCOView, false)
-          this.addNewChild('title', TitleView, true)
-          this.addNewChild('decription', DescriptionView, true)
-          this.addNewChild('photo', PhotoView, false)
-          this.addNewChild('tag', TagsView, true)
-          this.addNewChild('money', MoneyView, true)
-          this.addNewChild('endDate', EndDateView, true)
-          this.addNewChild('programID', ProgramIdView, true)
-        },
-        model: new ObjectModel({
-          title: 'проектної пропозиції',
-          type: key
-        })
-      })
+      titler = 'проектної пропозиції'
       break;
     case 4:
-      View = ObjectCreateView.extend({
-        onBeforeShow: function() {
-          if(latLngB) this.showChildView('latLng', window.latLngView);
-          this.addNewChild('nco', NCOView, false)
-          this.addNewChild('title', TitleView, true)
-          this.addNewChild('decription', DescriptionView, true)
-          this.addNewChild('photo', PhotoView, false)
-          this.addNewChild('tag', TagsView, true)
-          this.addNewChild('money', MoneyView, true)
-          this.addNewChild('startDate', StartDateView, true)
-          this.addNewChild('endDate', EndDateView, true)
-        },
-        model: new ObjectModel({
-          title: 'проекту',
-          type: key
-        })
-      })
+      titler = 'проекту'
       break;
     case 5:
-      View = ObjectCreateView.extend({
-        onBeforeShow: function() {
-          if(latLngB) this.showChildView('latLng', window.latLngView);
-          this.addNewChild('nco', NCOView, false)
-          this.addNewChild('title', TitleView, true)
-          this.addNewChild('decription', DescriptionView, true)
-          this.addNewChild('photo', PhotoView, false)
-          this.addNewChild('tag', TagsView, true)
-          this.addNewChild('money', MoneyView, true)
-          this.addNewChild('endDate', EndDateView, true)
-          this.addNewChild('beneficiar', BeneficiarView, true)
-        },
-        model: new ObjectModel({
-          title: 'запиту',
-          type: key
-        })
-      })
+      titler = 'запиту'
       break;
-    case 40:
-      View = ObjectCreateView.extend({
-        onBeforeShow: function() {
-          this.showChildView('latLng', window.latLngView);
-          this.addNewChild('title', TitleView, true)
-          this.addNewChild('decription', DescriptionView, true)
-          this.addNewChild('money', MoneyView, true)   //  Change label to 'Приблизна вартість'
-          this.addNewChild('phone', PhoneView, false)  //  Create PhoneView
-          this.addNewChild('photo', PhotoView, false)
-        },
-        model: new ObjectModel({
-          title: 'проекту по бюджету участі',
-          type: key
-        })
-      })
-      break;
-    default:
+    case 330:
+      titler = 'проекту по бюджету участі'
       break;
   }
+  View = ObjectCreateView.extend({
+    model: new ObjectModel({
+      title: titler,
+      type: key,
+      latLng: !!latLngB
+    })
+  })
   window.objectCreateView = new View()
-  region.reset()
-  region.show(objectCreateView);
+  // rightRegion.reset()
+  window.rightRegion.show(objectCreateView);
 }
 
+function showBeaconFullView(param){
+  window.beaconFullViewModel = new BeaconFullModel({id: param})
+  $.mobile.loading('show')
+  window.beaconFullViewModel.fetch()
+  .done(function(response){
+    var extention = response[0].full[0]
+    $.mobile.loading('hide')
+    window.beaconFullView = new BeaconFullView({model: window.beaconFullViewModel})
+    // window.rightRegion.reset()
+    window.rightRegion.show(window.beaconFullView);
+  })
+}

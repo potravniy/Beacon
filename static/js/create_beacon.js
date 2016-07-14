@@ -26,7 +26,7 @@ $('#create_beacon__no_geo .listview .request').click(function ()          { crea
 $('#create_beacon__geo .listview .program').click(function ()          { createObjectGeoNew(2) })
 $('#create_beacon__geo .listview .project_proposal').click(function () { createObjectGeoNew(3) })
 $('#create_beacon__geo .listview .project').click(function ()          { createObjectGeoNew(4) })
-$('#create_beacon__geo .listview .project_lmr').click(function ()      { createObjectGeoNew(40) })
+$('#create_beacon__geo .listview .p_budget').click(function ()      { createObjectGeoNew(330) })
 $('#create_beacon__geo .listview .request').click(function ()          { createObjectGeoNew(5) })
 
 $('#create_beacon__geo .listview .sos').click(function () {       createBeaconGeoNew('911') })

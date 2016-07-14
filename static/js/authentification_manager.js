@@ -255,6 +255,9 @@ function showUserInfo(){
     $('.menu .activities').addClass('ui-state-disabled')
     $('.menu .profile').addClass('ui-state-disabled')
   }
+  if(window.state.user.gov && +window.state.user.gov > 0 ){
+    switchBeaconCreateMenuToLMR()
+  }
 }
 
 function loggingRequest(data, m){

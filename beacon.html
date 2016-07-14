@@ -1,10 +1,12 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!--<base href="https://gurtom.mobi/">-->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Beacon page of gurtom.mobi mobile web apps">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
     <title>Маячок</title>
 
     <!-- Add to homescreen for Chrome on Android -->
@@ -47,14 +49,14 @@
           <div id="the-map"></div>
           <label for="map_search" class="ui-hidden-accessible map_search"></label>
           <input data-wrapper-class="wrapper_map_search" type="search" name="map_search" id="map_search" placeholder="#хеш-тег чи числовий id">
-          <div class="ui-nodisc-icon buttons-wrapper upper-right">
+          <div class="ui-nodisc-icon buttons-wrapper upper-right unused">
             <a href="#" class="ui-btn ui-corner-all ui-icon-nearby ui-btn-icon-notext ui-btn-inline">nearby</a><br>
             <a href="#" class="ui-btn ui-corner-all ui-icon-my_location ui-btn-icon-notext ui-btn-inline">location</a><br>
             <a href="#favorite__list" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-map" class="ui-btn ui-corner-all ui-icon-star-empty ui-btn-icon-notext ui-btn-inline favorite-button">favorite</a>
           </div>
           <div class="ui-nodisc-icon buttons-wrapper lower-left">
             <a id="create_btn" href="#create_beacon" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline">add</a><br>
-            <a href="#" class="ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline">share</a>
+            <a href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline">share</a>
           </div>
         </div> <!-- /beacons-map__the-map -->
         
@@ -154,9 +156,9 @@
               <li><a href="#" data-rel="dialog" class="program ui-icon-programm_map ui-btn ui-btn-icon-right ui-nodisc-icon">Програма</a></li>
               <li><a href="#" data-rel="dialog" class="project_proposal ui-icon-proj_prop_map ui-btn ui-btn-icon-right ui-nodisc-icon proect_prop">Проектна пропозиція&nbsp;&nbsp;</a></li>
               <li><a href="#" data-rel="dialog" class="project ui-icon-proj_map ui-btn ui-btn-icon-right ui-nodisc-icon">Проект</a></li>
-              <li><a href="#" data-rel="dialog" class="project_lmr ui-icon-proj_map ui-btn ui-btn-icon-right ui-nodisc-icon">Бюджет участі</a></li>
+              <li><a href="#" data-rel="dialog" class="p_budget ui-icon-p_budget ui-btn ui-btn-icon-right ui-nodisc-icon">Бюджет участі</a></li>
               <li><a href="#" data-rel="dialog" class="request ui-icon-request_map ui-btn ui-btn-icon-right ui-nodisc-icon">Запит</a></li>
-              <li><a href="#" data-rel="dialog" class="organisation ui-icon-enterprise_map ui-btn ui-btn-icon-right ui-nodisc-icon ui-state-disabled">Для організацій</a></li>
+              <!--<li><a href="#" data-rel="dialog" class="organisation ui-icon-enterprise_map ui-btn ui-btn-icon-right ui-nodisc-icon ui-state-disabled">Для організацій</a></li>-->
             </ul>
           </div>
         </div>              
@@ -503,14 +505,14 @@
           <form action="" id="object_create">
             <div class="wrapper__lat_lng"></div>
             <div class="wrapper__title"></div>
-            <div class="wrapper__decription"></div>
-            <!--<label for="decription"><strong>Детальний опис *</strong></label> -->  <!--  ItemView decription  -->
-            <!--<textarea id="decription" name="descr" placeholder="Розмістіть детальний опис тут." cols="40" rows="2" maxlength="10000" data-wrapper-class="textarea" required></textarea>-->-->
+            <div class="wrapper__admin_level"></div>
+            <div class="wrapper__description"></div>
             <div class="wrapper__money"></div>
             <div class="wrapper__currency_only"></div>
             <div class="wrapper__start_date"></div>
             <div class="wrapper__end_date"></div>
             <div class="wrapper__beneficiar"></div>
+            <div class="wrapper__phone"></div>
             <input id="tags" type="hidden" name="tags">
             <input id="nco" type="hidden" name="nco">
             <input id="img" type="hidden" name="img">
@@ -526,54 +528,30 @@
             </div>
           </form>
           <div class="wrapper__programID"></div>
-          <div class="wrapper__tag"></div>   <!--  ItemView tag  -->
+          <div class="wrapper__tag"></div>
           <div class="wrapper__nco"></div>
-          <div class="wrapper__photo"></div>   <!--  ItemView photo  -->
-
-          <!--<div id="add_tag">
-            <p><strong>Додати тег *</strong></p>
-            <p id="tag_storage"></p>
-            <h6>Автодоповнення починається з першої літери.</h6>
-            <form action="">
-              <input id="add_tag__input" data-type="search" placeholder="# лише букви та цифри" data-wrapper-class="input" title="Вводьте лише букви та цифри." autocomplete="off">
-            </form>
-            <ul id="add_tag__ul" data-role="listview" data-inset="true" data-filter="true" data-input="#add_tag__input"></ul>
-          </div>
-          
-          <div id="photo">
-            <div class="hiddenfile">
-              <label for="photo__input">Завантажити фото:</label>
-              <input id="photo__input" type="file" data-clear-btn="true" name="photo__input" accept="image/*" capture>
-            </div>
-            <div class="preview_wrapper clearfix">
-              <div id="photo__preview"></div>
-              <button id="photo__remove" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all"></button>
-            </div>
-            <button id="photo__choose_file">Оберіть фото</button>
-          </div>-->
-
+          <div class="wrapper__photo"></div>
           <h6>* - Обов'язкові поля.</h6>
-
         </div>
     </script>
 
-    <script id="latlng__tpl" type="text/template">  <!--  ItemView LatLng  -->
+    <script id="latlng__tpl" type="text/template">
         <input id="lat" type="hidden" name="lat" value="<%- lat %>">
         <input id="lng" type="hidden" name="lng" value="<%- lng %>">
         <input id="b_type" type="hidden" name="b_type" value="<%- b_type %>">
         <p class='lat_lng'>
           <img class="marker_img" src="https://gurtom.mobi/images/<%-b_type%>.png" alt="marker">
-          Координати маячка <%- (''+lat).replace('.', ',') %>&deg ш.; <%- (''+lng).replace('.', ',') %>&deg д. Можете перетягнути його на карті в іншу точку.
+          Координати <%- (''+lat).replace('.', ',') %>&deg ш.; <%- (''+lng).replace('.', ',') %>&deg д. Можете перетягнути його в іншу точку на карті.
         </p>
     </script>
-    <script id="title__tpl" type="text/template">  <!--  ItemView title  -->
-      <label for="title"><strong>Назва <% if(required=='required'){ %>'*'<% } else { %>''<% } %></strong></label>
+    <script id="title__tpl" type="text/template">
+      <label for="title"><strong>Назва <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
       <input id="title" type="text" name="title" <%-required%>>
     </script>
-    <script id="money__tpl" type="text/template">  <!--  ItemView money  -->
+    <script id="money__tpl" type="text/template">
       <fieldset id="money" class="ui-field-contain" data-role="controlgroup" data-type="horizontal">
-        <legend><strong><%-label%> <% if(required=='required'){ %>' *'<% } else { %>''<% } %></strong></legend>
-        <input id="amount" type="number" name="amount" pattern=".{12,}" <%-required%> >
+        <legend><strong><%-label%> <% if(required=='required'){ %> *<% } else { %><% } %></strong></legend>
+        <input id="amount" type="number" name="amount" pattern=".{12,}" <%-required%>>
         <label for="currency">у валюті</label>
         <select id="currency" name="curr" data-inline="true" data-mini="true" data-iconpos="noicon">
           <option value="980" selected>UAH</option>
@@ -584,7 +562,7 @@
         </select>
       </fieldset>
     </script>
-    <script id="currency_only__tpl" type="text/template">  <!--  ItemView currency  -->
+    <script id="currency_only__tpl" type="text/template">
         <label for="currency_only__select"><strong>Виберіть валюту</strong></label>
         <select name="curr" id="currency_only__select" data-iconpos="noicon">
           <option value="980" selected>UAH</option>
@@ -594,29 +572,29 @@
           <option value="1">ICAN</option>
         </select>
     </script>
-    <script id="start_date__tpl" type="text/template">  <!--  ItemView startDate  -->
-      <label for="start_date__input"><strong>Термін збору коштів для початку проекту <% if(required=='required'){ %>'*'<% } else { %>''<% } %></strong></label>
-      <input id="start_date__input" type="date" data-clear-btn="false" name="dtst" value="" placeholder="дд.мм.рррр" <%-required%>>>
+    <script id="start_date__tpl" type="text/template">
+      <label for="start_date__input"><strong>Термін збору коштів для початку проекту <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+      <input id="start_date__input" type="date" data-clear-btn="false" name="dtst" value="" placeholder="дд.мм.рррр" <%-required%>>
     </script>
-    <script id="end_date__tpl" type="text/template">  <!--  ItemView endDate  -->
-        <label for="end_date__input"><strong>Термін завершення <% if(required=='required'){ %>'*'<% } else { %>''<% } %></strong></label>
-        <input id="end_date__input" type="date" data-clear-btn="false" name="dtex" value="" placeholder="дд.мм.рррр" <%-required%>>>
+    <script id="end_date__tpl" type="text/template">
+        <label for="end_date__input"><strong>Термін завершення <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+        <input id="end_date__input" type="date" data-clear-btn="false" name="dtex" value="" placeholder="дд.мм.рррр" <%-required%>>
     </script>
-    <script id="beneficiar__tpl" type="text/template">  <!--  ItemView beneficiar  -->
-        <label for="beneficiar_name"><strong>Визначте вигодонабувача <% if(required=='required'){ %>'*'<% } else { %>''<% } %></strong></label>
-        <input id="beneficiar_name" type="text" name="ben" pattern=".{100,}" <%-required%>>>
+    <script id="beneficiar__tpl" type="text/template">
+        <label for="beneficiar_name"><strong>Визначте вигодонабувача <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+        <input id="beneficiar_name" type="text" name="ben" pattern=".{100,}" <%-required%>>
     </script>
-    <script id="programID__tpl" type="text/template">  <!--  ItemView programID  -->
-      <p><strong>Виберіть ID програми, якої стосується ця пропозиція <% if(required=='required'){ %>'*'<% } else { %>''<% } %></strong></p>
+    <script id="programID__tpl" type="text/template">
+      <p><strong>Виберіть ID програми, якої стосується ця пропозиція <% if(required=='required'){ %> *<% } else { %><% } %></strong></p>
       <h6>Автодоповнення починається з першого символу.</h6>
       <form class="ui-filterable">
-        <input id="programID__input" type="number" data-type="search" placeholder="Вводьте лише цифри." data-wrapper-class="input" title="Вводьте лише цифри." pattern="{12,}" <%-required%>>>
+        <input id="programID__input" type="number" data-type="search" placeholder="Вводьте лише цифри." data-wrapper-class="input" title="Вводьте лише цифри." pattern="{12,}" <%-required%>>
       </form>
       <ul id="programID__ul" data-role="listview" data-inset="true" data-filter="true" data-input="programID__input"></ul>
     </script>
-    <script id="nco__tpl" type="text/template">  <!--  ItemView nco  -->
+    <script id="nco__tpl" type="text/template">
       <div id="nco__wrapper">
-        <p><strong>Виберіть некомерційну організацію для накопичення коштів <% if(required=='required'){ %>'*'<% } else { %>''<% } %></strong></p>
+        <p><strong>Виберіть некомерційну організацію для накопичення коштів <% if(required=='required'){ %> *<% } else { %><% } %></strong></p>
         <h6>Автодоповнення починається з першої літери.</h6>
         <form class="ui-filterable" autocomplete="off">
           <input id="nco__autocomplete-input" data-type="search" placeholder="Оберіть організацію..." data-wrapper-class="input" autocomplete="off">
@@ -624,12 +602,12 @@
         <ul id="nco__ul" data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#nco__autocomplete-input"></ul>
       </div>
     </script>
-    <script id="description_tpl" type="text/template"> <!--  ItemView description  -->
-      <label for="decription"><strong>Детальний опис <% if(required=='required'){ %>'*'<% } else { %>''<% } %></strong></label>   <!--  ItemView decription  -->
-      <textarea id="decription" name="descr" placeholder="Розмістіть детальний опис тут." cols="40" rows="2" maxlength="10000" data-wrapper-class="textarea" <%-required%>>></textarea>
+    <script id="description_tpl" type="text/template">
+      <label for="description"><strong>Детальний опис <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+      <textarea id="description" name="descr" placeholder="Розмістіть детальний опис тут." cols="40" rows="2" maxlength="10000" data-wrapper-class="textarea" <%-required%>></textarea>
     </script>
-    <script id="tag_tpl" type="text/template"> <!--  ItemView tag  -->
-      <p><strong>Додати тег <% if(required=='required'){ %>'*'<% } else { %>''<% } %></strong></p>
+    <script id="tag_tpl" type="text/template">
+      <p><strong>Додати тег <% if(required=='required'){ %> *<% } else { %><% } %></strong></p>
       <p id="tag_storage"></p>
       <h6>Автодоповнення починається з першої літери.</h6>
       <form action="">
@@ -637,7 +615,7 @@
       </form>
       <ul id="add_tag__ul" data-role="listview" data-inset="true" data-filter="true" data-input="#add_tag__input"></ul>
     </script>
-    <script id="photo_tpl" type="text/template"> <!--  ItemView photo  -->
+    <script id="photo_tpl" type="text/template">
       <div class="hiddenfile">
         <label for="photo__input">Завантажити фото:</label>
         <input id="photo__input" type="file" data-clear-btn="true" name="photo__input" accept="image/*" capture>
@@ -646,14 +624,26 @@
         <div id="photo__preview"></div>
         <button id="photo__remove" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all"></button>
       </div>
-      <button id="photo__choose_file">Оберіть фото <% if(required=='required'){ %>'*'<% } else { %>''<% } %></button>
+      <button id="photo__choose_file">Оберіть фото <% if(required=='required'){ %> *<% } else { %><% } %></button>
     </script>
+    <script id="phone_tpl" type="text/template">
+      <label for="phone_num__input"><strong>Номер телефону <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+      <input type="tel" data-clear-btn="true" name="phone" id="phone_num__input" value="" placeholder="380ХХХХХХХХХХ" data-wrapper-class="input" <%-required%>>
+    </script>
+    <script id="admin_level__tpl" type="text/template">
+      <label for="admin_level__select"><strong>Виберіть адміністративний рівень проекту <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+      <select name="admin_level" id="admin_level__select" data-iconpos="noicon">
+        <option value="3" selected>Місто</option>
+        <option value="4">Район міста</option>
+      </select>
+    </script>
+    
     <!-- /object_create_tpl subViews -->
 
-    <script type="text/template" id="beacon_main_tpl">
+    <script id="beacon_main_tpl" type="text/template">
       <div data-role="beacon" class="beacon ui-corner-all">
         <div data-role="header" class="header">
-          <div class="ui-btn-left ui-icon-<%-source%> ui-btn-icon-notext ui-btn-inline">Origin Icon</div>
+          <div class="ui-btn-left ui-icon-<% if(full){ %>close<% } else { %><%-source%><% } %> ui-btn-icon-notext ui-btn-inline">Origin Icon</div>
           <div class="beacon-header">
             <h6>від: <span><%- author_name %></span>, ID <%- author_id %></h6>                                                                     
             <div class="content-with-icon">
@@ -665,7 +655,12 @@
         </div>
         <div data-role="content" class="beacon-content clearfix">
           <h3><%- title %></h3>                                                
-          <p><img class="photo" src="<%-b_img%>" alt="Photo"><%- details %></p>    <!-- !!!!!  Remove absolute path after migration   -->
+          <p><img class="photo" src="<%-b_img%>" alt="Photo"><strong><%- details %></strong></p>
+          <div class="expanding_view">
+            <div class="btn_wrapper ui-input-btn ui-btn ui-icon-more_horiz ui-btn-icon-notext ui-btn-right">
+                <input class="expanding_btn" type="button" data-enhanced="true" value="Enhanced - Icon only">
+            </div>
+          </div>
         </div>
         <div data-role="navbar" data-grid="d" data-iconpos="left" class="navbar">
           <ul>
@@ -688,12 +683,17 @@
       </div>
     </script>
     
-    <script type="text/template" id="chat_item_view_tpl">
+    <script id="chat_item_view_tpl" type="text/template">
       <p><img src="<%-avatar%>" alt="avatar"><span class="nickname"><%- user_id %>: </span><%- text %></p>
       <p class="date"><%- ts %><button class="abuse-spam ui-shadow ui-btn ui-corner-all ui-btn-inline ui-btn-right ui-icon-error_outline ui-btn-icon-notext ui-btn-a">Поскажитись</button></p>
     </script>
 
-    <script type="text/template" id="beacon_create_tpl">
+    <script id="expand_to_full__tpl" type="text/template">
+      <p class="money">Орієнтовна вартість проекту: <strong><%- amount %> <%- currency.getName(curr) %></strong></p>
+      <p class="descript">Детальний опис проекту: <strong><%- descr %></strong></p>
+    </script>
+
+    <script id="beacon_create_tpl" type="text/template">
       <div class="header clearfix ui-content" data-role="content">
         <h4>Створення об'єкту</h4>
         <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
@@ -703,7 +703,7 @@
       <div class="message_input ui-content" data-role="content">
         <h6>Повідомлення</h6>
         <label for="message_input__textarea" class="message_input__textarea ui-hidden-accessible">Textarea:</label>
-        <textarea name="message_input__textarea" id="message_input__textarea" placeholder="Максимальна довжина Вашого повідомлення - 240 символів." cols="40" rows="2" maxlength="240" data-wrapper-class="input" <%-required%>>></textarea>
+        <textarea name="message_input__textarea" id="message_input__textarea" placeholder="Максимальна довжина Вашого повідомлення - 240 символів." cols="40" rows="2" maxlength="240" data-wrapper-class="input" required></textarea>
       </div>
       <div class="take_photo ui-content" data-role="content">
         <div class="hiddenfile">
@@ -772,15 +772,40 @@
       <div id="the-map"></div>
       <label for="map_search" class="ui-hidden-accessible map_search"></label>
       <input data-wrapper-class="wrapper_map_search" type="search" name="map_search" id="map_search" placeholder="#хеш-тег чи числовий id">
-      <div class="ui-nodisc-icon buttons-wrapper upper-right">
+      <div class="ui-nodisc-icon buttons-wrapper upper-right unused">
         <a href="#" id="near" class="ui-btn ui-corner-all ui-icon-nearby ui-btn-icon-notext ui-btn-inline">nearby</a><br>
         <a href="#" id="location" class="ui-btn ui-corner-all ui-icon-my_location ui-btn-icon-notext ui-btn-inline">location</a><br>
         <a href="#favorite__list" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-map" class="ui-btn ui-corner-all ui-icon-star-empty ui-btn-icon-notext ui-btn-inline favorite-button">favorite</a>
       </div>
       <div class="ui-nodisc-icon buttons-wrapper lower-left">
         <a id="create_btn" href="#create_beacon" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline">add</a><br>
-        <a id="share" href="#" class="ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline">share</a>
+        <a id="share" href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline">share</a>
       </div>
+    </script>
+
+    <script id="gov_create_beacon" type="text/template">
+      <div data-role="header" class="header">
+        <h1>Створити маячок</h1>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+      </div>
+      <div data-role="main">
+        <ul data-role="listview" class="listview">
+          <!--<li><a href="#" data-rel="dialog" class="sos ui-icon-sos_map ui-btn ui-btn-icon-right ui-nodisc-icon">SOS</a></li>
+          <li><a href="#" data-rel="dialog" class="important ui-icon-important_map ui-btn ui-btn-icon-right ui-nodisc-icon">Важливо</a></li>
+          <li><a href="#" data-rel="dialog" class="emo_good ui-icon-good_map ui-btn ui-btn-icon-right ui-nodisc-icon">Тут добре</a></li>
+          <li><a href="#" data-rel="dialog" class="emo_bad ui-icon-bad_map ui-btn ui-btn-icon-right ui-nodisc-icon">Тут погано</a></li>
+          <li><a href="#" data-rel="dialog" class="voting ui-icon-voting_map ui-btn ui-btn-icon-right ui-nodisc-icon">Голосування</a></li>
+          <li><a href="#" data-rel="dialog" class="program ui-icon-programm_map ui-btn ui-btn-icon-right ui-nodisc-icon">Програма</a></li>
+          <li><a href="#" data-rel="dialog" class="project_proposal ui-icon-proj_prop_map ui-btn ui-btn-icon-right ui-nodisc-icon proect_prop">Проектна пропозиція&nbsp;&nbsp;</a></li>
+          <li><a href="#" data-rel="dialog" class="project ui-icon-proj_map ui-btn ui-btn-icon-right ui-nodisc-icon">Проект</a></li>
+          <li><a href="#" data-rel="dialog" class="p_budget ui-icon-p_budget ui-btn ui-btn-icon-right ui-nodisc-icon">Бюджет участі</a></li>
+          <li><a href="#" data-rel="dialog" class="request ui-icon-request_map ui-btn ui-btn-icon-right ui-nodisc-icon">Запит</a></li>-->
+        </ul>
+      </div>
+    </script>
+
+    <script id="gov_single_menu_item__tpl" type="text/template">
+      <a href="#" data-rel="dialog" class="btn_id_<%- id %> ui-btn"><%- name %> <img class="a_la_icon" src="<%- img %>" alt=""></a>
     </script>
 
 
@@ -800,18 +825,19 @@
     <script src="./static/js/vendor/json2.js"></script>
     <script src="./static/js/vendor/underscore-min.js"></script>
     <script src="./static/js/vendor/jquery-1.11.1.min.js"></script>
+    <script src="./static/js/init.js" async defer></script>
     <script src="./static/js/vendor/jquery.mobile-1.4.5.min.js"></script>
     <script src="./static/js/vendor/backbone.js"></script>
     <script src="./static/js/vendor/backbone.marionette.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9GrBwQ_NFlEMzjrAkE4KzsZcTsqf0_h8"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9GrBwQ_NFlEMzjrAkE4KzsZcTsqf0_h8&language=uk&region=UA"></script>
 
     <script src="./static/js/showMap.js"></script>
     <script src="./static/js/jQM_tweaks.js"></script>
     <script src="./static/js/filtersService.js"></script>
     <script src="./static/js/create_beacon.js"></script>
     <script src="./static/js/app_marionette.js"></script>
+    <script src="./static/js/gov_marionette.js"></script>
     <script src="./static/js/authentification_manager.js"></script>
-    <script src="./static/js/init.js" async defer></script>
 
   </body>
 </html>
