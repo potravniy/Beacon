@@ -45,13 +45,13 @@ window.state = {
 	},
 	singleBeacon: false
 }
+var iconMainURL = 'https://gurtom.mobi/'
 
 window.onload = function() {
 	window.MapOptions = null
 	window.bounds = null
 	window.myPosition = null
 	window.markerMyPosition = null
-	window.iconMainURL = 'https://gurtom.mobi/images/'
 	window.markers = []
 	window.i = 0
 	window.geocoder = new google.maps.Geocoder()
@@ -152,27 +152,19 @@ function renderMarkers() {
 	//	Render markers
 	for(i=0; i<response.length; i++){
 		if (response[i].c_n === '1') {
-			createMarker(response[i].b_type, response[i].layer_type, response[i].layer_owner_id,
-			i, response[i].title, response[i].id, response[i].lat, response[i].lng)
+			createMarker(response[i], i) 
 		}
 	}
 }
 
-function createMarker(b_type, layer_type, layer_owner_id, index, title, id, lat, lng, draggable){
-	var iconURL = ''
-	if(b_type < 100) {
-		iconURL = iconMainURL + b_type +'.png' 
-	} else if(b_type < 1000) {
-		iconURL = iconMainURL + b_type +'.png'
-	} else {
-			iconURL = iconMainURL + b_type +'.png'
-	}
+function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_type, r.layer_owner_id, r.title, r.id, r.lat, r.lng, i)
+	var iconURL = getIconURL(r)
 	markers[index] = new window.google.maps.Marker({
 		map: window.state.map,
-		title: title,
-		beaconID: id,
+		title: r.title + ', ' + iconURL,
+		beaconID: r.id,
 		zIndex: 2,
-		position: new google.maps.LatLng(lat, lng),
+		position: new google.maps.LatLng(r.lat, r.lng),
 		draggable: !!draggable,
 		icon: {
 			url: iconURL,
@@ -196,7 +188,8 @@ function createMarker(b_type, layer_type, layer_owner_id, index, title, id, lat,
 	}
 	markers[index].iconImg.src = iconURL
 	markers[index].addListener('click', function(){
-		beaconsList.getBeaconById(this.beaconID)
+		showBeaconFullView(this.beaconID)
+		// beaconsList.getBeaconById(this.beaconID)
 		setSingleBeaconMode()
 	})
 	if(draggable){
@@ -208,6 +201,19 @@ function createMarker(b_type, layer_type, layer_owner_id, index, title, id, lat,
 			}) 
     });
 	}
+}
+function getIconURL(r) {
+	if(r.b_type && +r.b_type < 1000) {
+		return iconMainURL + "images/" + r.b_type +'.png' 
+	} else if(r.b_type && r.layer_owner_id && r.layer_type && +r.b_type >= 1000 ){
+		return iconMainURL +"uploads/"+ r.layer_owner_id +"/" + r.b_type + "/" + r.layer_type +'.png'
+	}
+	return "//:0"
+}
+function createSingleMarker(r, draggable) {
+  google.maps.event.removeListener(requestMarkersListener)
+  hideMarkers()
+	createMarker(r, markers.length, draggable)
 }
 function setSingleBeaconMode() {
 	if(!window.state.singleBeacon) window.state.singleBeacon = true
@@ -257,4 +263,8 @@ function searchCityInHash() {
 		}
 	}
 	return city
+}
+
+function moveLastMarkerTo(lat, lng) {
+	markers[markers.length - 1].setPosition(new google.maps.LatLng(lat, lng))
 }

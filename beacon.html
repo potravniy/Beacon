@@ -103,37 +103,16 @@
             </ul>
           </div>
         </div>              
-        <div data-role="popup" id="beacon-status" data-theme="a" data-overlay-theme="b">
-          <div data-role="header" data-position="fixed">
-            <h1>Статус маячка</h1>
-            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
-          </div>
-          <div data-role="main">
-            <ul data-role="listview"  class="listview">
-              <li>
-                <a href="#" class="ui-icon-progress_one ui-btn ui-btn-icon-left ui-nodisc-icon">Підтвердити</a>
-              </li>
-              <li>
-                <a href="#" class="ui-icon-progress_two ui-btn ui-btn-icon-left ui-nodisc-icon">Запропонувати допомогу</a>
-              </li>
-              <li>
-                <a href="#" class="ui-icon-progress_full ui-btn ui-btn-icon-left ui-nodisc-icon">Проблему вирішено</a>
-              </li>
-              <li>
-                <a href="#" class="ui-icon-delete ui-btn ui-btn-icon-left ui-nodisc-icon ui-state-disabled">Видалити</a>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <div id="beacon-status__region"></div>
         <div data-role="popup" id="create_beacon" data-arrow="true" data-theme="a">
-          <div data-role="header" data-position="fixed">
+          <div data-role="header">
             <h1>Створити</h1>
             <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
           </div>
           <div data-role="main">
             <ul data-role="listview"  class="listview">
               <li>
-                <a id="btn__create_beacon__geo" class="ui-icon-add_location ui-btn ui-btn-icon-left ui-nodisc-icon">Створити маячок в центрі карти<!--<i class="ui-icon-close ui-nodisc-icon ui-btn-icon-notext ui-btn-inline"></i>--></a>
+                <a id="btn__create_beacon__geo" class="ui-icon-add_location ui-btn ui-btn-icon-left ui-nodisc-icon">Створити маячок в центрі карти</a>
               </li>
               <li>
                 <a id="btn__create_beacon__no_geo" class="ui-icon-location_disabled ui-btn ui-btn-icon-left ui-nodisc-icon">Створити об'єкт без відмітки на карті</a>
@@ -141,27 +120,8 @@
             </ul>
           </div>
         </div>
-        <div data-role="popup" id="create_beacon__geo" data-theme="a" data-overlay-theme="b" data-position-to="#beacons-map__the-map">
-          <div data-role="header" class="header">
-            <h1>Створити маячок</h1>
-            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
-          </div>
-          <div data-role="main">
-            <ul data-role="listview" class="listview">
-              <li><a href="#" data-rel="dialog" class="sos ui-icon-sos_map ui-btn ui-btn-icon-right ui-nodisc-icon">SOS</a></li>
-              <li><a href="#" data-rel="dialog" class="important ui-icon-important_map ui-btn ui-btn-icon-right ui-nodisc-icon">Важливо</a></li>
-              <li><a href="#" data-rel="dialog" class="emo_good ui-icon-good_map ui-btn ui-btn-icon-right ui-nodisc-icon">Тут добре</a></li>
-              <li><a href="#" data-rel="dialog" class="emo_bad ui-icon-bad_map ui-btn ui-btn-icon-right ui-nodisc-icon">Тут погано</a></li>
-              <li><a href="#" data-rel="dialog" class="voting ui-icon-voting_map ui-btn ui-btn-icon-right ui-nodisc-icon">Голосування</a></li>
-              <li><a href="#" data-rel="dialog" class="program ui-icon-programm_map ui-btn ui-btn-icon-right ui-nodisc-icon">Програма</a></li>
-              <li><a href="#" data-rel="dialog" class="project_proposal ui-icon-proj_prop_map ui-btn ui-btn-icon-right ui-nodisc-icon proect_prop">Проектна пропозиція&nbsp;&nbsp;</a></li>
-              <li><a href="#" data-rel="dialog" class="project ui-icon-proj_map ui-btn ui-btn-icon-right ui-nodisc-icon">Проект</a></li>
-              <li><a href="#" data-rel="dialog" class="p_budget ui-icon-p_budget ui-btn ui-btn-icon-right ui-nodisc-icon">Бюджет участі</a></li>
-              <li><a href="#" data-rel="dialog" class="request ui-icon-request_map ui-btn ui-btn-icon-right ui-nodisc-icon">Запит</a></li>
-              <!--<li><a href="#" data-rel="dialog" class="organisation ui-icon-enterprise_map ui-btn ui-btn-icon-right ui-nodisc-icon ui-state-disabled">Для організацій</a></li>-->
-            </ul>
-          </div>
-        </div>              
+
+        <div data-role="popup" id="create_beacon__geo_region"></div>
         <div data-role="popup" id="create_beacon__no_geo" data-theme="a" data-overlay-theme="b" data-position-to="#beacons-map__the-map">
           <div data-role="header" class="header">
             <h1>Створити</h1>
@@ -211,7 +171,7 @@
         </div>
       </div>    <!-- /footer -->
 
-      <div data-role="panel" id="left-panel" data-position="left" data-position-fixed="true" data-display="overlay" class="auth-panel" >
+      <div data-role="panel" id="left-panel" data-position="left" data-display="overlay" class="auth-panel" >
         <div class="panel-head">
           <div class="user-info">
             <div id = "menu_avatar" class="avatar"></div>
@@ -254,7 +214,7 @@
               <li><a href="#user_rating" data-ajax="false" data-icon="person" class="user_rating ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn-active ui-state-persist">User rating</a></li>
               <li><a href="#beacon_status" data-ajax="false" data-icon="progress_two" class="beacon_status ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Beacon status</a></li>
               <li><a href="#time_range" data-ajax="false" data-icon="schedule" class="time_range ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Time range</a></li>
-              <li><a href="#categories" data-ajax="false" data-icon="filter" class="categories ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Categories</a></li>
+              <!--<li><a href="#categories" data-ajax="false" data-icon="filter" class="categories ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Categories</a></li>-->
               <li><a href="#actions" data-ajax="false" data-icon="assignment_turned_in" class="actions ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Actions</a></li>
             </ul>
           </div>
@@ -330,7 +290,7 @@
               </div>
             </fieldset>
           </div>
-          <div id="categories" class="scrollable_content">
+          <!--<div id="categories" class="scrollable_content">
             
             <fieldset data-role="controlgroup" class="selected">
               <div class="checkbox-wrapper">
@@ -372,28 +332,32 @@
               <a href="#" class="ui-btn ui-shadow ui-corner-all">РГБ: Громадський порядок</a>
             </div>
             
-          </div>
+          </div>-->
           <div id="actions" class="scrollable_content">
             <ul data-role="listview" class="listview">
               <li>
                 <input type="checkbox" data-role="flipswitch" name="votings" id="votings" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="votings">Votings</label>
+                <label for="votings">Голосування</label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="programms" id="programms" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="programms">Programms</label>
+                <label for="programms">Програми</label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="project_proposals" id="project_proposals" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="project_proposals">Project proposals</label>
+                <label for="project_proposals">Проектні пропозиції</label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="projects" id="projects" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="projects">Projects</label>
+                <label for="projects">Проекти</label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="requests" id="requests" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="requests">Requests</label>
+                <label for="requests">Запити</label>
+              </li>
+              <li>
+                <input type="checkbox" data-role="flipswitch" name="requests" id="budget" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
+                <label for="budget">Бюджет участі</label>
               </li>
             </ul>
           </div>
@@ -498,7 +462,7 @@
 
     <script type="text/template" id="object_create_tpl">
         <div data-role="header" class="header">
-          <h4>Створення <%-title%></h4>
+          <h4>Створення <%-titler%></h4>
           <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
         </div>
         <div data-role="main" class="main ui-content">
@@ -507,16 +471,24 @@
             <div class="wrapper__title"></div>
             <div class="wrapper__admin_level"></div>
             <div class="wrapper__description"></div>
+            <div class="wrapper__sphere" data-role="collapsible-set" data-theme="a" data-content-theme="a"></div>
             <div class="wrapper__money"></div>
             <div class="wrapper__currency_only"></div>
+            <div class="wrapper__support"></div>
+            <div class="wrapper__support_finish_date"></div>
             <div class="wrapper__start_date"></div>
             <div class="wrapper__end_date"></div>
             <div class="wrapper__beneficiar"></div>
             <div class="wrapper__phone"></div>
+            <div class="wrapper__usr_countbl"></div>
+            <div class="wrapper__age"></div>
             <input id="tags" type="hidden" name="tags">
             <input id="nco" type="hidden" name="nco">
             <input id="img" type="hidden" name="img">
             <input id="program_id" type="hidden" name="program_id">
+            <input id="layer_type" type="hidden" name="layer_type" value="<%- layer_type||'' %>">
+            <input id="type" type="hidden" name="type" value="<%- type||'' %>">
+            <input id="targetId" type="hidden" name="targetId" value="<%- targetId||'' %>">
             <div id="submit" class="submit">
               <label for="submit_btn" class="ui-hidden-accessible">Submit</label>
               <button id="submit_btn" type="submit">Створити</button>
@@ -540,8 +512,9 @@
         <input id="lng" type="hidden" name="lng" value="<%- lng %>">
         <input id="b_type" type="hidden" name="b_type" value="<%- b_type %>">
         <p class='lat_lng'>
-          <img class="marker_img" src="https://gurtom.mobi/images/<%-b_type%>.png" alt="marker">
+          <img class="marker_img" src="<%- icon_url %>" alt="marker">
           Координати <%- (''+lat).replace('.', ',') %>&deg ш.; <%- (''+lng).replace('.', ',') %>&deg д. Можете перетягнути його в іншу точку на карті.
+          <% if(+window.state.user.gov > 0){ %> Адміністративний рівень проекту: <%- name %>.<% } %>
         </p>
     </script>
     <script id="title__tpl" type="text/template">
@@ -550,10 +523,10 @@
     </script>
     <script id="money__tpl" type="text/template">
       <fieldset id="money" class="ui-field-contain" data-role="controlgroup" data-type="horizontal">
-        <legend><strong><%-label%> <% if(required=='required'){ %> *<% } else { %><% } %></strong></legend>
+        <legend><strong><%- ( label ? label : 'Необхідна сума' ) %> <% if(required=='required'){ %> *<% } else { %><% } %></strong></legend>
         <input id="amount" type="number" name="amount" pattern=".{12,}" <%-required%>>
         <label for="currency">у валюті</label>
-        <select id="currency" name="curr" data-inline="true" data-mini="true" data-iconpos="noicon">
+        <select id="currency" name="curr" data-inline="true" data-mini="true" data-iconpos="noicon" data-native-menu="false">
           <option value="980" selected>UAH</option>
           <option value="1980">vUAH</option>
           <option value="840">USD</option>
@@ -564,7 +537,7 @@
     </script>
     <script id="currency_only__tpl" type="text/template">
         <label for="currency_only__select"><strong>Виберіть валюту</strong></label>
-        <select name="curr" id="currency_only__select" data-iconpos="noicon">
+        <select name="curr" id="currency_only__select" data-iconpos="noicon" data-native-menu="false">
           <option value="980" selected>UAH</option>
           <option value="1980">vUAH</option>
           <option value="840">USD</option>
@@ -573,11 +546,11 @@
         </select>
     </script>
     <script id="start_date__tpl" type="text/template">
-      <label for="start_date__input"><strong>Термін збору коштів для початку проекту <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+      <label for="start_date__input"><strong><%- ( label ? label : 'Термін збору коштів для початку проекту' ) %> <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
       <input id="start_date__input" type="date" data-clear-btn="false" name="dtst" value="" placeholder="дд.мм.рррр" <%-required%>>
     </script>
     <script id="end_date__tpl" type="text/template">
-        <label for="end_date__input"><strong>Термін завершення <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+        <label for="end_date__input"><strong><%- ( label ? label : 'Термін завершення' ) %> <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
         <input id="end_date__input" type="date" data-clear-btn="false" name="dtex" value="" placeholder="дд.мм.рррр" <%-required%>>
     </script>
     <script id="beneficiar__tpl" type="text/template">
@@ -594,7 +567,7 @@
     </script>
     <script id="nco__tpl" type="text/template">
       <div id="nco__wrapper">
-        <p><strong>Виберіть некомерційну організацію для накопичення коштів <% if(required=='required'){ %> *<% } else { %><% } %></strong></p>
+        <p><strong>Запропонуйте неприбуткову організацію для адміністрування проекту <% if(required=='required'){ %> *<% } else { %><% } %></strong></p>
         <h6>Автодоповнення починається з першої літери.</h6>
         <form class="ui-filterable" autocomplete="off">
           <input id="nco__autocomplete-input" data-type="search" placeholder="Оберіть організацію..." data-wrapper-class="input" autocomplete="off">
@@ -637,7 +610,46 @@
         <option value="4">Район міста</option>
       </select>
     </script>
+
+    <script id="usr_countbl__tpl" type="text/template">
+      <p><strong>Вкажіть статуси користувачів, чиї голоси будуть зараховуватися в голосуванні</strong></p>
+      <label for="usr_countbl__select" class="usr_countbl__select__label">Хто буде голосувати?</label>
+        <select id="usr_countbl__select" data-iconpos="noicon" multiple="multiple" data-native-menu="false" data-overlay-theme='b'>
+        </select>
+      </div>
+      <input id="usr_countbl" type="hidden" name="usr_countbl">
+    </script>
     
+    <script id="age__tpl" type="text/template">
+      <div data-role="rangeslider">
+        <label for="age_from"><strong>Вікові межі голосуючих</strong></label>
+        <input type="range" name="age_from" id="age_from" min="12" max="99" value="21">
+        <label for="age_to"></label>
+        <input type="range" name="age_to" id="age_to" min="13" max="100" value="60">
+      </div>
+    </script>
+    <script id="support__tpl" type="text/template">
+      <label for="support__input"><strong>Мінімальна кількість голосів для початку голосування <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+      <input id="support__input" type="number" data-clear-btn="false" name="sprt" value="" placeholder="100" <%-required%>>
+    </script>
+    <script id="support_finish_date__tpl" type="text/template">
+        <label for="support_finish_date__input"><strong>Дата завершення збору голосів підтримки <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+        <input id="support_finish_date__input" type="date" data-clear-btn="false" name="sprtf" value="" placeholder="дд.мм.рррр" <%-required%>>
+    </script>
+    <script id="sphere_title__tpl" type="text/template">
+      <h3>Виберіть сферу голосування</h3>
+      <div class="composite" data-role="collapsible-set" data-theme="a"></div>
+    </script>
+    <script id="sphere__tpl" type="text/template">
+      <% if(menu.length > 0) { %>
+        <legend><%- name %></legend>
+        <div class="composite" data-role="collapsible-set" data-theme="a"></div>
+      <% } else { %>
+        <label for="idc-<%- idc %>" class="ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-radio-off"><%- name %></label>
+        <input id="idc-<%- idc %>" name="sph" data-enhanced="true" type="radio" value="<%- idc %>">
+      <% } %>
+    </script>
+
     <!-- /object_create_tpl subViews -->
 
     <script id="beacon_main_tpl" type="text/template">
@@ -651,11 +663,12 @@
               <p><%- ts %>; cardID <%- id %></p>                                                
             </div>
           </div>
-          <a href="#beacon-status" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-beacons" class="beacon_status ui-btn ui-corner-all ui-btn-right ui-btn-inline ui-icon-progress_<% if(b_status=='0'){ %>empty<% } else if(b_status=='1'){ %>one<% } else if(b_status=='2'){ %>two<% } else if(b_status=='3'){ %>full<% } %> ui-btn-icon-notext">Status</a>
+          <a href="#" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-beacons" class="beacon_status ui-btn ui-corner-all ui-btn-right ui-btn-inline ui-icon-progress_<% if(b_status=='0'){ %>empty<% } else if(b_status=='1'){ %>one<% } else if(b_status=='2'){ %>two<% } else if(b_status=='3'){ %>full<% } %> ui-btn-icon-notext">Status</a>
         </div>
         <div data-role="content" class="beacon-content clearfix">
           <h3><%- title %></h3>                                                
           <p><img class="photo" src="<%-b_img%>" alt="Photo"><strong><%- details %></strong></p>
+          <p class="tags"><%- tagList %></p>
           <div class="expanding_view">
             <div class="btn_wrapper ui-input-btn ui-btn ui-icon-more_horiz ui-btn-icon-notext ui-btn-right">
                 <input class="expanding_btn" type="button" data-enhanced="true" value="Enhanced - Icon only">
@@ -677,8 +690,7 @@
             <input type="text" data-clear-btn="true" data-mini="true" name="text-message" id="text-message" value="" placeholder="Повідомлення">            <!--use locale for placeholder-->
             <button class="input-message__send ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-send ui-btn-icon-notext ui-btn-a">Надіслати</button>    <!--use locale-->
           </div>
-          <div class="sent-message__wrapper">
-          </div>
+          <div class="sent-message__wrapper"></div>
         </div>
       </div>
     </script>
@@ -688,16 +700,86 @@
       <p class="date"><%- ts %><button class="abuse-spam ui-shadow ui-btn ui-corner-all ui-btn-inline ui-btn-right ui-icon-error_outline ui-btn-icon-notext ui-btn-a">Поскажитись</button></p>
     </script>
 
-    <script id="expand_to_full__tpl" type="text/template">
+    <script id="expand_to_p-budget__tpl" type="text/template">
       <p class="money">Орієнтовна вартість проекту: <strong><%- amount %> <%- currency.getName(curr) %></strong></p>
       <p class="descript">Детальний опис проекту: <strong><%- descr %></strong></p>
+    </script>
+    <script id="expand_to_voting__tpl" type="text/template">
+      <p class="voting">Зібрано <strong><%- sprtd %></strong> голосів підтримки з <strong><%- sprt %></strong> необхідних.</p>
+      <p class="voting">Дата завершення збору підтримки: <strong><%- sprtF %></strong>.</p>
+      <p class="voting">Дата початку голосування: <strong><%- offerStartTime %></strong>.</p>
+      <p class="voting">Дата завершення голосування: <strong><%- offerFinishTime %></strong>.</p>
+      <p class="voting">Сфера голосування: <strong><%- sphereStr %></strong>.</p>
+      <p class="voting">Статус голосування: <strong><%- v_status %></strong></p>
+      <p class="voting">Детальний опис: <br><strong><%- descr %></strong></p>
+      <a href="<%- offer_discussion_link %>" class="ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-right ui-mini" target="_blank">Обговорення голосування</a>
+      <hr>
+      <p class="voting">Рівень Вашої авторизації: <strong>"<%- votingStatus %>".</strong></p>                      <!--Required usr_countbl-->
+      <p class="voting">Ваш статус: <strong><%- usr_status %></strong></p>                      <!--Required usr_countbl-->
+      <div class="voting_btns"></div>
+      <div class="voting_results__region"></div>
+      <div class="indicative_voting__region"></div>
+    </script>
+    <script id="voting_support__tpl" type="text/template">
+      <a href="#" class="ui-btn ui-corner-all" id="voting_support__btn"><%- btn_support %></a>
+    </script>
+    <script id="voting_buttons__tpl" type="text/template">
+      <div class="ui-field-contain">
+        <label for="flip-vote_type">Голосувати:</label>
+        <input type="checkbox" data-role="flipswitch" name="flip-vote_type" id="flip-vote_type" data-on-text="Таємно" data-off-text="Відкрито" data-wrapper-class="voting-flipswitch">
+      </div>
+      <ul>
+        <li><a href="#" class="voting_button voting_button__no <%- no %>">Проти</a></li>
+        <li><a href="#" class="voting_button voting_button__abstain <%- abstain %>">Утриматись</a></li>
+        <li><a href="#" class="voting_button voting_button__yes <%- yes %>">За</a></li>
+      </ul>
+      <hr>
+    </script>
+    
+    <script id="voting_results__title__tpl" type="text/template">
+      <h2 class="title"><%- title %></h2>
+      <div class="ui-checkbox ui-state-<%-disabled%>" style="<%- hide %>">
+        <label for="percent_checkbox" class="percents ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-checkbox-off">У відсотках</label>
+        <input type="checkbox" name="percent_checkbox" id="percent_checkbox" data-enhanced="true" <%- disabled %>>
+      </div>
+      <div class="subtitles">
+        <p class="subtitle total">Всього</p>
+        <p class="subtitle minus">Проти</p>
+        <p class="subtitle plus">За</p>
+        <p class="subtitle abst">Утримались</p>
+      </div>
+      <div class="voting_results"></div>
+      <hr>
+    </script>
+    
+    <script id="voting_results__bar__tpl" type="text/template">
+      <p class="usr_category"><%- title %></p>
+      <div class="bars">
+          <p> </p>
+        <div class="votes votes_total">
+          <p> </p>
+          <p class="number"><%- totalView %></p>
+        </div>
+        <div class="votes votes_no">
+          <p> </p>
+          <p class="number"><%- minusView %></p>
+        </div>
+        <div class="votes votes_yes">
+          <p> </p>
+          <p class="number"><%- plusView %></p>
+        </div>
+        <div class="votes votes_abstain">
+          <p> </p>
+          <p class="number"><%- abstView %></p>
+        </div>
+      </div>
     </script>
 
     <script id="beacon_create_tpl" type="text/template">
       <div class="header clearfix ui-content" data-role="content">
         <h4>Створення об'єкту</h4>
         <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
-        <img class="marker_img" src="https://gurtom.mobi/images/<%-b_type%>.png" alt="marker">
+        <img class="marker_img" src="<%- icon_url %>" alt="marker">
         <p class='lat_lng'><%- (''+lat).replace('.', ',') %>&deg ш.; <%- (''+lng).replace('.', ',') %>&deg д.</p>
       </div>
       <div class="message_input ui-content" data-role="content">
@@ -783,31 +865,74 @@
       </div>
     </script>
 
-    <script id="gov_create_beacon" type="text/template">
+    <script id="create_beacon__geo_tpl" type="text/template">
       <div data-role="header" class="header">
+        <a href="#" class="settings ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-settings ui-btn-icon-notext ui-btn-left ui-nodisc-icon">Close</a>
         <h1>Створити маячок</h1>
         <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
       </div>
       <div data-role="main">
-        <ul data-role="listview" class="listview">
-          <!--<li><a href="#" data-rel="dialog" class="sos ui-icon-sos_map ui-btn ui-btn-icon-right ui-nodisc-icon">SOS</a></li>
-          <li><a href="#" data-rel="dialog" class="important ui-icon-important_map ui-btn ui-btn-icon-right ui-nodisc-icon">Важливо</a></li>
-          <li><a href="#" data-rel="dialog" class="emo_good ui-icon-good_map ui-btn ui-btn-icon-right ui-nodisc-icon">Тут добре</a></li>
-          <li><a href="#" data-rel="dialog" class="emo_bad ui-icon-bad_map ui-btn ui-btn-icon-right ui-nodisc-icon">Тут погано</a></li>
-          <li><a href="#" data-rel="dialog" class="voting ui-icon-voting_map ui-btn ui-btn-icon-right ui-nodisc-icon">Голосування</a></li>
-          <li><a href="#" data-rel="dialog" class="program ui-icon-programm_map ui-btn ui-btn-icon-right ui-nodisc-icon">Програма</a></li>
-          <li><a href="#" data-rel="dialog" class="project_proposal ui-icon-proj_prop_map ui-btn ui-btn-icon-right ui-nodisc-icon proect_prop">Проектна пропозиція&nbsp;&nbsp;</a></li>
-          <li><a href="#" data-rel="dialog" class="project ui-icon-proj_map ui-btn ui-btn-icon-right ui-nodisc-icon">Проект</a></li>
-          <li><a href="#" data-rel="dialog" class="p_budget ui-icon-p_budget ui-btn ui-btn-icon-right ui-nodisc-icon">Бюджет участі</a></li>
-          <li><a href="#" data-rel="dialog" class="request ui-icon-request_map ui-btn ui-btn-icon-right ui-nodisc-icon">Запит</a></li>-->
-        </ul>
+        <ul data-role="listview" class="listview"></ul>
       </div>
     </script>
 
     <script id="gov_single_menu_item__tpl" type="text/template">
-      <a href="#" data-rel="dialog" class="btn_id_<%- id %> ui-btn"><%- name %> <img class="a_la_icon" src="<%- img %>" alt=""></a>
+      <a href="#" data-rel="dialog" class="ui-btn">
+        <%- name %>
+        <img class="a_la_icon" src="<%- icon_url %>" alt="">
+      </a>
     </script>
 
+    <script id="beacon_status__tpl" type="text/template">
+      <div data-role="header">
+        <h1>Статус маячка</h1>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+      </div>
+      <div data-role="main">
+        <ul data-role="listview" class="listview">
+          <li>
+            <a href="#" class="status one ui-icon-progress_one ui-btn ui-btn-icon-left ui-nodisc-icon">Підтвердити</a>
+          </li>
+          <li>
+            <a href="#" class="status two ui-icon-progress_two ui-btn ui-btn-icon-left ui-nodisc-icon">Запропонувати допомогу</a>
+          </li>
+          <li>
+            <a href="#" class="status full ui-icon-progress_full ui-btn ui-btn-icon-left ui-nodisc-icon">Проблему вирішено</a>
+          </li>
+          <li>
+            <a href="#" class="status delete ui-icon-delete ui-btn ui-btn-icon-left ui-nodisc-icon ui-state-disabled">Видалити</a>
+          </li>
+          <li class="lmr">
+            <a href="#" class="status copy ui-icon-add_location ui-btn ui-btn-icon-left ui-nodisc-icon">Прийняти</a>
+          </li>
+        </ul>
+      </div>
+    </script>
+
+    <script id="change_gov_menu__tpl" type="text/template">
+      <div data-role="header" class="header">
+        <h1>Змінити меню</h1>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+      </div>
+      <div data-role="main">
+        <ul data-role="listview" class="listview"></ul>
+        <button class="add ui-btn ui-corner-all">Додати ще</button>
+        <button class="save ui-btn ui-corner-all">Зберегти</button>
+      </div>
+    </script>
+    <script id="change_gov_menu_item__tpl" type="text/template">
+      <input type="hidden" class="change_gov_menu__layer" name="layer_type" value="<%- layer_type %>">
+      <input type="text" class="change_gov_menu__input" name="field_name" value="<%- name %>">
+      <div class="hiddenfile">
+        <label class="take_photo__input">
+          <input type="file" data-clear-btn="false" name="take_photo__input" accept="image/*" capture>
+        </label>
+      </div>
+      <button data-iconpos="noicon" class="change_gov_menu__icon ui-btn ui-btn-inline ui-btn-icon-notext">
+        <img class="a_la_icon" src="<%- icon_url %>" alt="Icon">
+      </button>
+      <a href="#" class="change_gov_menu__delete_item ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete"></a>
+    </script>
 
 
     <script>
@@ -825,13 +950,13 @@
     <script src="./static/js/vendor/json2.js"></script>
     <script src="./static/js/vendor/underscore-min.js"></script>
     <script src="./static/js/vendor/jquery-1.11.1.min.js"></script>
-    <script src="./static/js/init.js" async defer></script>
     <script src="./static/js/vendor/jquery.mobile-1.4.5.min.js"></script>
     <script src="./static/js/vendor/backbone.js"></script>
     <script src="./static/js/vendor/backbone.marionette.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9GrBwQ_NFlEMzjrAkE4KzsZcTsqf0_h8&language=uk&region=UA"></script>
 
     <script src="./static/js/showMap.js"></script>
+    <script src="./static/js/init.js" async defer></script>
     <script src="./static/js/jQM_tweaks.js"></script>
     <script src="./static/js/filtersService.js"></script>
     <script src="./static/js/create_beacon.js"></script>

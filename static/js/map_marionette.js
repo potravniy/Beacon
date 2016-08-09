@@ -40,7 +40,7 @@ var MapRegionView = Backbone.Marionette.ItemView.extend({
   model: MapRegionModel,
   template: '#map_view',
   className: 'map_view',
-  url: 'https://gurtom.mobi/map_cluster.php?'
+  url: 'https://gurtom.mobi/map_cluster.php?',
   ui: {
     search: '#map_search',
     nearBtn: '#near',

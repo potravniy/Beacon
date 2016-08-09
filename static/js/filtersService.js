@@ -62,6 +62,7 @@ var $filter_programms = $('#programms')
 var $filter_project_proposals = $('#project_proposals')
 var $filter_projects = $('#projects')
 var $filter_requests = $('#requests')
+var $filter_budget = $('#budget')
 $('#actions').click(_.debounce(actionsRead, 1000))
 function actionsRead(event){
   if(event.target.nodeName === 'INPUT'){
@@ -82,6 +83,10 @@ function actionsRead(event){
     if($filter_requests.prop("checked")){
       if(result) result += ",5"
       else result += "5"
+    }
+    if($filter_budget.prop("checked")){
+      if(result) result += ",330"
+      else result += "330"
     }
     window.state.b_types = result + (result ? ',69,96,777,911,1000' : '')
     window.state.sendGET(window.state.urlMarkers)
@@ -137,7 +142,24 @@ function formatTime(date){
   var time = ('0' + date.getHours()).slice(-2) +':'+ ('0' + date.getMinutes()).slice(-2) +':'+ ('0' + date.getSeconds()).slice(-2)
   return day +' '+ time
 }
-
+function getTodayWithZeroTime(){
+  var date = new Date()
+  var day = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2)
+  return new Date(normalizeInput(day))
+}
+function getAge(dateString) {     //    http://stackoverflow.com/questions/4060004/calculate-age-in-javascript
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+}
+function reverseDateFormat(dateStr) {
+  return dateStr.split('-').reverse().join('.')
+}
 $(window).load(function(){
   window.$filter_mapSearch = $('#map_search')
   var s ='change keydown paste input'

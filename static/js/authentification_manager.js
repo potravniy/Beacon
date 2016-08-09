@@ -230,6 +230,10 @@ function checkLoggedIn(){
 }
 
 function showUserInfo(){
+  if(+window.state.user.gov > 0){
+    getListMenuLMR()
+  }
+  getSpheresForVoting()
   var name = ''
   if(window.state.user.user_first && window.state.user.user_last){
     name = window.state.user.user_first + ' ' + window.state.user.user_last 
@@ -254,9 +258,6 @@ function showUserInfo(){
     $('#left-panel.auth-panel .menu li.logout').hide()
     $('.menu .activities').addClass('ui-state-disabled')
     $('.menu .profile').addClass('ui-state-disabled')
-  }
-  if(window.state.user.gov && +window.state.user.gov > 0 ){
-    switchBeaconCreateMenuToLMR()
   }
 }
 

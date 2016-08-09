@@ -15,24 +15,20 @@ function maxPopupHeightLimit(event) {
 
 
 var MainRegion = function(){
-  this.$el = $('#container')
+  var $el = $('#container'),
+      isAllowed = $(window).width() < 880 
   this.showMap = function(){
-    this.$el.css({
-      "-webkit-transform": "translate(0,0)",
-      "-moz-transform": "translate(0,0)",
-      "-o-transform": "translate(0,0)",
-      "-ms-transform": "translate(0,0)",
-      "transform": "translate(0,0)"
-    })
+    if(isAllowed) $el.css({ "transform": "translate(0,0)" })
   }
   this.showBeacons = function(){
-    this.$el.css({
-      "-webkit-transform": "translate(-50%,0)",
-      "-moz-transform": "translate(-50%,0)",
-      "-o-transform": "translate(-50%,0)",
-      "-ms-transform": "translate(-50%,0)",
-      "transform": "translate(-50%,0)"
-    })
+    if(isAllowed) $el.css({ "transform": "translate(-50%,0)" })
+  }
+  this.close = function(){
+    $el.css({ "transform": "" })
+    isAllowed = false
+  }
+  this.open = function(){
+    isAllowed = true
   }
   return this
 }
@@ -40,7 +36,6 @@ var mainRegion = new MainRegion()
 window.setPanelContent = function () {
   var maxHeight = $(window).height() - 59
   $('.panel .ui-widget-content').css('max-height', maxHeight + 'px')
-  // mainRegion.$el.css('max-height', maxHeight + 'px')
 }
 var $btnMap = $('#btn__the-map') 
 var $btnBeacons = $('#btn__the-beacons') 
@@ -52,11 +47,14 @@ $btnBeacons.click(function() {
 })
 $(window).resize(function(){
   if($(window).width() >= 880){
-    mainRegion.showMap()
-  } else if ($btnBeacons.hasClass('ui-btn-active')) {
-    mainRegion.showBeacons()
-  } else if ($btnMap.hasClass('ui-btn-active')) {
-    mainRegion.showMap()
+    mainRegion.close()
+  } else {
+    mainRegion.open()
+    if ($btnBeacons.hasClass('ui-btn-active')) {
+      mainRegion.showBeacons()
+    } else if ($btnMap.hasClass('ui-btn-active')) {
+      mainRegion.showMap()
+    }
   }
   window.setPanelContent()
 })
@@ -80,7 +78,9 @@ $(document).ready(function(){
   }
   function togglePopup(event) {
     $initPopup.one("popupafterclose", function() {
-      event.data.el.popup("open")
+      // if(window.state.user.gov == 0) event.data.el.popup("open")
+      // else 
+      switchBeaconCreateMenuToLMR()
     })
     $initPopup.popup("close")
   }
@@ -124,3 +124,4 @@ function minifyObj(obj){
 setInterval(function(){
   $('.warning').remove()
 }, 4000)
+

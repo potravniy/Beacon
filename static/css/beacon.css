@@ -27,9 +27,6 @@ img[src=""] {
   -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
-#beacons-map {
-  overflow: hidden;
-}
 #the-map {
   height: 100%;
 }
@@ -39,10 +36,10 @@ img[src=""] {
   width: 200%;
   left: 0;
   overflow: hidden;
-  -webkit-transition: 1s ease-in-out;
-  -moz-transition: 1s ease-in-out;
-  -o-transition: 1s ease-in-out;
-  transition: 1s ease-in-out;  
+  -webkit-transition: 0.5s ease-in-out;
+  -moz-transition: 0.5s ease-in-out;
+  -o-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;  
 }
 #beacons-map__the-map,
 #beacons-map__the-beacons {
@@ -76,7 +73,7 @@ img[src=""] {
   min-height: 100%;
 }
 #footer {
-  bottom: -2px;
+  bottom: -3px;
 }
 .buttons-wrapper {
   position: absolute;
@@ -316,7 +313,6 @@ img[src=""] {
 #create_beacon .listview {
     min-width: 210px;
     overflow-y: auto;
-    margin-top: 43px;
 }
 #beacon-status .ui-title {
     margin: 0 2em;
@@ -601,6 +597,39 @@ img.photo {
 .public_private_switch__flipswitch.ui-flipswitch.ui-flipswitch-active {
   padding-left: 7em;
 }
+
+/* Custom indentations are needed because the length of custom labels differs from
+   the length of the standard labels */
+.voting_btns .voting-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
+  text-indent: -5.9em;
+  font-size: 1em;
+}
+.voting_btns .voting-flipswitch.ui-flipswitch .ui-flipswitch-off {
+  text-indent: 0.5em;
+}
+/* Custom widths are needed because the length of custom labels differs from
+   the length of the standard labels */
+.voting_btns .voting-flipswitch.ui-flipswitch {
+  width: 9em;
+  height: 2em;
+  font-size: 0.8125em;
+}
+.voting_btns .voting-flipswitch.ui-flipswitch.ui-flipswitch-active {
+  padding-left: 7em;
+  width: 1.875em;
+}
+.voting_btns .ui-flipswitch.ui-flipswitch-active .ui-btn {
+  background-color: #ededed;
+}
+.voting_btns .ui-flipswitch .ui-btn {
+  background-color: #3388cc;
+}
+.voting_btns .ui-navbar label {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 0;
+}
+
 .preview_wrapper {
   position: relative;
   max-width: 80%;
@@ -608,15 +637,18 @@ img.photo {
 }
 #take_photo__choose_file,
 .submit,
-#photo__choose_file {
+#photo__choose_file,
+#voting_support__btn {
   position: relative;
   width: 66%;
   margin: 0.5em auto;
 }
-.submit .submit_btn {
+.submit .submit_btn,
+#voting_support__btn {
   background-color: #9f9;
 }
-.submit .submit_btn:hover {
+.submit .submit_btn:hover,
+#voting_support__btn:hover {
   background-color: #1f1;
 }
 .submit .progressbar,
@@ -726,7 +758,8 @@ img.photo {
 
 
 /*  Object create section start  */
-#object_create_dialog {
+#object_create_dialog,
+.change_gov_menu {
   background-color: #f9f9f9;
   margin: 0.5em;
   border-radius: 0.7em;
@@ -812,20 +845,16 @@ img.photo {
 /*   Left panel section   */
 #left-panel {
   background: #fff; }
-  #left-panel.ui-panel-open {
-    position: fixed; }
   #left-panel .ui-panel-inner {
-    position: absolute;
-    top: 1px;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    position: relative;
+    display: table;
+    width: 100%;
     padding: 0;
  }
-
   #left-panel .panel-head {
     overflow: hidden;
-    height: 11em;
+    display: table-row;
+    width: 100%;
     background-repeat: no-repeat;
     background-position: 0 0;
     background-image: url(../../images/panel-bg.jpg);
@@ -836,8 +865,10 @@ img.photo {
   #left-panel .user-info {
     padding: 1em; }
   #left-panel .avatar {
+    position: absolute;
     width: 68px;
     height: 68px;
+    left: 6px;
     overflow: hidden;
     background: url(../../images/avatar-bg.png) 0 0 no-repeat;
     -moz-background-size: 68px 68px;
@@ -852,7 +883,7 @@ img.photo {
       max-width: 100%; }
   #left-panel .username, #left-panel .email {
     display: block;
-    margin: 0.5em 0;
+    margin: 0.5em 0 0.5em 3em;
     min-width: 68px;
     color: #ffffff;
     padding-left: 0.75em; }
@@ -1000,6 +1031,10 @@ hr {
   .ui-field-contain > .ui-rangeslider > label {
     width: 40%;
   }
+    /*Repeated from rule .ui-flipswitch above*/
+  .voting_btns .ui-field-contain > label + .voting-flipswitch.ui-flipswitch {
+    width: 9em;
+  }
 }
 @media (max-width: 35em) {
 	.my-responsive > .ui-block-a,
@@ -1020,10 +1055,15 @@ hr {
 @media ( min-width: 55em ) {
   #container {
     position: static;
-    width: 100%;
+    width: auto;
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;  
   }
   #footer {
     height: 0;
+    display: none;
   }
 }
 @media ( max-height: 9em ) {
@@ -1035,6 +1075,7 @@ hr {
   }
   #footer {
     height: 0;
+    display: none;
   }
 }
 
@@ -1202,13 +1243,146 @@ hr {
 .unused {
   display: none;
 }
-.menu_item .ui-btn {
+#create_beacon__geo .menu_item {
+  position: relative;
+}
+#create_beacon__geo .menu_item .ui-btn {
   padding-right: 3em;
 }
-.menu_item .ui-btn .a_la_icon {
+#create_beacon__geo .menu_item .ui-btn .a_la_icon {
   height: 36px;
   position: absolute;
   right: 10px;
+  left: auto;
   top: 4px;
 }
+.ui-listview > .ui-li-has-thumb > .ui-btn{
+  min-height: 0; 
+  padding-left: 1em; 
+}
+
+.wrapper__usr_countbl .usr_countbl__select__label {
+  display: none;
+}
+#usr_countbl__select-button span:first-child {
+  white-space: normal;
+}
+#object_create_dialog .wrapper__sphere fieldset {
+  margin: 1em 0;
+}
+.ui-collapsible a.ui-collapsible-heading-toggle {
+    white-space: normal;
+}
+.composite,
+.idc-input {
+  margin: 0.1em 0;
+}
+p.voting {
+  margin: 0.5em 0;
+}
+.voting_btns a.voting_button {
+  font-size: 0.95em;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  overflow: visible;
+}
+.voting_button.voting_button__yes.ui-btn {
+  border-right-width: 1px;
+}
+
+h2.title {
+  text-align: center;
+  margin-bottom: 0.1em;
+}
+.subtitles {
+  position: relative;
+}
+.subtitle {
+  position: absolute;
+  top: 0;
+  font-weight: bold;
+}
+.subtitle.total {
+  position: relative;
+}
+.subtitle.minus {
+  right: 53%;
+}
+.subtitle.plus {
+  left: 53%;
+}
+.subtitle.abst {
+  right: 0;
+}
+p.usr_category {
+  text-align: center;
+  margin-top: 0.2em;
+}
+.bars {
+  position: relative;
+  border-bottom: 1px solid #ddd;
+}
+.votes {
+  position: absolute;
+  top: 0;
+}
+.votes .number {
+  position: absolute;
+  top: 0;
+  text-shadow: none;
+  color: #000;
+}
+.votes_total {
+  left: 0;
+}
+.votes_total .number {
+  left: 0;
+}
+.votes_no {
+  right: 50%;
+  background-color: #faa;
+  min-width: 1px;
+}
+.votes_no .number {
+  right: 3px;
+}
+.votes_yes {
+  left: 50%;
+  background-color: #8f6;
+  min-width: 1px;
+}
+.votes_yes .number {
+  left: 3px;
+}
+.votes_abstain {
+  right: 0;
+  background-color: #bbb;
+  min-width: 1px;
+}
+.votes_abstain .number {
+  right: 3px;
+}
+.voting_results .usr_category {
+  font-size: 0.8125em;
+}
+.voting_results__bars .percents {
+  margin: 0 auto;
+  width: 10em;
+  font-size: 0.8125em;
+}
+.voting_results__bars #percent_checkbox {
+  display: none;
+}
+.voting_results__region .voting_results div:first-child {
+  font-weight: bold;
+  padding-bottom: 1em;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  border-bottom: solid 1px #888;
+}
+
+
+
+
+
 

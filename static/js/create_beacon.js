@@ -1,7 +1,8 @@
-//  Using old site
 
-// $('#create_beacon__no_geo .listview .voting').click(function ()           { createBeaconNoGeo(1) })
-$('#create_beacon__geo .listview .voting').click(function ()           { createBeaconGeo(1) })
+
+
+// $('#create_beacon__no_geo .listview .voting').click(function (){ createBeaconNoGeo(1) })
+
 
 function createBeaconNoGeo(index){
   $('#create_beacon__no_geo').popup('close')
@@ -23,11 +24,12 @@ $('#create_beacon__no_geo .listview .project_proposal').click(function () { crea
 $('#create_beacon__no_geo .listview .project').click(function ()          { createObjectNoGeoNew(4)  })
 $('#create_beacon__no_geo .listview .request').click(function ()          { createObjectNoGeoNew(5)  })
 
+$('#create_beacon__geo .listview .voting').click(function ()           { createObjectGeoNew(1) })
 $('#create_beacon__geo .listview .program').click(function ()          { createObjectGeoNew(2) })
 $('#create_beacon__geo .listview .project_proposal').click(function () { createObjectGeoNew(3) })
 $('#create_beacon__geo .listview .project').click(function ()          { createObjectGeoNew(4) })
-$('#create_beacon__geo .listview .p_budget').click(function ()      { createObjectGeoNew(330) })
 $('#create_beacon__geo .listview .request').click(function ()          { createObjectGeoNew(5) })
+$('#create_beacon__geo .listview .p_budget').click(function ()         { createObjectGeoNew(330) })
 
 $('#create_beacon__geo .listview .sos').click(function () {       createBeaconGeoNew('911') })
 $('#create_beacon__geo .listview .important').click(function () { createBeaconGeoNew('777') })
@@ -42,36 +44,43 @@ $('#create_btn').click(function(e){
 })
 
 function createBeaconGeoNew(type) {
-  $('#create_beacon__geo').popup('close')
-  var options = {
-    'lat': +window.state.map.getCenter().lat().toFixed(8),
-    'lng': +window.state.map.getCenter().lng().toFixed(8),
-    'b_type': +type
-  }
+  var options = getGeoOptions(type)
+  $.extend(options, { type: type })
   showBeaconCreateView(options)
-  //  Show new marker
-  google.maps.event.removeListener(requestMarkersListener)
-  hideMarkers()
-  createMarker(options.b_type, '', '', markers.length, '', '', options.lat, options.lng, true)
+  createSingleMarker(options, true)
+  $btnBeacons.trigger('click')
 }
 function createObjectGeoNew(type) {
-  $('#create_beacon__geo').popup('close')
-  var options = {
-    'lat': +window.state.map.getCenter().lat().toFixed(8),
-    'lng': +window.state.map.getCenter().lng().toFixed(8),
-    'b_type': +type
+  var options = getGeoOptions(type)
+  $.extend(options, { type: type })
+  showObjectCreateView(options)
+  createSingleMarker(options, true)
+  $btnBeacons.trigger('click')
+}
+function createObjectLMR(model) {
+  if(model.type==69 || model.type==96 || model.type==777 || model.type==911) {  //  migrate to objectCreateView ASAP !!!
+    return createBeaconGeoNew(model.type)
   }
-  showObjectCreateView(type, options)
-  //  Show new marker
-  google.maps.event.removeListener(requestMarkersListener)
-  hideMarkers()
-  createMarker(options.b_type, '', '', markers.length, '', '', options.lat, options.lng, true)
+  var options = getGeoOptions(model.type)
+  $.extend(options, model)
+  showObjectCreateView(options)
+  createSingleMarker(options, true)
+  $btnBeacons.trigger('click')
 }
 function createObjectNoGeoNew(type) {
   $('#create_beacon__no_geo').popup('close')
-  showObjectCreateView(type)
+  showObjectCreateView({type: type})
+  $btnBeacons.trigger('click')
 }
-
+function getGeoOptions(type){
+  $('#create_beacon__geo').popup('close')
+  var options = {
+    'lat': +window.state.map.getCenter().lat().toFixed(8),
+    'lng': +window.state.map.getCenter().lng().toFixed(8),
+    'b_type': +type
+  }
+  return options  
+}
 function closeBeaconNew() {
   requestMarkersListener = window.state.map.addListener('idle', requestMarkers)
   requestMarkers()
