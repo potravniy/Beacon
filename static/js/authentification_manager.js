@@ -12,6 +12,11 @@ if($.mobile && $.mobile.activePage && $.mobile.activePage.attr('id')){
   }) 
 }
 
+$( "#login_dialog" ).one( "pagecreate", loginDialogInit)
+$( "#registration_dialog" ).one( "pagecreate", registerDialogInit)
+$( '#restore_pass_dialog' ).one( "pagecreate", restoreDialogInit)
+$( '#reset_pass_dialog' ).one( "pagecreate", resetDialogInit)
+
 function emailAccountActivation(){
   var i = undefined
   if((i = location.href.indexOf('/index.php?m=5&id=')) > -1){
@@ -33,18 +38,14 @@ function emailAccountActivation(){
       alert("Ваш профіль не створено!")
     })
     promise.always(function(){
-      location.href = 'https://gurtom.mobi/index.php'
+      location.href = 'https://gurtom.mobi'
     })
   }
 }
 
-$( "#login_dialog" ).one( "pagecreate", loginDialogInit)
-$( "#registration_dialog" ).one( "pagecreate", registerDialogInit)
-$( '#restore_pass_dialog' ).one( "pagecreate", restoreDialogInit)
-$( '#reset_pass_dialog' ).one( "pagecreate", resetDialogInit)
-
 function leftPanelInit(){
   checkLoggedIn()
+  $('#left-panel.auth-panel .menu li.login').click( logIn )
   $('#left-panel.auth-panel .menu li.logout').click( logOut )
 }
 
@@ -56,7 +57,8 @@ function loginDialogInit(){
       if(response[0] && response[0].id && response[0].id > 0) {
         window.state.user = response[0]
         showUserInfo()
-        $.mobile.navigate( "#beacons-map" )
+        Manager.trigger('home')
+        // $(":mobile-pagecontainer").pagecontainer("change", $('#beacons-map'), {changeHash: false})
       } else {
         alert("Введені облікові дані не дійсні.\nВведіть правильні Ім'я та Пароль.")
       }
@@ -66,7 +68,9 @@ function loginDialogInit(){
     });
   })
 }
-
+function logIn() {
+  Manager.trigger('login')
+}
 function logOut(){
   var data = {
     'logout': '1'
@@ -88,6 +92,7 @@ function logOut(){
 }
 
 function registerDialogInit(){
+  console.log("registerDialogInit")
   $('#registration #login').before("<p class='tip'>Латиницею літери та цифри, 2-64 символи.</p>")
   $('#registration #email').before("<p class='tip'>Потрібен для завершення реєстрації.</p>")
   $('#registration #password').before("<p class='tip'>Не менше 6 символів.<br></p>")
@@ -103,7 +108,7 @@ function registerDialogInit(){
     promise.done(function ( response ) {
       if(response[0] && response[0].msg) {
         alert(response[0].msg)
-        $.mobile.navigate( "#beacons-map" )
+        Manager.trigger('home')
       } else if(response[0] && response[0].error) {
         alert("Error: " + response[0].error)
       } else {
@@ -119,6 +124,7 @@ function registerDialogInit(){
 }
 
 function restoreDialogInit(){
+  console.log("restoreDialogInit")
   var $email = $('#restore_pass_dialog #email-rest'),
       $btnSubmit = $('#restore_pass_dialog .submit')
   
@@ -130,6 +136,7 @@ function restoreDialogInit(){
   }
 
   function requestRestore() {
+    console.log("requestRestore")
     var data = {
       email: $email.val(),
       request_password_reset: 'Reset my password'
@@ -137,7 +144,7 @@ function restoreDialogInit(){
     var promise = loggingRequest(data, 3)
     promise.done(function(response){
       alert("Error: " + response[0].msg)
-      $.mobile.navigate( "#beacons-map" )
+      Manager.trigger('home')
     });
     promise.fail(function(response){
       var i = response.responseText.indexOf('<'),
@@ -153,6 +160,7 @@ function restoreDialogInit(){
 }
 
 function resetDialogInit(){
+  console.log("restoreDialogInit")
   var $pass1 = $('#reset_pass_dialog #password_reset'),
       $pass2 = $('#reset_pass_dialog #password_reset-repeat'),
       $btnSubmit = $('#reset_pass_dialog .submit')
@@ -173,7 +181,7 @@ function resetDialogInit(){
       return
     }
     var i = location.hash.indexOf('=')
-    // if(i < 36) $.mobile.navigate( "#beacons-map" )
+    // if(i < 36) Manager.trigger('home')
     var hash = location.hash.substring(i+1, location.hash.length),
     promise = $.ajax({
       type: "POST",
@@ -192,7 +200,7 @@ function resetDialogInit(){
       } else if(response[0] && response[0].error_uk){
         alert("Error: "+ response[0].error_uk)
       }
-      $.mobile.navigate('#beacons-map')
+      Manager.trigger('home')
     });
     promise.fail(function(response){
       console.log("error")
@@ -289,21 +297,3 @@ function removeAccount(){
   })
 }
 
-
-
-
-
-
-
-
-
-
-// $date_picker.change(function(){
-//   var low = normalizeInput( $('#low_limit').val() )
-//   var hight = normalizeInput( $('#hight_limit').val() )
-//   if(low && hight){
-//     window.state.start = formatTime(new Date(low + ' 00:00:00'))
-//     window.state.finish = formatTime(new Date(hight + ' 23:59:59'))
-//     window.state.sendGET(window.state.urlMarkers)
-//   }
-// })

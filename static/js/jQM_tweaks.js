@@ -57,6 +57,7 @@ $(window).resize(function(){
     }
   }
   window.setPanelContent()
+  window.setMaxHeightOfInnerEl()
 })
 
 $(document).ready(function(){
@@ -66,10 +67,22 @@ $(document).ready(function(){
   var $geoProectPropos = $('#create_beacon__geo .proect_prop')
   var $noGeoProectPropos = $('#create_beacon__no_geo .proect_prop')
   var $proectPropPopup = $('#proect_propos_popup')
+  $('#create_btn').on('click', showInitPopup)
   $('#btn__create_beacon__geo').on('click', {el: $geoPopup}, togglePopup)
   $('#btn__create_beacon__no_geo').on('click', {el: $noGeoPopup}, togglePopup)
   $geoProectPropos.on('click', {el: $geoPopup}, openProectPopup)
   $noGeoProectPropos.on('click', {el: $noGeoPopup}, openProectPopup)
+  function showInitPopup() {
+    if(!window.state.user.id){
+      window.logIn()
+    } else {
+      var options = {
+        transition: 'turn',
+        positionTo: '#create_btn'
+      }
+      $initPopup.popup("open", options)
+    }
+  }
   function openProectPopup(event) {
     event.data.el.one("popupafterclose", function() {
       $proectPropPopup.popup("open")
@@ -120,7 +133,11 @@ function minifyObj(obj){
     return val !== '' 
   })
 }
-
+function setMaxHeightOfInnerEl(){
+  $( ".listview_wrapper" ).css( "max-height", function() {
+    return $(window).height() - 88
+  })
+}
 setInterval(function(){
   $('.warning').remove()
 }, 4000)

@@ -263,7 +263,7 @@ BeaconCreateForm = Backbone.Model.extend({
     'icon_url': '//:0'
   },
   initialize: function(){
-    this.set({icon_url: getIconURL(this.attributes)})
+    this.set({icon_url: getIconURL(this.attributes, true)})
   }
 })
 
@@ -422,7 +422,7 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
         },
         success: function ( response ) {
           $.each( response, function ( i, val ) {
-            html += '<li>' + val.tag + '</li>';
+            html += '<li>' + val.tag.replace(/&amp;#39;/g, "'") + '</li>';
           });
           $ul.html( html );
           $ul.listview( "refresh" );
@@ -906,13 +906,18 @@ PhoneView = Backbone.Marionette.ItemView.extend({
   }
 })
 UsrCountblOptionView = Backbone.Marionette.ItemView.extend({
-  template: function(serialized_model){
-    if (serialized_model.index === -1){
-      return _.template("<option>"+ serialized_model.name +"</option>")
-    } else {
-      return _.template("<option value='"+ serialized_model.index +"' selected>"+ serialized_model.name +"</option>")
+  template: '#usr_countbl__option__tpl',
+  tagName: 'option',
+  attributes: function(){
+    var attrib = {}
+    if(this.model.get('index') !== -1){
+      attrib = {
+        "value": this.model.get('index'),
+        "selected": true 
+      }
     }
-  },
+    return attrib
+  }
 })
 UsrCountblView = Backbone.Marionette.CompositeView.extend({
   template: '#usr_countbl__tpl',
@@ -997,7 +1002,6 @@ var SphereGeneralView = Marionette.CompositeView.extend({
   childViewContainer: ".composite"
 });
 
-ObjectModel = Backbone.Model.extend();
 ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   template: '#object_create_tpl',
   id: 'object_create_dialog',
@@ -1844,9 +1848,11 @@ BeaconFullView = Backbone.Marionette.LayoutView.extend({
       Model = VotingModel
       View = VotingView
     }
-    var extModel = new Model(this.model.get('full')[0])
-    View = View.extend({model: extModel}) 
-    this.showChildView('extention', new View())
+    if ( Model && View ) {
+      var extModel = new Model(this.model.get('full')[0])
+      View = View.extend({model: extModel}) 
+      this.showChildView('extention', new View())
+    }
     
     var chat = this.model.get('chat')
     var chatCollection = new MsgGroup(chat)
@@ -1909,7 +1915,7 @@ function showObjectCreateView(model) {
   }
   $.extend(model, { titler: titler })
   View = ObjectCreateView.extend({
-    model: new ObjectModel(model)
+    model: new Backbone.Model(model)
   })
   window.objectCreateView = new View()
   window.rightRegion.show(objectCreateView);
@@ -1919,6 +1925,19 @@ function showBeaconFullView(param){
   if(param[0] && param[0].full && param[0].full[0]) {
     window.beaconFullViewModel = new BeaconFullModel(param[0])
     showFullView()
+  } else if( +param.b_type > 0 || +param.type > 0 ) {
+    window.beaconFullViewModel = new BeaconFullModel(param)
+    showFullView()
+  } else if(param[0] && param[0].id) {
+    window.beaconFullViewModel = new BeaconFullModel(param[0])
+    $.mobile.loading('show')
+    window.beaconFullViewModel.fetch()
+    .done(function(){
+      showFullView()
+    })
+    .always(function(){
+      $.mobile.loading('hide')
+    })
   } else {
     window.beaconFullViewModel = new BeaconFullModel({id: param})
     $.mobile.loading('show')

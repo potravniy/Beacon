@@ -36,7 +36,6 @@
 
   </head>
   <body>
-    
     <div id="beacons-map" data-role="page" data-fullscreen="true" class="ui-overlay-shadow ui-responsive-panel" data-theme="a" data-title="Маячок">
 
       <div id="header" data-role="header" data-position="fixed" data-tap-toggle="false">
@@ -55,7 +54,7 @@
             <a href="#favorite__list" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-map" class="ui-btn ui-corner-all ui-icon-star-empty ui-btn-icon-notext ui-btn-inline favorite-button">favorite</a>
           </div>
           <div class="ui-nodisc-icon buttons-wrapper lower-left">
-            <a id="create_btn" href="#create_beacon" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline">add</a><br>
+            <a id="create_btn" href="#" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline">add</a><br>
             <a href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline">share</a>
           </div>
         </div> <!-- /beacons-map__the-map -->
@@ -120,7 +119,6 @@
             </ul>
           </div>
         </div>
-
         <div data-role="popup" id="create_beacon__geo_region"></div>
         <div data-role="popup" id="create_beacon__no_geo" data-theme="a" data-overlay-theme="b" data-position-to="#beacons-map__the-map">
           <div data-role="header" class="header">
@@ -199,9 +197,9 @@
             <a class="menu-icon-help ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#help">Help</a>
           </li>
           <li class="login">
-            <a class="menu-icon-login ui-link" data-ajax="false" data-link = "menu-page" href="#login_dialog">Login</a>
+            <a class="menu-icon-login ui-link" data-ajax="false" data-link = "menu-page" href="#">Login</a>
           </li>
-          <li id = 'logout' class="logout">
+          <li id='logout' class="logout">
             <a class="menu-icon-logout ui-link" data-ajax="false" data-link = "menu-page" data-prefetch="true" href="#">Logout</a>
           </li>
         </ul>
@@ -371,7 +369,7 @@
     <div data-role="page" data-dialog="true" id="login_dialog" data-close-btn="none" data-title="Вхід">
       <form id="login" action="https://gurtom.mobi/l/index.php?m=0" method="post">
         <div data-role="header">
-          <a href="#beacons-map" data-icon="close" data-rel="back" class="ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
+          <a href="#" data-icon="close" data-rel="back" class="ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
           <h1>Увійти</h1>
         </div>
         <div data-role="main" class="ui-content ui-grid-a">
@@ -400,7 +398,7 @@
 
     <div data-role="page" data-dialog="true" id="registration_dialog" data-close-btn="none" data-title="Реєстрація">
       <div data-role="header" data-position="fixed">
-        <a href="#login_dialog" data-icon="close" data-rel="back" class="ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
+        <a href="#" data-icon="close" data-rel="back" class="ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
         <h1>Реєстрація</h1>
       </div>
       <form action="https://gurtom.mobi/l/index.php?m=4" id="registration" method="POST">
@@ -506,7 +504,7 @@
           <h6>* - Обов'язкові поля.</h6>
         </div>
     </script>
-
+    <!-- /object_create_tpl -->
     <script id="latlng__tpl" type="text/template">
         <input id="lat" type="hidden" name="lat" value="<%- lat %>">
         <input id="lng" type="hidden" name="lng" value="<%- lng %>">
@@ -559,7 +557,7 @@
     </script>
     <script id="programID__tpl" type="text/template">
       <p><strong>Виберіть ID програми, якої стосується ця пропозиція <% if(required=='required'){ %> *<% } else { %><% } %></strong></p>
-      <h6>Автодоповнення починається з першого символу.</h6>
+      <!--<h6>Автодоповнення починається з першого символу.</h6>-->
       <form class="ui-filterable">
         <input id="programID__input" type="number" data-type="search" placeholder="Вводьте лише цифри." data-wrapper-class="input" title="Вводьте лише цифри." pattern="{12,}" <%-required%>>
       </form>
@@ -619,13 +617,16 @@
       </div>
       <input id="usr_countbl" type="hidden" name="usr_countbl">
     </script>
+    <script id="usr_countbl__option__tpl" type="text/template">
+      <span><%- name %></span>
+    </script>
     
     <script id="age__tpl" type="text/template">
       <div data-role="rangeslider">
         <label for="age_from"><strong>Вікові межі голосуючих</strong></label>
-        <input type="range" name="age_from" id="age_from" min="12" max="99" value="21">
+        <input class="age_range" type="range" name="age_from" id="age_from" min="12" max="99" value="21">
         <label for="age_to"></label>
-        <input type="range" name="age_to" id="age_to" min="13" max="100" value="60">
+        <input class="age_range" type="range" name="age_to" id="age_to" min="13" max="100" value="60">
       </div>
     </script>
     <script id="support__tpl" type="text/template">
@@ -871,7 +872,7 @@
         <h1>Створити маячок</h1>
         <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
       </div>
-      <div data-role="main">
+      <div data-role="main" class="listview_wrapper">
         <ul data-role="listview" class="listview"></ul>
       </div>
     </script>
@@ -879,7 +880,7 @@
     <script id="gov_single_menu_item__tpl" type="text/template">
       <a href="#" data-rel="dialog" class="ui-btn">
         <%- name %>
-        <img class="a_la_icon" src="<%- icon_url %>" alt="">
+        <img class="a_la_icon" src="<%- img %>" alt="">
       </a>
     </script>
 
@@ -914,22 +915,24 @@
         <h1>Змінити меню</h1>
         <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
       </div>
-      <div data-role="main">
-        <ul data-role="listview" class="listview"></ul>
+      <div data-role="main" class="listview_wrapper ui-content">
+        <ul id="change_gov_menu_list" class="listview" data-role="listview"></ul>
         <button class="add ui-btn ui-corner-all">Додати ще</button>
         <button class="save ui-btn ui-corner-all">Зберегти</button>
       </div>
     </script>
     <script id="change_gov_menu_item__tpl" type="text/template">
       <input type="hidden" class="change_gov_menu__layer" name="layer_type" value="<%- layer_type %>">
-      <input type="text" class="change_gov_menu__input" name="field_name" value="<%- name %>">
+      <div class="change_gov_menu__input_wrapper ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+        <input class="change_gov_menu__input" type="text" data-enhanced="true" data-clear-btn="false" name="text-enhanced" id="text-enhanced" value="<%- name %>">
+      </div>
       <div class="hiddenfile">
-        <label class="take_photo__input">
-          <input type="file" data-clear-btn="false" name="take_photo__input" accept="image/*" capture>
+        <label>
+          <input class="take_icon__input" type="file" data-clear-btn="false" name="icon__input" accept="image/*" capture>
         </label>
       </div>
       <button data-iconpos="noicon" class="change_gov_menu__icon ui-btn ui-btn-inline ui-btn-icon-notext">
-        <img class="a_la_icon" src="<%- icon_url %>" alt="Icon">
+        <img class="a_la_icon" src="<%- img %>" alt="?">
       </button>
       <a href="#" class="change_gov_menu__delete_item ui-btn ui-btn-inline ui-btn-icon-notext ui-icon-delete"></a>
     </script>
@@ -950,6 +953,13 @@
     <script src="./static/js/vendor/json2.js"></script>
     <script src="./static/js/vendor/underscore-min.js"></script>
     <script src="./static/js/vendor/jquery-1.11.1.min.js"></script>
+    <script>
+      $(document).on("mobileinit", function () {
+          $.mobile.hashListeningEnabled = false;
+          $.mobile.pushStateEnabled = false;
+          $.mobile.changePage.defaults.changeHash = false;
+      });
+    </script>
     <script src="./static/js/vendor/jquery.mobile-1.4.5.min.js"></script>
     <script src="./static/js/vendor/backbone.js"></script>
     <script src="./static/js/vendor/backbone.marionette.js"></script>
@@ -959,6 +969,7 @@
     <script src="./static/js/init.js" async defer></script>
     <script src="./static/js/jQM_tweaks.js"></script>
     <script src="./static/js/filtersService.js"></script>
+    <script src="./static/js/router.js"></script>
     <script src="./static/js/create_beacon.js"></script>
     <script src="./static/js/app_marionette.js"></script>
     <script src="./static/js/gov_marionette.js"></script>
@@ -966,6 +977,3 @@
 
   </body>
 </html>
-<!--
-  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae quos maxime eligendi excepturi modi suscipit nemo incidunt quo atque eaque! Unde dicta at totam perspiciatis ex officia inventore porro nobis.
--->

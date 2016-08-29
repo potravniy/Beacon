@@ -134,6 +134,9 @@ function getListMenuLMR() {
     dataType: "json",
     crossDomain: true,
     success: function ( response ) {
+      if(response.length === 0){
+        console.log('listMenuLMR is empty')
+      }
       window.state.listMenuLMR = response
     },
     error: function(){

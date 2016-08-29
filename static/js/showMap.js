@@ -93,6 +93,7 @@ window.onload = function() {
 			window.google.maps.event.removeListener(listener)
 		}
 	}
+	window.Manager.start();
 } 	//	window.onload
 
 
@@ -158,7 +159,7 @@ function renderMarkers() {
 }
 
 function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_type, r.layer_owner_id, r.title, r.id, r.lat, r.lng, i)
-	var iconURL = getIconURL(r)
+	var iconURL = getIconURL(r, true)
 	markers[index] = new window.google.maps.Marker({
 		map: window.state.map,
 		title: r.title + ', ' + iconURL,
@@ -202,7 +203,8 @@ function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_t
     });
 	}
 }
-function getIconURL(r) {
+function getIconURL(r, relative) {
+	var iconMainURL = ( relative ? '/' : window.iconMainURL )
 	if(r.b_type && +r.b_type < 1000) {
 		return iconMainURL + "images/" + r.b_type +'.png' 
 	} else if(r.b_type && r.layer_owner_id && r.layer_type && +r.b_type >= 1000 ){

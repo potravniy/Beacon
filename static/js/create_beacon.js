@@ -36,13 +36,6 @@ $('#create_beacon__geo .listview .important').click(function () { createBeaconGe
 $('#create_beacon__geo .listview .emo_good').click(function () {  createBeaconGeoNew('69')  })
 $('#create_beacon__geo .listview .emo_bad').click(function () {   createBeaconGeoNew('96')  })
 
-$('#create_btn').click(function(e){
-  if(!window.state.user.id){
-    e.preventDefault()
-    $.mobile.navigate('#login_dialog')
-  }
-})
-
 function createBeaconGeoNew(type) {
   var options = getGeoOptions(type)
   $.extend(options, { type: type })

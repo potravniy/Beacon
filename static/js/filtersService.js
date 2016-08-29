@@ -115,8 +115,8 @@ $("#time_range input:radio").change(function() {
     setDatesForAJAX(dateFrom, theMoment)
   }
   function setDatesForAJAX(start, finish){
-    window.state.start = start
-    window.state.finish = finish
+    window.state.start = encodeURIComponent(start)
+    window.state.finish = encodeURIComponent(finish)
     window.state.sendGET(window.state.urlMarkers)
   }
 })
@@ -124,8 +124,8 @@ $filter_date_picker.change(function(){
   var low = normalizeInput( $('#low_limit').val() )
   var hight = normalizeInput( $('#hight_limit').val() )
   if(low && hight){
-    window.state.start = formatTime(new Date(low + ' 00:00:00'))
-    window.state.finish = formatTime(new Date(hight + ' 23:59:59'))
+    window.state.start = encodeURIComponent(formatTime(new Date(low + ' 00:00:00')))
+    window.state.finish = encodeURIComponent(formatTime(new Date(hight + ' 23:59:59')))
     window.state.sendGET(window.state.urlMarkers)
   }
 })
@@ -162,21 +162,22 @@ function reverseDateFormat(dateStr) {
 }
 $(window).load(function(){
   window.$filter_mapSearch = $('#map_search')
-  var s ='change keydown paste input'
-  window.$filter_mapSearch.on('keydown keyup paste', _.debounce(mapSeachEventHandler, 1000))
-  
+  window.$filter_mapSearch.on('change keydown keyup paste', _.debounce(mapSeachEventHandler, 1000))
   function mapSeachEventHandler(){
     var res = window.$filter_mapSearch.val()
-    if(res.length){
+    if (res === ""){
+      window.state.filter = ""
+      window.state.sendGET(window.state.urlMarkers)
+    } else {
       var first = res[0]
-      if( +first > -1 && +first < 10 ){
-        window.state.filter = res
+      if( +first >= 0 && +first <= 9 ){
+        window.state.filter = encodeURIComponent(res)
         window.state.sendGET(window.state.urlMarkers)
-      } else if(res[0] === '#'){
+      } else if(first === '#'){
         res = _.filter(res, function(item){
           return item !== "#"
         }).join('')
-        window.state.filter = res
+        window.state.filter = encodeURIComponent(res)
         window.state.sendGET(window.state.urlMarkers)
       } else {
         console.log(first, 'string')

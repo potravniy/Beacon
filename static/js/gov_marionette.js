@@ -4,7 +4,7 @@ GovItemModel = Backbone.Model.extend({
   defaults: {
     targetId: "",
     name: '',
-    icon_url: "//:0"
+    img: "//:0"
   }
 })
 GovListModel = Backbone.Collection.extend({
@@ -14,7 +14,6 @@ GovItemView = Backbone.Marionette.ItemView.extend({
   template: '#gov_single_menu_item__tpl',
   tagName: 'li',
   className: function(){
-    this.model.set({ icon_url: getIconURL(this.model.attributes) })
     return 'menu_item '+ (this.model.get('className') ? this.model.get('className') : '' ) 
   },
   events: {
@@ -38,7 +37,7 @@ GovCreateBeaconView = Backbone.Marionette.CompositeView.extend({
   childViewContainer: '.listview',
   collection: new GovListModel(),
   onSettingsClick: function(){
-    console.log('onSettingsClick')
+    showChangeGovMenuView()
   },
   initialize: function(options){
     var collection = []
@@ -124,41 +123,118 @@ PopupStatusBeacon = Backbone.Marionette.ItemView.extend({
 
 //  Settings of gov beacon create popup START
 
+ChangeGovMenuItemModel = Backbone.Model.extend({
+  defaults: {
+    "act": '0',   //  act: '0'=nothing, '1'=add, '2'=edit, '3'=del 
+    "name": "",
+    "type": "330",
+    "b_type": "1000",
+    "layer_type": "",
+    "img": "/images/1000.png"
+  },
+  sendIconToServer: function(){
+    if(this.get('file')){
+      var that = this
+      var fd = new FormData();   //  http://stackoverflow.com/questions/6974684/how-to-send-formdata-objects-with-ajax-requests-in-jquery    
+      fd.append( 'picture', this.get('file') );
+      var promise = $.ajax({
+        url: "https://gurtom.mobi/i/up.php?type=1000",
+        data: fd,
+        crossDomain: true,
+        processData: false,
+        contentType: false,
+        headers: {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'},
+        type: 'POST'
+      });
+      promise.done(function(data){
+        that.set({ img: data })
+        that.unset('file')
+      })
+      promise.fail(function(){
+        alert("Немає зв'язку з сервером.")
+      })
+      return promise
+    } else {
+      return $.Deferred().resolve()
+    }
+  }
+})
 ChangeGovMenuItemView = Backbone.Marionette.ItemView.extend({
   template: '#change_gov_menu_item__tpl',
-  templateHelpers: function () {
-    var url = getIconURL(this.model.attributes)
-    return { icon_url: url }
-  },
+  tagName: 'li',
+  className: 'change_gov_menu_item',
   ui: {
     btnIcon: '.change_gov_menu__icon',
-    btnDel: '.change_gov_menu__delete_item' 
+    iconImg: '.a_la_icon',
+    iconFile: ".take_icon__input",
+    btnDel: '.change_gov_menu__delete_item',
+    inputName: '.change_gov_menu__input' 
   },
   events: {
-    'click @ui.btnIcon': 'icon',
-    'click @ui.btnDel': 'delete'
+    'click @ui.btnIcon': 'iconClick',
+    'change @ui.iconFile': 'changeIcon',
+    'click @ui.btnDel': 'delete',
+    'blur @ui.inputName': 'updateName'
   },
-  icon: function(){
-    console.log('icon')
+  iconClick: function(e){
+    e.preventDefault();
+    this.ui.iconFile.trigger("click");
+  },
+  changeIcon: function(e){
+    var file = this.ui.iconFile[0].files[0]
+    if(file){
+      previewImage(file, this.ui.iconImg[0]);
+      this.setEditStatus()
+      this.model.set( {file: file} )
+    }
+    function previewImage(file, img) {
+      if (typeof FileReader !== "undefined") {
+        var reader = new FileReader();
+        reader.onload = (function (theImg) {
+          return function (evt) {
+            theImg.src = evt.target.result;
+          };
+        }(img));
+        reader.readAsDataURL(file);
+      }
+    }
   },
   delete: function(){
-    console.log('delete')
+    if(this.model.get('act') === '1'){
+      this.triggerMethod('delete:me')
+    } else {
+      this.model.set( {act: '3'} )
+      this.$el.hide()
+      this.triggerMethod('reposition:popup')
+    }
+  },
+  updateName: function(){
+    this.model.set( {name: this.ui.inputName.val()} )
+    this.setEditStatus()
+  },
+  setEditStatus: function(){
+    if(this.model.get('act') === '0'){
+      this.model.set( {act: '2'} )
+    }
   }
-
+})
+ChangeGovMenuCollection = Backbone.Collection.extend({
+  model: ChangeGovMenuItemModel,
+  url: "https://gurtom.mobi/beacon_list_layers.php"
 })
 ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
   template: '#change_gov_menu__tpl',
   className: 'change_gov_menu',
-  attributes: {
-    "data-role": "content"
-  },
   childView: ChangeGovMenuItemView,
-  childViewContainer: '.listview',
+  childViewContainer: '#change_gov_menu_list',
   initialize: function(){
-    this.collection = new Backbone.Collection(state.listMenuLMR)
+    var collection = _.clone(window.state.listMenuLMR)
+    this.collection = new ChangeGovMenuCollection(collection)
   },
   onShow: function(){
     this.$el.trigger('create')
+    window.setMaxHeightOfInnerEl()
+    this.reposition()
   },
   ui: {
     btnAdd: '.add',
@@ -168,13 +244,52 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
     'click @ui.btnAdd': 'add',
     'click @ui.btnSave': 'save'
   },
-  add: function(){
-    console.log('add')
+  childEvents: {
+    'delete:me': 'deleteChild',
+    'reposition:popup': 'reposition'
+  },
+  add: function(e){
+    var newItemModel = new ChangeGovMenuItemModel({
+      layer_owner_id: window.state.user.id,
+      layer_type: '',
+      act: '1'
+    }) 
+    this.collection.add(newItemModel)
+    this.$childViewContainer.trigger('create')
+    this.reposition()
   },
   save: function(){
-    console.log('save')
+    var promises = _.map(this.collection.models, function(model){
+      return model.sendIconToServer()
+    })
+    var that = this
+    $.when.apply(this, promises).done(function(){
+      that.send()
+    })
+  },
+  send: function(){
+    var that = this
+    var promise = this.collection.sync("create", this.collection)
+    promise.done(function(response){
+      console.log(response)
+      window.state.listMenuLMR = response
+      // window.switchBeaconCreateMenuToLMRAfterChange()
+      $('#create_beacon__geo').one( "popupafterclose", function(event, ui) {
+        window.switchBeaconCreateMenuToLMR()
+      })
+      $('#create_beacon__geo').popup( "close" )
+    })
+    promise.fail(function(){
+      alert("Немає зв'язку з сервером.")
+    })
+  },
+  deleteChild: function(childView){
+    this.collection.remove(childView.model)
+    this.reposition()
+  },
+  reposition: function(){
+    $('#create_beacon__geo').popup('reposition', {'positionTo': "#beacons-map__the-map"})
   }
-
 })
 
 
@@ -184,10 +299,12 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
 
 window.govCreateBeaconRegion = new Backbone.Marionette.Region({el: "#create_beacon__geo_region"})
 window.popupStatusBeaconRegion = new Backbone.Marionette.Region({el: "#beacon-status__region"})
+window.changeGovMenuRegion = new Backbone.Marionette.Region({el: "#create_beacon__geo"})
 
 function switchBeaconCreateMenuToLMR(options) {
   window.govCreateBeaconView = new GovCreateBeaconView(options)
   window.govCreateBeaconRegion.show(window.govCreateBeaconView)
+  console.log('Switch to govCreateBeaconView')
 }
 
 function showPopupStatusBeacon(options) {
@@ -196,9 +313,16 @@ function showPopupStatusBeacon(options) {
     model: model
   })
   window.popupStatusBeaconRegion.show(window.popupStatusBeacon)
+  console.log('Switch to popupStatusBeacon')
 }
 
 function showChangeGovMenuView() {
   window.changeGovMenuView = new ChangeGovMenuView();
-  window.rightRegion.show(window.changeGovMenuView);
+  window.changeGovMenuRegion.show(window.changeGovMenuView);
+  console.log('Switch to changeGovMenuView')
 }
+
+// function switchBeaconCreateMenuToLMRAfterChange(){
+//   window.govCreateBeaconView = new GovCreateBeaconView()
+//   window.changeGovMenuRegion.show(window.govCreateBeaconView);
+// }

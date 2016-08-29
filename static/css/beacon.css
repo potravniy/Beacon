@@ -758,15 +758,15 @@ img.photo {
 
 
 /*  Object create section start  */
-#object_create_dialog,
-.change_gov_menu {
+#object_create_dialog {
   background-color: #f9f9f9;
   margin: 0.5em;
   border-radius: 0.7em;
 }
-#object_create_dialog .header {
-    border-top-left-radius: 0.7em;
-    border-top-right-radius: 0.7em;
+#object_create_dialog .header,
+.change_gov_menu .header {
+    border-top-left-radius: 0.3em;
+    border-top-right-radius: 0.3em;
 }
 #object_create_dialog .main {
   padding-bottom: 100px;
@@ -1380,9 +1380,52 @@ p.usr_category {
   margin-bottom: 1em;
   border-bottom: solid 1px #888;
 }
-
-
-
-
-
+#change_gov_menu_list {
+  margin: 0;
+}
+#change_gov_menu_list .change_gov_menu_item {
+  position: relative;
+}
+#change_gov_menu_list .change_gov_menu_item .ui-input-text {
+  margin-right: 5em;
+}
+#change_gov_menu_list .change_gov_menu_item .change_gov_menu__icon,
+#change_gov_menu_list .change_gov_menu_item .change_gov_menu__delete_item {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+#change_gov_menu_list .change_gov_menu_item .change_gov_menu__icon {
+  right: 2.5em;
+  width: 2.4em;
+  height: 2.4em;
+  line-height: 10px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  text-align: center;
+  background-color: transparent;
+}
+#change_gov_menu_list .change_gov_menu_item .change_gov_menu__icon img {
+  display: inline-block;
+  position: static;
+  width: auto;
+  height: 97%;
+}
+#change_gov_menu_list .change_gov_menu_item .change_gov_menu__delete_item {
+  width: 2.4em;
+  height: 2.4em;
+  border: none;
+  top: -1px;
+  background-color: transparent;
+}
+.change_gov_menu__input_wrapper {
+  margin: 0.1em;
+}
+.ui-popup-container .listview_wrapper {
+  overflow-y: auto;
+}
+#age .age_range {
+  height: 100%;
+}
 
