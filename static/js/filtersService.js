@@ -62,12 +62,18 @@ var $filter_programms = $('#programms')
 var $filter_project_proposals = $('#project_proposals')
 var $filter_projects = $('#projects')
 var $filter_requests = $('#requests')
+var $filter_positive = $('#positive')
+var $filter_negative = $('#negative')
 var $filter_budget = $('#budget')
-$('#actions').click(_.debounce(actionsRead, 1000))
+var $filter_info = $('#info')
+var $filter_sos = $('#sos')
+var $filter_organizations = $('#organizations')
 function actionsRead(event){
   if(event.target.nodeName === 'INPUT'){
     var result = ''
-    if($filter_votings.prop("checked")) result += "1"
+    if($filter_votings.prop("checked")) {
+      result += "1"
+    }
     if($filter_programms.prop("checked")){
       if(result) result += ",2"
       else result += "2"
@@ -84,43 +90,83 @@ function actionsRead(event){
       if(result) result += ",5"
       else result += "5"
     }
+    if($filter_positive.prop("checked")){
+      if(result) result += ",69"
+      else result += "69"
+    }
+    if($filter_negative.prop("checked")){
+      if(result) result += ",96"
+      else result += "96"
+    }
     if($filter_budget.prop("checked")){
       if(result) result += ",330"
       else result += "330"
     }
-    window.state.b_types = result + (result ? ',69,96,777,911,1000' : '')
+    if($filter_info.prop("checked")){
+      if(result) result += ",777"
+      else result += "777"
+    }
+    if($filter_sos.prop("checked")){
+      if(result) result += ",911"
+      else result += "911"
+    }
+    if($filter_organizations.prop("checked")){
+      if(result) result += ",1000"
+      else result += "1000"
+    }
+    window.state.b_types = result
     window.state.sendGET(window.state.urlMarkers)
   }
 }
 //  this section processes TWO last tabs in right panel navbar --- END
 
-var $filter_date_picker = $('#time_range .date_picker')
+var $filter_date_picker = $('#time_range .date_picker'),
+    $timeFilterWrapper = $('#time_range')[0]
 $filter_date_picker.hide()
-$("#time_range input:radio").change(function() {
-  var date = new Date()
-  var theMoment = formatTime(date)
-  var dateFrom;
-  if($(this).val() === 'custom') $filter_date_picker.show()
-  else $filter_date_picker.hide()
-  if($(this).val() === 'any'){
-    setDatesForAJAX('', '')
-  } else if($(this).val() === 'hour'){
-    dateFrom = formatTime(new Date(Date.now() - 1000*60*60))
-    setDatesForAJAX(dateFrom, theMoment)
-  } else if($(this).val() === 'day'){
-    dateFrom = formatTime(new Date(Date.now() - 1000*60*60*24))
-    setDatesForAJAX(dateFrom, theMoment)
-  } else if($(this).val() === 'week'){
-    dateFrom = formatTime(new Date(Date.now() - 1000*60*60*24*7))
-    setDatesForAJAX(dateFrom, theMoment)
+$("#time_range input:radio").change(timeRangeChanged)
+function timeRangeChanged(e) {
+  var theMoment = formatTime(new Date()),
+      dateFrom;
+  switch (e.target.value) {
+    case 'custom':
+      $filter_date_picker.show()
+      $timeFilterWrapper.scrollTop = $timeFilterWrapper.scrollHeight
+      break;
+    case 'any':
+      dateFrom = ''
+      break;
+    case 'hour':
+      dateFrom = formatTime(new Date(Date.now() - 1000*60*60))
+      break;
+    case 'day':
+      dateFrom = formatTime(new Date(Date.now() - 1000*60*60*24))
+      break;
+    case 'week':
+      dateFrom = formatTime(new Date(Date.now() - 1000*60*60*24*7))
+      break;
+    case 'month':
+      dateFrom = formatTime(new Date(Date.now() - 1000*60*60*24*30))
+      break;
+    case 'hundred':
+      dateFrom = formatTime(new Date(Date.now() - 1000*60*60*24*100))
+      break;
+    case 'year':
+      dateFrom = formatTime(new Date(Date.now() - 1000*60*60*24*365))
+      break;
+  }
+  if(e.target.value !== 'custom'){
+    $filter_date_picker.hide()
+    if(dateFrom) setDatesForAJAX(dateFrom, theMoment)
+    else setDatesForAJAX('', '')
   }
   function setDatesForAJAX(start, finish){
     window.state.start = encodeURIComponent(start)
     window.state.finish = encodeURIComponent(finish)
     window.state.sendGET(window.state.urlMarkers)
   }
-})
-$filter_date_picker.change(function(){
+}
+$filter_date_picker.change(datePickerChanged)
+function datePickerChanged(){
   var low = normalizeInput( $('#low_limit').val() )
   var hight = normalizeInput( $('#hight_limit').val() )
   if(low && hight){
@@ -128,7 +174,7 @@ $filter_date_picker.change(function(){
     window.state.finish = encodeURIComponent(formatTime(new Date(hight + ' 23:59:59')))
     window.state.sendGET(window.state.urlMarkers)
   }
-})
+}
 function normalizeInput(date) {
   var temp = []
   if(date.indexOf('.') !== -1) temp = date.split('.')
@@ -163,26 +209,92 @@ function reverseDateFormat(dateStr) {
 $(window).load(function(){
   window.$filter_mapSearch = $('#map_search')
   window.$filter_mapSearch.on('change keydown keyup paste', _.debounce(mapSeachEventHandler, 1000))
-  function mapSeachEventHandler(){
-    var res = window.$filter_mapSearch.val()
-    if (res === ""){
-      window.state.filter = ""
+  $(document).on('click', 'input', function(e){
+    e.stopPropagation()
+  })
+  $(window).click(function(){
+    if(document.activeElement.tagName.toLowerCase() === 'input'){
+      document.activeElement.blur()
+    }
+  })
+  $('#actions').click(_.debounce(actionsRead, 1000))
+})
+
+function mapSeachEventHandler(){
+  var res = window.$filter_mapSearch.val()
+  if (res === ""){
+    window.state.filter = ""
+    window.state.sendGET(window.state.urlMarkers)
+  } else {
+    var first = res[0]
+    if( +first >= 0 && +first <= 9 ){
+      res = _.filter(res, function(item){
+        return item !== "#"
+      }).join('')
+      window.state.filter = encodeURIComponent(res)
+      window.state.sendGET(window.state.urlMarkers)
+    } else if(first === '#'){
+      res = _.filter(res, function(item){
+        return item !== "#"
+      }).join('')
+      window.state.filter = encodeURIComponent(res)
       window.state.sendGET(window.state.urlMarkers)
     } else {
-      var first = res[0]
-      if( +first >= 0 && +first <= 9 ){
-        window.state.filter = encodeURIComponent(res)
-        window.state.sendGET(window.state.urlMarkers)
-      } else if(first === '#'){
-        res = _.filter(res, function(item){
-          return item !== "#"
-        }).join('')
-        window.state.filter = encodeURIComponent(res)
-        window.state.sendGET(window.state.urlMarkers)
-      } else {
-        console.log(first, 'string')
-        //  Adress search is not written yet.
-      }
+      console.log(first, 'string')
+      //  Adress search is not written yet.
     }
   }
-})
+}
+
+function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft) {
+  $('#beacon_status').off()
+  $('#user_rating').off()
+  $('#actions').off()
+  $filter_date_picker.off()
+  window.$filter_mapSearch.off('change keydown keyup paste')
+
+  var arr = al.split(',')
+  if(_.indexOf(arr, '0' ) === -1 ) $filter_e_mail.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '1' ) === -1 ) $filter_social_net.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '7' ) === -1 ) $filter_co_owners.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '8' ) === -1 ) $filter_organisations.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '9' ) === -1 ) $filter_payments.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '10') === -1 ) $filter_bank_id.prop('checked', false).flipswitch( "refresh" )
+  arr = bs.split(',')
+  if(_.indexOf(arr, '0' ) === -1 ) $filter_new_beacons.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '1' ) === -1 ) $filter_confirmed_beacons.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '2' ) === -1 ) $filter_processing_beacons.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '3' ) === -1 ) $filter_closed_beacons.prop('checked', false).flipswitch( "refresh" )
+  arr = bt.split(',')
+  if(_.indexOf(arr, '1' ) === -1 ) $filter_votings.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '2' ) === -1 ) $filter_programms.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '3' ) === -1 ) $filter_project_proposals.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '4' ) === -1 ) $filter_projects.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '5' ) === -1 ) $filter_requests.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '69') === -1 ) $filter_positive.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '96') === -1 ) $filter_negative.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '330') === -1 ) $filter_budget.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '777') === -1 ) $filter_info.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '911') === -1 ) $filter_sos.prop('checked', false).flipswitch( "refresh" )
+  if(_.indexOf(arr, '1000') === -1 ) $filter_organizations.prop('checked', false).flipswitch( "refresh" )
+  if(qw !== '.') window.$filter_mapSearch.val( decodeURIComponent(qw) )
+  if(st!=='.' && ft!=='.') {
+    var $customRangeRadioBtn = $('#custom_range'),
+        $timeTabBtn = $(".time_range")
+    $customRangeRadioBtn.click()
+    st = decodeURIComponent(st).split(' ')[0]
+    $('#low_limit').val(st)
+    ft = decodeURIComponent(ft).split(' ')[0]
+    $('#hight_limit').val(ft)
+    $timeTabBtn.one('click', function(){
+      $customRangeRadioBtn.click()
+    })
+  }
+
+  $('#beacon_status').click(_.debounce(beaconStatusRead, 1000))
+  $('#user_rating').click(_.debounce(userRatingRead, 1000))
+  $('#actions').click(_.debounce(actionsRead, 1000))
+  $filter_date_picker.change(datePickerChanged)
+  window.$filter_mapSearch.on('change keydown keyup paste', _.debounce(mapSeachEventHandler, 1000))
+
+}

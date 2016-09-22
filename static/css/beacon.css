@@ -27,6 +27,9 @@ img[src=""] {
   -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
+#beacons-map {
+  padding-top: 44px;
+}
 #the-map {
   height: 100%;
 }
@@ -73,7 +76,8 @@ img[src=""] {
   min-height: 100%;
 }
 #footer {
-  bottom: -3px;
+  bottom: 0;
+  padding-bottom: 0;
 }
 .buttons-wrapper {
   position: absolute;
@@ -534,8 +538,11 @@ img.photo {
   height: 20px;
   margin-top: -10px;
 }
+.public_private_switch {
+  padding-bottom: 0;
+}
 .create_object .input,
-.create_object .public_private_switch__flipswitch {
+.wrapper__private .public_private_switch__flipswitch {
   display: block;
   margin: 0 auto;
 }
@@ -711,9 +718,6 @@ img.photo {
   margin-bottom: 1px;
   margin-top: 1px;
 }
-.select_group {
-  display: none;
-}
 #tag_store,
 #tag_storage {
   font-size: 1em;
@@ -808,12 +812,17 @@ img.photo {
   margin-top: 0.7em;
   width: 5em;
 }
-#programID, #add_tag, #nco__wrapper {
+#select_group {
+  display: none;
+}
+#programID, #add_tag, #nco__wrapper, #layer_type__view {
   margin-top: 1.5em;
 }
 #programID p,
 #add_tag p,
-#nco__wrapper p {
+#nco__wrapper p,
+#layer_type__view p,
+#select_group p {
   margin: 0;
 }
 #add_tag__ul,
@@ -1147,6 +1156,9 @@ hr {
 #reset_pass_dialog .submit {
   font-size: 1.5em;
   background-color: #0f0;
+}
+#restore_pass_dialog .submit {
+  margin: 0;
 }
 #login_dialog .submit {
   top: -12px;

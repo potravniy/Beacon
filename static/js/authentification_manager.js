@@ -11,7 +11,12 @@ if($.mobile && $.mobile.activePage && $.mobile.activePage.attr('id')){
     leftPanelInit()
   }) 
 }
-
+$( '#login_dialog .registration' ).click(function(){
+  Manager.trigger('registration')
+})
+$( '#login_dialog .restore_pass' ).click(function(){
+  Manager.trigger('pass_restore')
+})
 $( "#login_dialog" ).one( "pagecreate", loginDialogInit)
 $( "#registration_dialog" ).one( "pagecreate", registerDialogInit)
 $( '#restore_pass_dialog' ).one( "pagecreate", restoreDialogInit)
@@ -50,7 +55,8 @@ function leftPanelInit(){
 }
 
 function loginDialogInit(){
-  $('#login').submit(function (e) {
+  var $loginForm = $('#login')
+  $loginForm.submit(function (e) {
     e.preventDefault()
     var promise = loggingRequest($(this).serialize(), 0)
     promise.done(function ( response ) {
@@ -58,7 +64,6 @@ function loginDialogInit(){
         window.state.user = response[0]
         showUserInfo()
         Manager.trigger('home')
-        // $(":mobile-pagecontainer").pagecontainer("change", $('#beacons-map'), {changeHash: false})
       } else {
         alert("Введені облікові дані не дійсні.\nВведіть правильні Ім'я та Пароль.")
       }
@@ -143,7 +148,7 @@ function restoreDialogInit(){
     }
     var promise = loggingRequest(data, 3)
     promise.done(function(response){
-      alert("Error: " + response[0].msg)
+      alert(response[0].msg)
       Manager.trigger('home')
     });
     promise.fail(function(response){
@@ -160,7 +165,7 @@ function restoreDialogInit(){
 }
 
 function resetDialogInit(){
-  console.log("restoreDialogInit")
+  console.log("resetDialogInit")
   var $pass1 = $('#reset_pass_dialog #password_reset'),
       $pass2 = $('#reset_pass_dialog #password_reset-repeat'),
       $btnSubmit = $('#reset_pass_dialog .submit')

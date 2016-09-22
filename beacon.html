@@ -38,7 +38,7 @@
   <body>
     <div id="beacons-map" data-role="page" data-fullscreen="true" class="ui-overlay-shadow ui-responsive-panel" data-theme="a" data-title="Маячок">
 
-      <div id="header" data-role="header" data-position="fixed" data-tap-toggle="false">
+      <div id="header" data-role="header" data-position="fixed" data-tap-toggle="false" data-update-page-padding="false" data-fullscreen="true">
         <a class="ui-btn ui-btn-left ui-btn-inline ui-icon-menu ui-btn-icon-notext ui-nodisc-icon" href="#left-panel">Menu</a>
         <h1>Гість</h1>
         <a class="ui-btn ui-btn-right ui-btn-inline ui-icon-more_vert ui-btn-icon-notext ui-nodisc-icon" href="#right-panel">Options</a>
@@ -65,7 +65,7 @@
         
         
         <div data-role="popup" id="favorite__list" data-theme="a" data-overlay-theme="b">
-          <div data-role="header" data-position="fixed">
+          <div data-role="header" data-position="fixed" data-update-page-padding="false" data-fullscreen="true"> <!-- data-fullscreen="true" prevents padding-top incorrect change in row 12588 of jQM -->
             <h1>Обрані маячки</h1>
             <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
           </div>
@@ -101,9 +101,15 @@
               </li>
             </ul>
           </div>
-        </div>              
+        </div>
+        <div data-role="popup" id="popupPhoto" class="photopopup" data-overlay-theme="b" data-corners="false" data-tolerance="30,15">
+          <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right">Close</a>
+          <img class="photopopup__img" src="" alt="Photo">
+          <a href="#" class="abuse ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-info_outline ui-btn-icon-notext ui-btn-right">Abuse</a>
+        </div>
         <div id="beacon-status__region"></div>
-        <div data-role="popup" id="create_beacon" data-arrow="true" data-theme="a">
+        <div data-role="popup" id="create_beacon__geo_region"></div>
+        <!--<div data-role="popup" id="create_beacon" data-arrow="true" data-theme="a">
           <div data-role="header">
             <h1>Створити</h1>
             <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
@@ -111,16 +117,15 @@
           <div data-role="main">
             <ul data-role="listview"  class="listview">
               <li>
-                <a id="btn__create_beacon__geo" class="ui-icon-add_location ui-btn ui-btn-icon-left ui-nodisc-icon">Створити маячок в центрі карти</a>
+                <a href="#" id="btn__create_beacon__geo" class="ui-icon-add_location ui-btn ui-btn-icon-left ui-nodisc-icon">Створити маячок в центрі карти</a>
               </li>
               <li>
-                <a id="btn__create_beacon__no_geo" class="ui-icon-location_disabled ui-btn ui-btn-icon-left ui-nodisc-icon">Створити об'єкт без відмітки на карті</a>
+                <a href="#" id="btn__create_beacon__no_geo" class="ui-icon-location_disabled ui-btn ui-btn-icon-left ui-nodisc-icon">Створити об'єкт без відмітки на карті</a>
               </li>
             </ul>
           </div>
-        </div>
-        <div data-role="popup" id="create_beacon__geo_region"></div>
-        <div data-role="popup" id="create_beacon__no_geo" data-theme="a" data-overlay-theme="b" data-position-to="#beacons-map__the-map">
+        </div>-->
+        <!--<div data-role="popup" id="create_beacon__no_geo" data-theme="a" data-overlay-theme="b" data-position-to="#beacons-map__the-map">
           <div data-role="header" class="header">
             <h1>Створити</h1>
             <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
@@ -134,13 +139,8 @@
               <li><a href="#" data-rel="dialog" class="request ui-icon-send ui-btn ui-btn-icon-right ui-nodisc-icon" data-ajax="false">Запит</a></li>
             </ul>
           </div>
-        </div>
-        <div data-role="popup" id="popupPhoto" class="photopopup" data-overlay-theme="b" data-corners="false" data-tolerance="30,15">
-          <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right">Close</a>
-          <img class="photopopup__img" src="" alt="Photo">
-          <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-info_outline ui-btn-icon-notext ui-btn-right">Info</a>
-        </div>
-        <div data-role="popup" id="proect_propos_popup" data-theme="a" data-overlay-theme="b" data-position-to="#beacons-map__the-map">
+        </div>-->
+        <!--<div data-role="popup" id="proect_propos_popup" data-theme="a" data-overlay-theme="b" data-position-to="#beacons-map__the-map">
           <div data-role="header">
             <h1>Знайти програму</h1>
             <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
@@ -156,11 +156,11 @@
               <li><a href="#" data-rel="dialog" class="ui-btn">ID 134<br>Programm example 234</a></li>
             </ul>
           </div>
-        </div>
+        </div>-->
 
       </div>    <!-- /container -->
       
-      <div id="footer" data-role="footer" data-position="fixed"> 
+      <div id="footer" data-role="footer" data-position="fixed" data-update-page-padding="false" data-fullscreen="true"> 
         <div data-role="navbar">
           <ul>
             <li><a href="#" id="btn__the-map" class="ui-btn-active">Карта</a></li>
@@ -267,22 +267,28 @@
           <div id="time_range" class="scrollable_content">
             <fieldset data-role="controlgroup">
               <input type="radio" name="radio-time" id="any" value="any" checked="checked">
-              <label for="any">Any</label>
+              <label for="any">За весь час</label>
               <input type="radio" name="radio-time" id="last_hour" value="hour">
-              <label for="last_hour">Last hour</label>
+              <label for="last_hour">За останню годину</label>
               <input type="radio" name="radio-time" id="last_day" value="day">
-              <label for="last_day">Last day</label>
+              <label for="last_day">За останній день</label>
               <input type="radio" name="radio-time" id="last_week" value="week">
-              <label for="last_week">Last week</label>
+              <label for="last_week">За останній тиждень</label>
+              <input type="radio" name="radio-time" id="last_month" value="month">
+              <label for="last_month">За останні 30 днів</label>
+              <input type="radio" name="radio-time" id="last_hundred" value="hundred">
+              <label for="last_hundred">За останні 100 днів</label>
+              <input type="radio" name="radio-time" id="last_year" value="year">
+              <label for="last_year">За останній рік</label>
               <input type="radio" name="radio-time" id="custom_range" value="custom">
-              <label for="custom_range">By date</label>
+              <label for="custom_range">Встановити межі</label>
               <div class="date_picker">
                 <div class="ui-field-contain">
-                  <label for="low_limit">from</label>
+                  <label for="low_limit">з</label>
                   <input type="date" data-clear-btn="false" data-mini="true" name="low_limit" id="low_limit" value="" placeholder="дд.мм.рррр">
                 </div>
                 <div class="ui-field-contain">
-                  <label for="hight_limit">to</label>
+                  <label for="hight_limit">по</label>
                   <input type="date" data-clear-btn="false" data-mini="true" name="hight_limit" id="hight_limit" value="" placeholder="дд.мм.рррр">
                 </div>
               </div>
@@ -357,6 +363,26 @@
                 <input type="checkbox" data-role="flipswitch" name="requests" id="budget" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
                 <label for="budget">Бюджет участі</label>
               </li>
+              <li>
+                <input type="checkbox" data-role="flipswitch" name="requests" id="positive" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
+                <label for="positive">Тут добре</label>
+              </li>
+              <li>
+                <input type="checkbox" data-role="flipswitch" name="requests" id="negative" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
+                <label for="negative">Тут погано</label>
+              </li>
+              <li>
+                <input type="checkbox" data-role="flipswitch" name="requests" id="info" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
+                <label for="info">Важливо</label>
+              </li>
+              <li>
+                <input type="checkbox" data-role="flipswitch" name="requests" id="sos" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
+                <label for="sos">SOS</label>
+              </li>
+              <li>
+                <input type="checkbox" data-role="flipswitch" name="requests" id="organizations" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
+                <label for="organizations">Організації</label>
+              </li>
             </ul>
           </div>
         </div>
@@ -369,7 +395,7 @@
     <div data-role="page" data-dialog="true" id="login_dialog" data-close-btn="none" data-title="Вхід">
       <form id="login" action="https://gurtom.mobi/l/index.php?m=0" method="post">
         <div data-role="header">
-          <a href="#" data-icon="close" data-rel="back" class="ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
+          <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
           <h1>Увійти</h1>
         </div>
         <div data-role="main" class="ui-content ui-grid-a">
@@ -384,13 +410,12 @@
           <div class="ui-block-b">
             <div id="custom-border-radius">
               <h5>Приєднатися через мережу</h5>
-            <a class="activities menu-icon-activities ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#my-activities-page">My Activities</a>
               <a href="./sn/gp.php" data-ajax="false" class="gp ui-btn ui-icon-google_plus ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Google+</a>
               <a href="./sn/fb.php" data-ajax="false" class="ui-btn ui-icon-facebook ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Facebook</a>
               <a href="./sn/li.php" data-ajax="false" class="ui-btn ui-icon-linkedin ui-btn-icon-notext ui-nodisc-icon ui-corner-all">LinkedIn</a>
             </div>
-            <a href="#registration_dialog" class="ui-btn ui-input-btn ui-corner-all ui-shadow">Ви тут вперше?</a>
-            <a href="#restore_pass_dialog" class="ui-btn ui-input-btn ui-corner-all ui-shadow">Забули пароль?</a>
+            <a href="#" class="registration ui-btn ui-input-btn ui-corner-all ui-shadow">Ви тут вперше?</a>
+            <a href="#" class="restore_pass ui-btn ui-input-btn ui-corner-all ui-shadow">Забули пароль?</a>
           </div>
         </div>
       </form>
@@ -398,7 +423,7 @@
 
     <div data-role="page" data-dialog="true" id="registration_dialog" data-close-btn="none" data-title="Реєстрація">
       <div data-role="header" data-position="fixed">
-        <a href="#" data-icon="close" data-rel="back" class="ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
+        <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
         <h1>Реєстрація</h1>
       </div>
       <form action="https://gurtom.mobi/l/index.php?m=4" id="registration" method="POST">
@@ -427,7 +452,7 @@
 
     <div data-role="page" data-dialog="true" id="restore_pass_dialog" data-close-btn="none" data-title="Відновлення паролю">
       <div data-role="header">
-        <a href="#beacons-map" data-icon="close" data-rel="back" class="ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
+        <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
         <h1>Відновлення паролю</h1>
       </div>
       <div data-role="main" class="ui-content">
@@ -441,7 +466,7 @@
 
     <div data-role="page" data-dialog="true" id="reset_pass_dialog" data-close-btn="none" data-title="Відновлення паролю">
       <div data-role="header">
-        <a href="#beacons-map" data-icon="close" data-rel="back" class="ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
+        <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
         <h1>Відновлення паролю</h1>
       </div>
       <div data-role="main" class="ui-content">
@@ -458,9 +483,9 @@
     <span class='warning'><h2>Ми переходимо на новий інтерфейс<br>Перепрошуємо за тимчасові незручності</h2></span>
 
 
-    <script type="text/template" id="object_create_tpl">
+    <script id="object_create_tpl" type="text/template">
         <div data-role="header" class="header">
-          <h4>Створення <%-titler%></h4>
+          <h4><%-titler%></h4>
           <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
         </div>
         <div data-role="main" class="main ui-content">
@@ -469,6 +494,7 @@
             <div class="wrapper__title"></div>
             <div class="wrapper__admin_level"></div>
             <div class="wrapper__description"></div>
+            <div class="wrapper__details"></div>
             <div class="wrapper__sphere" data-role="collapsible-set" data-theme="a" data-content-theme="a"></div>
             <div class="wrapper__money"></div>
             <div class="wrapper__currency_only"></div>
@@ -480,6 +506,7 @@
             <div class="wrapper__phone"></div>
             <div class="wrapper__usr_countbl"></div>
             <div class="wrapper__age"></div>
+            <div class="wrapper__response"></div>
             <input id="tags" type="hidden" name="tags">
             <input id="nco" type="hidden" name="nco">
             <input id="img" type="hidden" name="img">
@@ -487,6 +514,7 @@
             <input id="layer_type" type="hidden" name="layer_type" value="<%- layer_type||'' %>">
             <input id="type" type="hidden" name="type" value="<%- type||'' %>">
             <input id="targetId" type="hidden" name="targetId" value="<%- targetId||'' %>">
+            <input id="private_group" type="hidden" name="private">
             <div id="submit" class="submit">
               <label for="submit_btn" class="ui-hidden-accessible">Submit</label>
               <button id="submit_btn" type="submit">Створити</button>
@@ -501,6 +529,9 @@
           <div class="wrapper__tag"></div>
           <div class="wrapper__nco"></div>
           <div class="wrapper__photo"></div>
+          <div class="wrapper__layer_type"></div>
+          <div class="wrapper__private"></div>
+          <br>
           <h6>* - Обов'язкові поля.</h6>
         </div>
     </script>
@@ -575,8 +606,42 @@
     </script>
     <script id="description_tpl" type="text/template">
       <label for="description"><strong>Детальний опис <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
-      <textarea id="description" name="descr" placeholder="Розмістіть детальний опис тут." cols="40" rows="2" maxlength="10000" data-wrapper-class="textarea" <%-required%>></textarea>
+      <textarea id="description" name="descr" placeholder="Розмістіть детальний опис тут." cols="40" rows="2" maxlength="10000" <%-required%>></textarea>
     </script>
+
+    <script id="response_tpl" type="text/template">
+      <p><strong>Очікувана відповідь</strong></p>
+      <input type="text" data-clear-btn="true" name="response" id="response__input" value="" placeholder="Тип відповіді">
+    </script>
+    <script id="details_tpl" type="text/template">
+      <label for="details"><strong>Повідомлення <% if(required=='required'){ %> *<% } else { %><% } %></strong></label>
+      <textarea id="details" name="details" placeholder="Довжина повідомлення - до 240 символів." cols="40" rows="2" maxlength="240" data-wrapper-class="textarea" <%-required%>></textarea>
+    </script>
+    <script id="layer_type_tpl" type="text/template">
+      <p><strong>Категорія повідомлення <% if(required=='required'){ %> *<% } else { %><% } %></strong></p>
+      <h6>Автодоповнення починається з першої літери.</h6>
+      <form action="">
+        <input id="layer_type__input" name="layer_type__input" data-type="search" placeholder="Оберіть категорію..." data-wrapper-class="input" title="Вводьте лише букви та цифри." autocomplete="off">
+      </form>
+      <ul id="layer_type__ul" data-role="listview" data-inset="true" data-filter="true" data-input="#layer_type__input"></ul>
+    </script>
+
+    <script id="private_tpl" type="text/template">
+        <div class="public_private_switch ui-content" data-role="content">
+          <label for="public_private_switch__input" class=" ui-hidden-accessible">Flip toggle switch checkbox:</label>
+          <input type="checkbox" data-role="flipswitch" name="public_private_switch__input" id="public_private_switch__input" data-on-text="Для групи" data-off-text="Публічний" data-wrapper-class="public_private_switch__flipswitch">
+        </div>
+        <div id="select_group">
+          <p><strong>Оберіть групу</strong></p>
+          <h6>Автодоповнення починається <strong>з третьої літери</strong>.</h6>
+          <form class="ui-filterable" autocomplete="off">
+            <input id="select_group__autocomplete-input" data-type="search" placeholder="Назва групи" data-wrapper-class="input">
+          </form>
+          <ul id="select_group__autocomplete" data-role="listview" data-inset="true" data-filter="true" data-input="#select_group__autocomplete-input"></ul>
+        </div>
+    </script>
+
+
     <script id="tag_tpl" type="text/template">
       <p><strong>Додати тег <% if(required=='required'){ %> *<% } else { %><% } %></strong></p>
       <p id="tag_storage"></p>
@@ -586,6 +651,7 @@
       </form>
       <ul id="add_tag__ul" data-role="listview" data-inset="true" data-filter="true" data-input="#add_tag__input"></ul>
     </script>
+
     <script id="photo_tpl" type="text/template">
       <div class="hiddenfile">
         <label for="photo__input">Завантажити фото:</label>
@@ -828,7 +894,6 @@
           <input type="text" data-clear-btn="true" name="expected_response__input" id="expected_response__input" value="" placeholder="Тип відповіді" data-wrapper-class="input">
         </div>
         <div class="public_private_switch ui-content" data-role="content">
-          <!--<h6>Тип об'єкту</h6>-->
           <label for="public_private_switch__input" class=" ui-hidden-accessible">Flip toggle switch checkbox:</label>
           <input type="checkbox" data-role="flipswitch" name="public_private_switch__input" id="public_private_switch__input" data-on-text="Для групи" data-off-text="Публічний" data-wrapper-class="public_private_switch__flipswitch">
         </div>
@@ -861,7 +926,7 @@
         <a href="#favorite__list" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-map" class="ui-btn ui-corner-all ui-icon-star-empty ui-btn-icon-notext ui-btn-inline favorite-button">favorite</a>
       </div>
       <div class="ui-nodisc-icon buttons-wrapper lower-left">
-        <a id="create_btn" href="#create_beacon" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline">add</a><br>
+        <a id="create_btn" href="#" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline">add</a><br>
         <a id="share" href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline">share</a>
       </div>
     </script>
@@ -955,12 +1020,12 @@
     <script src="./static/js/vendor/jquery-1.11.1.min.js"></script>
     <script>
       $(document).on("mobileinit", function () {
-          $.mobile.hashListeningEnabled = false;
-          $.mobile.pushStateEnabled = false;
-          $.mobile.changePage.defaults.changeHash = false;
+        $.mobile.hashListeningEnabled = false;
+        $.mobile.pushStateEnabled = false;
+        $.mobile.changePage.defaults.changeHash = false;
       });
     </script>
-    <script src="./static/js/vendor/jquery.mobile-1.4.5.min.js"></script>
+    <script src="./static/js/vendor/jquery.mobile-1.4.5.js"></script>
     <script src="./static/js/vendor/backbone.js"></script>
     <script src="./static/js/vendor/backbone.marionette.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9GrBwQ_NFlEMzjrAkE4KzsZcTsqf0_h8&language=uk&region=UA"></script>

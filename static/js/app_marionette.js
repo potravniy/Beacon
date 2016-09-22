@@ -14,7 +14,6 @@ MsgGroup = Backbone.Collection.extend({
     return -model.get('ts');  //  latest msg appears first
   }
 })
-
 BeaconModel = Backbone.Model.extend({
   defaults: {
     id: "",
@@ -34,7 +33,6 @@ BeaconModel = Backbone.Model.extend({
     full: ''
   }
 });
-
 BeaconsList = Backbone.Collection.extend({
   model: BeaconModel,
   limit: 10,
@@ -49,11 +47,12 @@ BeaconsList = Backbone.Collection.extend({
   	this.url = this.baseUrl + window.state.urlRequest()
     this.fetch({
       reset: true,
-      success: function(){
+      success: function(res){
         $.mobile.loading('hide')
       },
       error: function(){
         $.mobile.loading('hide')
+        alert("Відсутній зв'язок або неполадки на сервері.")
       }
     })
   },
@@ -71,6 +70,7 @@ BeaconsList = Backbone.Collection.extend({
         },
         error: function(){
           $.mobile.loading('hide')
+          alert("Відсутній зв'язок або неполадки на сервері.")
         }
       })
     }
@@ -101,13 +101,20 @@ BeaconsList = Backbone.Collection.extend({
     return res
   }
 })
-
 MsgView = Backbone.Marionette.ItemView.extend({
   model: MsgModel,
   template: '#chat_item_view_tpl',
-  className: 'sent-message clearfix'
+  className: 'sent-message clearfix',
+  events: {
+    'click .abuse-spam': 'onClickBtn'
+  },
+  onClickBtn: function(){
+    console.log('chat abuse btn clicked for beacon_id:' + this.model.get('beacon')
+    + ', user_id: ' + this.model.get('user_id')
+    + ', text: ' + this.model.get('text') )
+    alert('Скаргу на повідомлення надіслано.')
+  }
 })
-
 BeaconView = Backbone.Marionette.CompositeView.extend({
   template: "#beacon_main_tpl",
   templateHelpers: function() {
@@ -120,7 +127,6 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
   },
   childView: MsgView,
   childViewContainer: '.sent-message__wrapper',
-  collection: BeaconsList,
   className: function(){
     var index = _.indexOf(this.model.collection.models, this.model)
     return "ui-content ui-block-" + ((index % 2) ? "b" : "a")
@@ -134,18 +140,20 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
   },
   ui: {
     expandBtn: '.expanding_view .btn_wrapper',
-    beaconStatusBtn: '.beacon_status'
+    beaconStatusBtn: '.beacon_status',
+    img: '.photo'
   },
   events: {
     'click .share':  'onClickShare',
     'click .link':   'onClickLink',
-    'click .error':  'onClickError',
+    'click .error':  'onClickAbuse',
     'click .star':   'onClickStar',
     'click .add':    'onClickAdd',
-    'click .header': 'onCompositeViewClick',
-    'click .beacon-content': 'onCompositeViewClick',
+    'click .header': 'onThisViewClick',
+    'click .beacon-content': 'onThisViewClick',
     'click .expanding_btn': 'goToSingleView',
-    'click @ui.beaconStatusBtn': 'onClickStatusBtn'
+    'click @ui.beaconStatusBtn': 'onClickStatusBtn',
+    'click @ui.img': 'onClickImg'
   },
   onBeforeShow: function(){
     if(this.model.get('b_type') == '330' || this.model.get('type') == '330'
@@ -164,9 +172,10 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
     event.stopPropagation()
     console.log('button "link" clicked id=' + this.model.get('id'))
   },
-  onClickError: function (event) {
+  onClickAbuse: function (event) {
     event.stopPropagation()
-    console.log('button "error" clicked id=' + this.model.get('id'))
+    console.log('button "Abuse" clicked id=' + this.model.get('id'))
+    alert('Скаргу на цю інформацію надіслано.')
   },
   onClickStar: function (event) {
     event.stopPropagation()
@@ -179,8 +188,8 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
   onClickStatusBtn: function(){
     showPopupStatusBeacon({ id: this.model.get('id') })
   },
-  isBouncing: false,
-  onCompositeViewClick: function(e){
+  isSelected: false,
+  onThisViewClick: function(e){
     var isPhoto = (e.target.className.search('photo') !== -1) 
     var isStatusBtn = (e.target.className.search('beacon_status') !== -1)
     var isExpandBtn = (e.target.className.search('expanding_btn') !== -1) 
@@ -189,29 +198,45 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
       var i = _.findIndex(markers, function(item){
         return item.beaconID === id
       })
-      if(this.isBouncing){
+      var div = this.$el.find('.beacon')
+      if(this.isSelected){
         markers[i].setAnimation(null)
-        this.$el.css( "background-color", "" )
-        this.isBouncing = false
+        div.css( "outline", "" )
+        this.isSelected = false
       } else {
         if( i === -1 ) {
-          var index = markers.length
-          createMarker(this.model.attributes, markers.length)
-          markers[index].setAnimation(google.maps.Animation.BOUNCE)
-      } else {
-          markers[i].setAnimation(google.maps.Animation.BOUNCE)
+          i = markers.length
+          createMarker(this.model.attributes, i)
         }
-        this.$el.css( "background-color", "#8af" )
-        this.isBouncing = true
+        markers[i].setAnimation(google.maps.Animation.BOUNCE)
+        div.css( "outline", "#69f solid 3px" )
+        this.isSelected = true
         this.trigger("marker:bounce", this.model.get('id'));
       }
     }
   },
   goToSingleView: function(e){
     window.showBeaconFullView(this.model.get('id'))
+  },
+  onClickImg: function(){
+    var $photoPopup = $('#popupPhoto')
+    $('#popupPhoto .photopopup__img').attr("src", this.model.get('b_img'))
+    $photoPopup.popup('open')
+    $photoPopup.popup("reposition", {positionTo: 'window'})
+    var $abuseBtn = $('#popupPhoto .abuse')
+    $abuseBtn.attr("data-id", this.model.get('id'))
+    $abuseBtn.click(function(){
+      console.log('image abuse btn clicked for beacon_id:' + $(this).attr('data-id'))
+      alert('Скаргу на зображення надіслано.')
+      $photoPopup.popup('close')
+    })
+    $photoPopup.popup({
+      afterclose: function( event, ui ) {
+        $abuseBtn.off()
+      }
+    });
   }
 });
-
 BeaconListView = Backbone.Marionette.CollectionView.extend({
   childView: BeaconView,
   className: "collection_view__wrapper ui-grid-a my-responsive ui-nodisc-icon",
@@ -246,370 +271,369 @@ BeaconListView = Backbone.Marionette.CollectionView.extend({
 //  End of section BeaconsView
 //  Start of section BeaconCreate
 
-BeaconCreateForm = Backbone.Model.extend({
-  defaults: {
-    'lat': '',        //  decimal(12,8)
-    'lng': '',        //  decimal(12,8)
-    'source': '',     //  tinyint(1)
-    'img': '',        //  varchar(100)
-    'b_type': '',     //  int(11)
-    'layer_type': '', //  int(11)
-    'details': '',    //  varchar(255)
-    'result': '',     //  tinyint(1)
-    'phone': '',      //  varchar(45)
-    'email': '',      //  varchar(45)
-    'private': '',    //  bigint(20)
-    'tags': '',       //  string, string...
-    'icon_url': '//:0'
-  },
-  initialize: function(){
-    this.set({icon_url: getIconURL(this.attributes, true)})
-  }
-})
-
-BeaconCreateView = Backbone.Marionette.ItemView.extend({
-  template: "#beacon_create_tpl",
-  className: 'create_object ui-content',
-  attributes: {
-    "data-role": "content"
-  },
-  model: BeaconCreateForm,
-  modelEvents: {
-    "change": "modelChanged"   //  Rerenders .lat_lng only after new marker move across the map
-  },
-  modelChanged: function(e){
-    if(e.changed.lat || e.changed.lng) {
-      var data = this.serializeData()
-      data = this.mixinTemplateHelpers(data)
-      var html = Marionette.Renderer.render(this.getTemplate(), data, this)
-      this.$el.find('.lat_lng').replaceWith($('.lat_lng', html));
-    }
-  },
-  onDomRefresh: function(){
-    this.$el.trigger("create")
-  },
-  ui: {
-    msg: '#message_input__textarea',
-    photo: '#take_photo__input',
-    tag_input: '#add_tag__autocomplete-input',
-    tag_autocomplete_list: '#add_tag__autocomplete',
-    tag_store: '#tag_store',
-    msgCategory: '#select_category__autocomplete-input',
-    phone: 'phone_number__input',
-    response: '#expected_response__input',
-    publicOrPriv: '#public_private_switch__input',
-    privatGroup: '#select_group__autocomplete-input',
-    submitBtn: '.submit_btn',
-    progressVal: '.submit .progressval',
-    progressBar: '.submit .progressbar',
-    progressWrap: '.submit .progress_bar__wrapper'
-  },
-  onChangePrivat: function () {
-    if($('#public_private_switch__input').is(':checked')){
-      $('.select_group').show()
-    } else {
-      $('.select_group').hide()
-    }
-  },
-  onClickSubmit: function () {
-    //  set phone
-    if(this.model.get('b_type') == 911 || this.model.get('b_type') == 777) {
-      var phone = '+' + $('#phone_number__input').val()
-      var regex = /^\+(?:[0-9] ?){11,14}[0-9]$/;
-      if (regex.test(phone)) {
-        this.model.set('phone', phone)
-      } else {
-        alert('Номер телефону невірний.')
-        return
-      }
-    }
-    //  set details
-    if(this.ui.msg.val().length > 15) {
-      this.model.set('details', this.ui.msg.val())
-    } else {
-      alert('Повідомлення не може містити менше 15 літер.')
-      return
-    }
-    //  set tags
-    var tags = $( '#tag_store .ui-icon-delete' ).map(function() {
-        return this.innerText.substring(1, this.innerText.length)
-      })
-      .get()
-      .join();
-    this.model.set('tags', tags)
-    //  set layer_type
-    var layer_type = $('#select_category__autocomplete-input').attr('data-id')
-    this.model.set('layer_type', layer_type)
-    //  set private
-    var private = $('#select_group__autocomplete-input').attr('data-id')
-    this.model.set('private', private)
-    //  send photo
-    var file = $("#take_photo__input")[0].files[0],
-        that = this
-    if (file){
-      var client = new XMLHttpRequest()
-      function upload(){
-        that.ui.progressBar.css({ "width": 0 })
-        that.ui.progressWrap.show()
-        var formData = new FormData();
-        formData.append("picture", file);
-        client.open("post", "https://gurtom.mobi/i/up.php?type="
-        + that.model.get('b_type') , true);
-        client.setRequestHeader('Accept'
-        ,'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8')
-        client.send(formData);
-      }
-      client.upload.onprogress = function(e) {
-        if (e.lengthComputable) {
-          var percentCompleted = (100 * e.loaded / e.total).toFixed(0) + '%';
-          that.ui.progressBar.css({ "width": percentCompleted })
-          that.ui.progressVal.text(percentCompleted)
-        }
-      }
-      client.onerror = function(){
-        console.log(client.responseText);
-        that.ui.progressWrap.hide()
-      }
-      client.onreadystatechange = function(){
-        if (client.readyState == 4 && client.status == 200){
-          console.log(client.responseText);
-          that.model.set('img', client.responseText)
-          sendNewBeaconAJAX()
-        }
-      }
-      upload();  
-    } else sendNewBeaconAJAX()
-    //  Send new beacon
-    function sendNewBeaconAJAX() {
-      var promise = $.ajax({
-        type: "POST",
-        url: "https://gurtom.mobi/beacon_add.php",
-        dataType: "json",
-        xhrFields: { withCredentials: true },
-        crossDomain: true,
-        data: that.model.attributes
-      })
-      promise.done(function ( response ) {
-        window.state.singleBeacon = true
-        markers[markers.length-1].setDraggable(false)
-        beaconsList.set(response, {reset: true})
-        closeBeaconNew()    // showBeaconsListView()
-      })
-      promise.fail(function(response){
-        alert(response)
-      })
-      promise.always(function(){
-        $('that.ui.progressWrap').hide()
-      })
-    }
-  },
-  tagAutocomplete: function(e, data){
-    var $ul = $( '#add_tag__autocomplete' ),
-      $input = $( data.input ),
-      value = $input.val(),
-      html = "";
-    $ul.html( "" );
-    if ( value && value.length > 0 ) {
-      $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
-      $ul.listview( "refresh" );
-      $.ajax({
-        url: "https://gurtom.mobi/tags.php",
-        dataType: "json",
-        xhrFields: { withCredentials: true },
-        crossDomain: true,
-        data: {
-          tag: $input.val()
-        },
-        success: function ( response ) {
-          $.each( response, function ( i, val ) {
-            html += '<li>' + val.tag.replace(/&amp;#39;/g, "'") + '</li>';
-          });
-          $ul.html( html );
-          $ul.listview( "refresh" );
-          $ul.trigger( "updatelayout");
-        } 
-      })
-    }
-  }, 
-  addTagFromAutocomplete: function(e){
-    $("#tag_store").append( "<div class='ui-icon-delete'>" +'#'+ e.target.innerText +"</div>" )
-    $('#add_tag__autocomplete-input').val('')
-    var $ul = $( '#add_tag__autocomplete' )
-    $ul.html( '' );
-    $ul.listview( "refresh" );
-    $ul.trigger( "updatelayout");
-  },
-  processTagInput: function(e){
-    if(e.which === 13 && e.target.value.length > 1) {
-      collect()
-      return
-    }
-    var filter = /^[A-ZА-ЯІЇЄa-zа-яіїє0-9 ]+$/
-    var isDotComaEntered = false
-    if(!filter.test(e.target.value)){
-      e.target.value = _.filter(e.target.value, function(item){
-        if(item==="." || item===",") isDotComaEntered = true
-        return filter.test(item)
-      }).join('')
-    }
-    if(isDotComaEntered){
-      if(e.target.value.length > 1) collect()
-      else e.target.value = ''
-    }
-    function collect() {
-      $("#tag_store").append( "<div class='ui-icon-delete'>" 
-       +'#'+ e.target.value +"</div>" )
-      e.target.value = ''
-    }
-  },
-  deleteTag: function(e){
-    e.target.parentElement.removeChild(e.target)
-  },
-  categoryAutocomplete: function(e, data){
-    var $ul = $( '#select_category__autocomplete' ),
-      $input = $( data.input ),
-      value = $input.val(),
-      html = "";
-    $ul.html( "" );
-    if ( value && value.length > 0 ) {
-      $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
-      $ul.listview( "refresh" );
-      $.ajax({
-        type: "POST",
-        url: "https://gurtom.mobi/beacon_list.php", //  !!!
-        dataType: "json",
-        xhrFields: { withCredentials: true },
-        crossDomain: true,
-        data: {
-          b_type: this.model.get('b_type'),
-          type: $input.val()
-        },
-        success: function ( response ) {
-          $.each( response, function ( i, val ) {
-            html += '<li data-id="'+ val.id +'">' + val.type + '</li>';
-          });
-          $ul.html( html );
-          $ul.listview( "refresh" );
-          $ul.trigger( "updatelayout");
-        } 
-      })
-    }
-  },
-  categoryAutocompleteClick: function(e){
-    var $input = $('#select_category__autocomplete-input') 
-    $input.attr('data-id', $(e.target).attr('data-id'))
-    $input.val(e.target.innerText)
-    var $ul = $( '#select_category__autocomplete' )
-    $ul.html( '' );
-    $ul.listview( "refresh" );
-    $ul.trigger( "updatelayout");
-  },
-  input_click: function(e){
-    $(e.target).attr('data-id', '').val('')
-  },
-  selectCategoryBtnClearClick: function(){
-    $('#select_category__autocomplete-input').attr('data-id', '')
-  },
-  selectGroupBtnClearClick:  function(){
-    $('#select_group__autocomplete-input').attr('data-id', '')
-  },
-  groupAutocomplete: function(e, data){
-    var $ul = $( '#select_group__autocomplete' ),
-      $input = $( data.input ),
-      value = $input.val(),
-      html = "";
-    $ul.html( "" );
-    if ( value && value.length > 2 ) {
-      $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
-      $ul.listview( "refresh" );
-      $.ajax({
-        url: "https://gurtom.mobi/groups.php", //  !!!
-        dataType: "json",
-        xhrFields: { withCredentials: true },
-        crossDomain: true,
-        data: {
-          filter: $input.val()
-        },
-        success: function ( response ) {
-          $.each( response, function ( i, val ) {
-            html += '<li data-id="'+ val.id +'">' + val.org + '</li>';
-          });
-          $ul.html( html );
-          $ul.listview( "refresh" );
-          $ul.trigger( "updatelayout");
-        } 
-      })
-    }
-  },
-  groupAutocompleteClick: function(e){
-    $input = $('#select_group__autocomplete-input')
-    $input.attr('data-id', $(e.target).attr('data-id'))
-    $input.val(e.target.innerText)
-    var $ul = $( '#select_group__autocomplete' )
-    $ul.html( '' );
-    $ul.listview( "refresh" );
-    $ul.trigger( "updatelayout");
-  },
-  takePhotoBtnClick: function(e){
-    e.preventDefault();
-    $("#take_photo__input").trigger("click");
-  },
-  takePhoto: function(e){
-    file = $("#take_photo__input")[0].files[0]
-    var $btnRemove = $('#take_photo__input__remove')            
-    $("#preview").empty();
-    if(file){
-      previewImage(file, "preview");
-      $btnRemove.show()
-      $btnRemove.one('click', function(e){
-        $('.take_photo .ui-input-clear').trigger("click")
-      })
-    } else {
-      $btnRemove.off()
-      $btnRemove.hide()
-    }
-    function previewImage(file, containerid) {
-      if (typeof FileReader !== "undefined") {
-        var container = document.getElementById(containerid),
-            img = document.createElement("img"),
-            reader;
-        container.appendChild(img);
-        reader = new FileReader();
-        reader.onload = (function (theImg) {
-          return function (evt) {
-            theImg.src = evt.target.result;
-          };
-        }(img));
-        reader.readAsDataURL(file);
-      }
-    }
-  },
-  events: {
-    'change @ui.publicOrPriv': 'onChangePrivat',
-    'click @ui.submitBtn':  _.debounce(function(){
-        this.onClickSubmit()
-      }, 10000, true),
-    'filterablebeforefilter #add_tag__autocomplete': _.debounce(function(e, data){
-        this.tagAutocomplete(e, data)
-      }, 700),
-    'click @ui.tag_autocomplete_list': 'addTagFromAutocomplete',
-    'keyup @ui.tag_input':  'processTagInput',
-    'click #tag_store>div': 'deleteTag',
-    'filterablebeforefilter #select_category__autocomplete': _.debounce(function(e, data){
-        this.categoryAutocomplete(e, data)
-      }, 700),
-    'click @ui.msgCategory': 'input_click',
-    'click #select_group__autocomplete-input': 'input_click',
-    'click #select_category__autocomplete': 'categoryAutocompleteClick',
-    'filterablebeforefilter #select_group__autocomplete': 'groupAutocomplete',
-    'click #select_group__autocomplete': 'groupAutocompleteClick',
-    'click .select_category .ui-input-search .ui-input-clear': 'selectCategoryBtnClearClick',
-    'click .select_group .ui-input-search .ui-input-clear': 'selectGroupBtnClearClick',
-    'click #take_photo__choose_file': 'takePhotoBtnClick',
-    'change #take_photo__input': 'takePhoto',
-    'click .header a': closeBeaconNew
-  }
-});
+// BeaconCreateModel = Backbone.Model.extend({
+//   defaults: {
+//     'lat': '',        //  decimal(12,8)
+//     'lng': '',        //  decimal(12,8)
+//     'source': '',     //  tinyint(1)
+//     'img': '',        //  varchar(100)
+//     'b_type': '',     //  int(11)
+//     'layer_type': '', //  int(11)
+//     'details': '',    //  varchar(255)
+//     'result': '',     //  tinyint(1)
+//     'phone': '',      //  varchar(45)
+//     'email': '',      //  varchar(45)
+//     'private': '',    //  bigint(20)
+//     'tags': '',       //  string, string...
+//     'icon_url': '//:0'
+//   },
+//   initialize: function(){
+//     this.set({icon_url: getIconURL(this.attributes, true)})
+//   }
+// })
+// BeaconCreateView = Backbone.Marionette.ItemView.extend({
+//   template: "#beacon_create_tpl",
+//   className: 'create_object ui-content',
+//   attributes: {
+//     "data-role": "content"
+//   },
+//   model: BeaconCreateModel,
+//   modelEvents: {
+//     "change": "modelChanged"   //  Rerenders .lat_lng only after new marker move across the map
+//   },
+//   modelChanged: function(e){
+//     if(e.changed.lat || e.changed.lng) {
+//       var data = this.serializeData()
+//       data = this.mixinTemplateHelpers(data)
+//       var html = Marionette.Renderer.render(this.getTemplate(), data, this)
+//       this.$el.find('.lat_lng').replaceWith($('.lat_lng', html));
+//     }
+//   },
+//   onDomRefresh: function(){
+//     this.$el.trigger("create")
+//   },
+//   ui: {
+//     msg: '#message_input__textarea',
+//     photo: '#take_photo__input',
+//     tag_input: '#add_tag__autocomplete-input',
+//     tag_autocomplete_list: '#add_tag__autocomplete',
+//     tag_store: '#tag_store',
+//     msgCategory: '#select_category__autocomplete-input',
+//     phone: 'phone_number__input',
+//     response: '#expected_response__input',
+//     publicOrPriv: '#public_private_switch__input',
+//     privatGroup: '#select_group__autocomplete-input',
+//     submitBtn: '.submit_btn',
+//     progressVal: '.submit .progressval',
+//     progressBar: '.submit .progressbar',
+//     progressWrap: '.submit .progress_bar__wrapper'
+//   },
+//   onChangePrivat: function () {
+//     if($('#public_private_switch__input').is(':checked')){
+//       $('.select_group').show()
+//     } else {
+//       $('.select_group').hide()
+//     }
+//   },
+//   onClickSubmit: function () {
+//     //  set phone
+//     if(this.model.get('b_type') == 911 || this.model.get('b_type') == 777) {
+//       var phone = '+' + $('#phone_number__input').val()
+//       var regex = /^\+(?:[0-9] ?){11,14}[0-9]$/;
+//       if (regex.test(phone)) {
+//         this.model.set('phone', phone)
+//       } else {
+//         alert('Номер телефону невірний.')
+//         return
+//       }
+//     }
+//     //  set details
+//     if(this.ui.msg.val().length > 15) {
+//       this.model.set('details', this.ui.msg.val())
+//     } else {
+//       alert('Повідомлення не може містити менше 15 літер.')
+//       return
+//     }
+//     //  set tags
+//     var tags = $( '#tag_store .ui-icon-delete' ).map(function() {
+//         return this.innerText.substring(1, this.innerText.length)
+//       })
+//       .get()
+//       .join();
+//     this.model.set('tags', tags)
+//     //  set layer_type
+//     var layer_type = $('#select_category__autocomplete-input').attr('data-id')
+//     this.model.set('layer_type', layer_type)
+//     //  set private
+//     var private = $('#select_group__autocomplete-input').attr('data-id')
+//     this.model.set('private', private)
+//     //  send photo
+//     var file = $("#take_photo__input")[0].files[0],
+//         that = this
+//     if (file){
+//       var client = new XMLHttpRequest()
+//       function upload(){
+//         that.ui.progressBar.css({ "width": 0 })
+//         that.ui.progressWrap.show()
+//         var formData = new FormData();
+//         formData.append("picture", file);
+//         client.open("post", "https://gurtom.mobi/i/up.php?type="
+//         + that.model.get('b_type') , true);
+//         client.setRequestHeader('Accept'
+//         ,'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8')
+//         client.send(formData);
+//       }
+//       client.upload.onprogress = function(e) {
+//         if (e.lengthComputable) {
+//           var percentCompleted = (100 * e.loaded / e.total).toFixed(0) + '%';
+//           that.ui.progressBar.css({ "width": percentCompleted })
+//           that.ui.progressVal.text(percentCompleted)
+//         }
+//       }
+//       client.onerror = function(){
+//         console.log(client.responseText);
+//         that.ui.progressWrap.hide()
+//       }
+//       client.onreadystatechange = function(){
+//         if (client.readyState == 4 && client.status == 200){
+//           console.log(client.responseText);
+//           that.model.set('img', client.responseText)
+//           sendNewBeaconAJAX()
+//         }
+//       }
+//       upload();  
+//     } else sendNewBeaconAJAX()
+//     //  Send new beacon
+//     function sendNewBeaconAJAX() {
+//       var promise = $.ajax({
+//         type: "POST",
+//         url: "https://gurtom.mobi/beacon_add.php",
+//         dataType: "json",
+//         xhrFields: { withCredentials: true },
+//         crossDomain: true,
+//         data: that.model.attributes
+//       })
+//       promise.done(function ( response ) {
+//         window.state.singleBeacon = true
+//         markers[markers.length-1].setDraggable(false)
+//         beaconsList.set(response, {reset: true})
+//         closeBeaconNew()    // showBeaconsListView()
+//       })
+//       promise.fail(function(response){
+//         alert(response)
+//       })
+//       promise.always(function(){
+//         $('that.ui.progressWrap').hide()
+//       })
+//     }
+//   },
+//   tagAutocomplete: function(e, data){
+//     var $ul = $( '#add_tag__autocomplete' ),
+//       $input = $( data.input ),
+//       value = $input.val(),
+//       html = "";
+//     $ul.html( "" );
+//     if ( value && value.length > 0 ) {
+//       $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+//       $ul.listview( "refresh" );
+//       $.ajax({
+//         url: "https://gurtom.mobi/tags.php",
+//         dataType: "json",
+//         xhrFields: { withCredentials: true },
+//         crossDomain: true,
+//         data: {
+//           tag: $input.val()
+//         },
+//         success: function ( response ) {
+//           $.each( response, function ( i, val ) {
+//             html += '<li>' + val.tag.replace(/&amp;#39;/g, "'") + '</li>';
+//           });
+//           $ul.html( html );
+//           $ul.listview( "refresh" );
+//           $ul.trigger( "updatelayout");
+//         } 
+//       })
+//     }
+//   }, 
+//   addTagFromAutocomplete: function(e){
+//     $("#tag_store").append( "<div class='ui-icon-delete'>" +'#'+ e.target.innerText +"</div>" )
+//     $('#add_tag__autocomplete-input').val('')
+//     var $ul = $( '#add_tag__autocomplete' )
+//     $ul.html( '' );
+//     $ul.listview( "refresh" );
+//     $ul.trigger( "updatelayout");
+//   },
+//   processTagInput: function(e){
+//     if(e.which === 13 && e.target.value.length > 1) {
+//       collect()
+//       return
+//     }
+//     var filter = /^[A-ZА-ЯІЇЄa-zа-яіїє0-9 ]+$/
+//     var isDotComaEntered = false
+//     if(!filter.test(e.target.value)){
+//       e.target.value = _.filter(e.target.value, function(item){
+//         if(item==="." || item===",") isDotComaEntered = true
+//         return filter.test(item)
+//       }).join('')
+//     }
+//     if(isDotComaEntered){
+//       if(e.target.value.length > 1) collect()
+//       else e.target.value = ''
+//     }
+//     function collect() {
+//       $("#tag_store").append( "<div class='ui-icon-delete'>" 
+//        +'#'+ e.target.value +"</div>" )
+//       e.target.value = ''
+//     }
+//   },
+//   deleteTag: function(e){
+//     e.target.parentElement.removeChild(e.target)
+//   },
+//   categoryAutocomplete: function(e, data){
+//     var $ul = $( '#select_category__autocomplete' ),
+//       $input = $( data.input ),
+//       value = $input.val(),
+//       html = "";
+//     $ul.html( "" );
+//     if ( value && value.length > 0 ) {
+//       $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+//       $ul.listview( "refresh" );
+//       $.ajax({
+//         type: "POST",
+//         url: "https://gurtom.mobi/beacon_list.php", //  !!!
+//         dataType: "json",
+//         xhrFields: { withCredentials: true },
+//         crossDomain: true,
+//         data: {
+//           b_type: this.model.get('b_type'),
+//           type: $input.val()
+//         },
+//         success: function ( response ) {
+//           $.each( response, function ( i, val ) {
+//             html += '<li data-id="'+ val.id +'">' + val.type + '</li>';
+//           });
+//           $ul.html( html );
+//           $ul.listview( "refresh" );
+//           $ul.trigger( "updatelayout");
+//         } 
+//       })
+//     }
+//   },
+//   categoryAutocompleteClick: function(e){
+//     var $input = $('#select_category__autocomplete-input') 
+//     $input.attr('data-id', $(e.target).attr('data-id'))
+//     $input.val(e.target.innerText)
+//     var $ul = $( '#select_category__autocomplete' )
+//     $ul.html( '' );
+//     $ul.listview( "refresh" );
+//     $ul.trigger( "updatelayout");
+//   },
+//   selectCategoryBtnClearClick: function(){
+//     $('#select_category__autocomplete-input').attr('data-id', '')
+//   },
+//   input_click: function(e){
+//     $(e.target).attr('data-id', '').val('')
+//   },
+//   selectGroupBtnClearClick:  function(){
+//     $('#select_group__autocomplete-input').attr('data-id', '')
+//   },
+//   groupAutocomplete: function(e, data){
+//     var $ul = $( '#select_group__autocomplete' ),
+//       $input = $( data.input ),
+//       value = $input.val(),
+//       html = "";
+//     $ul.html( "" );
+//     if ( value && value.length > 2 ) {
+//       $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+//       $ul.listview( "refresh" );
+//       $.ajax({
+//         url: "https://gurtom.mobi/groups.php", //  !!!
+//         dataType: "json",
+//         xhrFields: { withCredentials: true },
+//         crossDomain: true,
+//         data: {
+//           filter: $input.val()
+//         },
+//         success: function ( response ) {
+//           $.each( response, function ( i, val ) {
+//             html += '<li data-id="'+ val.id +'">' + val.org + '</li>';
+//           });
+//           $ul.html( html );
+//           $ul.listview( "refresh" );
+//           $ul.trigger( "updatelayout");
+//         } 
+//       })
+//     }
+//   },
+//   groupAutocompleteClick: function(e){
+//     $input = $('#select_group__autocomplete-input')
+//     $input.attr('data-id', $(e.target).attr('data-id'))
+//     $input.val(e.target.innerText)
+//     var $ul = $( '#select_group__autocomplete' )
+//     $ul.html( '' );
+//     $ul.listview( "refresh" );
+//     $ul.trigger( "updatelayout");
+//   },
+//   takePhotoBtnClick: function(e){
+//     e.preventDefault();
+//     $("#take_photo__input").trigger("click");
+//   },
+//   takePhoto: function(e){
+//     file = $("#take_photo__input")[0].files[0]
+//     var $btnRemove = $('#take_photo__input__remove')            
+//     $("#preview").empty();
+//     if(file){
+//       previewImage(file, "preview");
+//       $btnRemove.show()
+//       $btnRemove.one('click', function(e){
+//         $('.take_photo .ui-input-clear').trigger("click")
+//       })
+//     } else {
+//       $btnRemove.off()
+//       $btnRemove.hide()
+//     }
+//     function previewImage(file, containerid) {
+//       if (typeof FileReader !== "undefined") {
+//         var container = document.getElementById(containerid),
+//             img = document.createElement("img"),
+//             reader;
+//         container.appendChild(img);
+//         reader = new FileReader();
+//         reader.onload = (function (theImg) {
+//           return function (evt) {
+//             theImg.src = evt.target.result;
+//           };
+//         }(img));
+//         reader.readAsDataURL(file);
+//       }
+//     }
+//   },
+//   events: {
+//     'change @ui.publicOrPriv': 'onChangePrivat',
+//     'click @ui.submitBtn':  _.debounce(function(){
+//         this.onClickSubmit()
+//       }, 10000, true),
+//     'filterablebeforefilter #add_tag__autocomplete': _.debounce(function(e, data){
+//         this.tagAutocomplete(e, data)
+//       }, 700),
+//     'click @ui.tag_autocomplete_list': 'addTagFromAutocomplete',
+//     'keyup @ui.tag_input':  'processTagInput',
+//     'click #tag_store>div': 'deleteTag',
+//     'filterablebeforefilter #select_category__autocomplete': _.debounce(function(e, data){
+//         this.categoryAutocomplete(e, data)
+//       }, 700),
+//     'click #select_category__autocomplete': 'categoryAutocompleteClick',
+//     'click @ui.msgCategory': 'input_click',
+//     'click #select_group__autocomplete-input': 'input_click',
+//     'filterablebeforefilter #select_group__autocomplete': 'groupAutocomplete',
+//     'click #select_group__autocomplete': 'groupAutocompleteClick',
+//     'click .select_category .ui-input-search .ui-input-clear': 'selectCategoryBtnClearClick',
+//     'click .select_group .ui-input-search .ui-input-clear': 'selectGroupBtnClearClick',
+//     'click #take_photo__choose_file': 'takePhotoBtnClick',
+//     'change #take_photo__input': 'takePhoto',
+//     'click .header a': closeBeaconNew
+//   }
+// });
 
 // view.scrollHendlerOn()    //  How to arrange?
 
@@ -632,12 +656,13 @@ LatLngView = Backbone.Marionette.ItemView.extend({
     "change": 'onLatLngChanges'   //  Rerenders .lat_lng only after new marker move across the map
   },
   onLatLngChanges: function(){
+    window.moveLastMarkerTo(this.model.get('lat'), this.model.get('lng'))
     this.render()
   },
   onRender: function(){
     this.addressLookUp()
   },
-  addressLookUp: function geocodeLatLng() {
+  addressLookUp: function() {
     var latlng = {lat: this.model.get('lat'), lng: this.model.get('lng')};
     window.geocoder.geocode({'location': latlng}, function(results, status) {
       if (status === google.maps.GeocoderStatus.OK) {
@@ -650,7 +675,6 @@ LatLngView = Backbone.Marionette.ItemView.extend({
       } else {
         window.infowindow.setContent('Територія, окупована Росією.');
         window.infowindow.open(window.state.map, window.markers[window.markers.length-1]);
-        // window.alert('Geocoder failed due to: ' + status);
       }
     });
   }
@@ -755,6 +779,14 @@ DescriptionView = Backbone.Marionette.ItemView.extend({
     'textarea': '#description'
   }
 })
+DetailsView = Backbone.Marionette.ItemView.extend({
+  template: '#details_tpl',
+  className: 'message_input'
+})
+ResponseView = Backbone.Marionette.ItemView.extend({
+  template: '#response_tpl',
+  className: 'response'
+})
 TagsView = Backbone.Marionette.ItemView.extend({
   template: '#tag_tpl',
   id: 'add_tag',
@@ -842,6 +874,70 @@ TagsView = Backbone.Marionette.ItemView.extend({
     for(var i=0; i< tagsArray.length; i++){
       $("#tag_storage").append( "<div class='ui-icon-delete'>" +'#'+ tagsArray[i].tag +"</div>" )
     }
+  }
+})
+LayerTypeView = Backbone.Marionette.ItemView.extend({
+  template: '#layer_type_tpl',
+  id: 'layer_type__view',
+  ui: {
+    layerTypeInput: '#layer_type__input',
+    layerTypeUl: '#layer_type__ul',
+  },
+  events: {
+    'click @ui.layerTypeInput': 'input_click',
+    'filterablebeforefilter @ui.layerTypeUl': _.debounce(function(e, data){
+        this.layerTypeAutocomplete(e, data)
+      }, 700),
+    'click @ui.layerTypeUl': 'layerTypeAutocompleteClick',
+    'click #layer_type__view .ui-input-search .ui-input-clear': 'layerTypeBtnClearClick'
+  },
+  input_click: function(e){
+    $(e.target).attr('data-id', '').val('')
+  },
+  layerTypeAutocomplete: function(e, data){
+    var $ul = $( '#layer_type__ul' ),
+      $input = $( data.input ),
+      value = $input.val(),
+      html = "";
+    $ul.html( "" );
+    if ( value && value.length > 0 ) {
+      $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+      $ul.listview( "refresh" );
+      $.ajax({
+        type: "POST",
+        url: "https://gurtom.mobi/beacon_list.php", //  !!!
+        dataType: "json",
+        xhrFields: { withCredentials: true },
+        crossDomain: true,
+        data: {
+          b_type: this.model.get('b_type'),
+          type: $input.val()
+        },
+        success: function ( response ) {
+          $.each( response, function ( i, val ) {
+            html += '<li data-id="'+ val.id +'">' + val.type + '</li>';
+          });
+          $ul.html( html );
+          $ul.listview( "refresh" );
+          $ul.trigger( "updatelayout");
+        } 
+      })
+    }
+  },
+  layerTypeAutocompleteClick: function(e){
+    var $input = $('#layer_type__input') 
+    $input.attr('data-id', $(e.target).attr('data-id'))
+    $input.val(e.target.innerText)
+    var $ul = $( '#layer_type__ul' )
+    $ul.html( '' );
+    $ul.listview( "refresh" );
+    $ul.trigger( "updatelayout");
+  },
+  layerTypeBtnClearClick: function(){
+    $('#layer_type__input').attr('data-id', '')
+  },
+  getLayerType: function(){
+    var str = this.ui.layerTypeInput.val()
   }
 })
 PhotoView = Backbone.Marionette.ItemView.extend({
@@ -961,7 +1057,74 @@ SupportFinishDateView = Backbone.Marionette.ItemView.extend({
     this.ui.input.val( normalizeInput(this.ui.input.val()) )
   }
 })
-
+PrivateView = Backbone.Marionette.ItemView.extend({
+  template: '#private_tpl',
+  ui: {
+    publicOrPriv: '#public_private_switch__input',
+    privatGroup: '#select_group__autocomplete-input',
+  },
+  events: {
+    'change @ui.publicOrPriv': 'onChangePrivat',
+    'click @ui.privatGroup': 'input_click',
+    'filterablebeforefilter #select_group__autocomplete': 'groupAutocomplete',
+    'click #select_group__autocomplete': 'groupAutocompleteClick',
+    'click #select_group .ui-input-search .ui-input-clear': 'selectGroupBtnClearClick',
+  },
+  onChangePrivat: function () {
+    if($('#public_private_switch__input').is(':checked')){
+      $('#select_group').show()
+    } else {
+      this.ui.privatGroup.val(null)
+      $('#select_group').hide()
+    }
+  },
+  input_click: function(e){
+    $(e.target).attr('data-id', '').val('')
+  },
+  groupAutocomplete: function(e, data){
+    var $ul = $( '#select_group__autocomplete' ),
+      $input = $( data.input ),
+      value = $input.val(),
+      html = "";
+    $ul.html( "" );
+    if ( value && value.length > 2 ) {
+      $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+      $ul.listview( "refresh" );
+      $.ajax({
+        url: "https://gurtom.mobi/groups.php", //  !!!
+        dataType: "json",
+        xhrFields: { withCredentials: true },
+        crossDomain: true,
+        data: {
+          filter: $input.val()
+        },
+        success: function ( response ) {
+          $.each( response, function ( i, val ) {
+            html += '<li data-id="'+ val.id +'">' + val.org + '</li>';
+          });
+          $ul.html( html );
+          $ul.listview( "refresh" );
+          $ul.trigger( "updatelayout");
+        } 
+      })
+    }
+  },
+  groupAutocompleteClick: function(e){
+    $input = $('#select_group__autocomplete-input')
+    $input.attr('data-id', $(e.target).attr('data-id'))
+    $input.val(e.target.innerText)
+    var $ul = $( '#select_group__autocomplete' )
+    $ul.html( '' );
+    $ul.listview( "refresh" );
+    $ul.trigger( "updatelayout");
+  },
+  selectGroupBtnClearClick:  function(){
+    $('#select_group__autocomplete-input').attr('data-id', '')
+  },
+  getPrivate: function(){
+    var str = this.ui.layerTypeInput.val()
+  }
+})
 var SphereItemModel = Backbone.Model.extend({
   initialize: function() {
     var menu = this.get("menu");
@@ -1001,7 +1164,6 @@ var SphereGeneralView = Marionette.CompositeView.extend({
   childView: SphereCompositeView,
   childViewContainer: ".composite"
 });
-
 ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   template: '#object_create_tpl',
   id: 'object_create_dialog',
@@ -1028,7 +1190,11 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     age: '.wrapper__age',
     support: '.wrapper__support',
     supportFinishDate: '.wrapper__support_finish_date',
-    sphere: '.wrapper__sphere'
+    sphere: '.wrapper__sphere',
+    details: '.wrapper__details',
+    response: '.wrapper__response',
+    layerType: '.wrapper__layer_type',
+    private: '.wrapper__private'
   },
   ui: {
     submitBtn: '#submit_btn',
@@ -1039,13 +1205,13 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     closeBtn: '.header a'
   },
   onBeforeShow: function() {
-    if(this.model.get('targetId') && +this.model.get('targetId') > 0) this.copyTargetObject()
+    if(this.model.get('targetId') && +this.model.get('targetId') > 0) this.fetchObjectModelById()
     if(this.model.get('lat') && this.model.get('lng')) {
       var latLngModel = new LatLngModel({
         'lat': this.model.get('lat'),
         'lng': this.model.get('lng'),
         'b_type': this.model.get('b_type'),
-        'icon_url': this.model.get('icon_url'),
+        'icon_url': this.model.get('img'),
         'name': this.model.get('name')
       })
       LatLngView = LatLngView.extend({ model: latLngModel })
@@ -1054,27 +1220,53 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
 
     var t = +this.model.get('type'),
         g = +window.state.user.gov
-    if(t==1 ||t==2 ||t==3 ||t==4 ||t==5 ||t==330         ) this.addNewChild('title', TitleView, true)
-    if(t==1 ||t==2 ||t==3 ||t==4 ||t==5 ||t==330         ) this.addNewChild('description', DescriptionView, true)
-    if(              t==3 ||t==4 ||t==5                  ) this.addNewChild('nco', NCOView, false)
-    if(t==1 ||t==2 ||t==3 ||t==4 ||t==5 ||t==330         ) this.addNewChild('photo', PhotoView, false)
-    if(       t==2 ||t==3 ||t==4 ||t==5                  ) this.addNewChild('tag', TagsView, true)
-    if(                                   t==330         ) this.addNewChild('tag', TagsView, false)
-    if(       t==2                                       ) this.addNewChild('currency', CurrencyView, true)
-    if(t==1 ||       t==3 ||t==4 ||t==5                  ) this.addNewChild('endDate', EndDateView, true, (t==1 ? 'Оберіть дату закінчення голосування' : undefined))
-    if(t==1 ||              t==4                         ) this.addNewChild('startDate', StartDateView, true, (t==1 ? 'Оберіть дату початку голосування' : undefined))
-    if(              t==3                                ) this.addNewChild('programID', ProgramIdView, true)
-    if(                            t==5                  ) this.addNewChild('beneficiar', BeneficiarView, true)
-    if(                                   t==330         ) this.addNewChild('phone', PhoneView, true)
-    if(              t==3 ||t==4 ||t==5 ||t==330         ) this.addNewChild('money', MoneyView, true, (t==330 ? 'Орієнтовна вартість проекту' : undefined))
-    if(                                   t==330 && g==0 ) this.addNewChild('admLevel', AdmLevelView, true)
-    if(t==1                                              ) this.addNewChild('usrCountbl', UsrCountblView, true)
-    if(t==1                                              ) this.addNewChild('age', AgeView, true)
-    if(t==1                                              ) this.addNewChild('support', SupportView, true)
-    if(t==1                                              ) this.addNewChild('supportFinishDate', SupportFinishDateView, true)
-    if(t==1                                              ) this.addNewChild('sphere', SphereGeneralView, true)
+    if(t==1 ||t==2 ||t==3 ||t==4 ||t==5 ||t==330                                           ) this.addNewChild('title', TitleView, true)
+    if(t==1 ||t==2 ||t==3 ||t==4 ||t==5 ||t==330                                           ) this.addNewChild('description', DescriptionView, true)
+    if(              t==3 ||t==4 ||t==5                                                    ) this.addNewChild('nco', NCOView, false)
+    if(t==1 ||t==2 ||t==3 ||t==4 ||t==5 ||t==330 ||t==69 ||t==96 ||t==777 ||t==911         ) this.addNewChild('photo', PhotoView, false)
+    if(       t==2 ||t==3 ||t==4 ||t==5                                                    ) this.addNewChild('tag', TagsView, true)
+    if(                                   t==330 ||t==69 ||t==96 ||t==777 ||t==911         ) this.addNewChild('tag', TagsView, false)
+    if(       t==2                                                                         ) this.addNewChild('currency', CurrencyView, true)
+    if(t==1 ||       t==3 ||t==4 ||t==5                                                    ) this.addNewChild('endDate', EndDateView, true, (t==1 ? 'Оберіть дату закінчення голосування' : undefined))
+    if(t==1 ||              t==4                                                           ) this.addNewChild('startDate', StartDateView, true, (t==1 ? 'Оберіть дату початку голосування' : undefined))
+    if(              t==3                                                                  ) this.addNewChild('programID', ProgramIdView, true)
+    if(                            t==5                                                    ) this.addNewChild('beneficiar', BeneficiarView, true)
+    if(                                   t==330 ||t==69 ||t==96 ||t==777 ||t==911         ) this.addNewChild('phone', PhoneView, true)
+    if(              t==3 ||t==4 ||t==5 ||t==330                                           ) this.addNewChild('money', MoneyView, true, (t==330 ? 'Орієнтовна вартість проекту' : undefined))
+    if(                                   t==330                                   && g==0 ) this.addNewChild('admLevel', AdmLevelView, true)
+    if(t==1                                                                                ) this.addNewChild('usrCountbl', UsrCountblView, true)
+    if(t==1                                                                                ) this.addNewChild('age', AgeView, true)
+    if(t==1                                                                                ) this.addNewChild('support', SupportView, true)
+    if(t==1                                                                                ) this.addNewChild('supportFinishDate', SupportFinishDateView, true)
+    if(t==1                                                                                ) this.addNewChild('sphere', SphereGeneralView, true)
+    if(                                            t==69 ||t==96 ||t==777 ||t==911         ) this.addNewChild('details', DetailsView, true)
+    if(                                                            t==777 ||t==911         ) this.addNewChild('response', ResponseView, false)
+    if(                                                            t==777 ||t==911         ) this.addNewChild('layerType', LayerTypeView, false)
+    if(                                                            t==777 ||t==911         ) this.addNewChild('private', PrivateView, false)
   },
-  copyTargetObject: function(){
+  addNewChild: function(region, ViewItem, req, label){
+    if(region === 'sphere') {
+      var sphereMenus = new SphereMenuCollection(window.state.sphereJSON)
+      var viewItem = new SphereGeneralView({
+        collection: sphereMenus
+      });
+    } else {
+      var opt = {},
+          viewModel = null,
+          ViewItemExt = null,
+          viewItem = null
+      opt = {
+        'required': req ? 'required' : '',
+        'label': label ? label : undefined
+      }
+      viewModel = new Backbone.Model(opt) 
+      viewItem = new ViewItem({
+        model: viewModel
+      })
+    }
+    this.showChildView(region, viewItem)
+  },
+  fetchObjectModelById: function(){
     this.model.url = 'https://gurtom.mobi/beacon_cards.php?b_id=' + this.model.get('targetId')
     $.mobile.loading('show')
     var that = this
@@ -1088,21 +1280,19 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       }
     })
   },
-  fillFormWithTargetData: function(){
+  fillFormWithTargetData: function(){   //  Not completed. It lacks fields and conditions to display
     var brief = this.model.changedAttributes()[0],
         full = brief.full[0]
     this.model.set({'lat': brief.lat})
     this.model.set({'lng': brief.lng})
-    this.latLng.currentView.model.set({'lat': +brief.lat})
-    this.latLng.currentView.model.set({'lng': +brief.lng})
-    moveLastMarkerTo(brief.lat, brief.lng)
-    this.latLng.currentView.render()
-    $('#title').val(full.title)
-    $('#description').val(full.descr)
-    $('#currency').val(full.curr).trigger( "change" )
-    $('#amount').val(full.amount)
-    $('#phone_num__input').val(full.title)
-    this.tag.currentView.setTags(brief.tags)
+    this.latLng.currentView.model.set({'lat': +brief.lat, 'lng': +brief.lng})
+    // this.latLng.currentView.render()
+    $('#title').val(full.title || '')
+    $('#description').val(full.descr || '')
+    $('#currency').val(full.curr || '').trigger( "change" )
+    $('#amount').val(full.amount || '')
+    $('#phone_num__input').val(full.title || '')
+    this.tag.currentView.setTags(brief.tags || '')
     $('#img').val((brief.b_img || ''))
     if(brief.b_img) {
       this.photo.currentView.showLoadedPhoto(brief.b_img)
@@ -1110,9 +1300,10 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   },
   onShow: function(){
     this.$el.trigger('create')
-    var $btnClose = $("#usr_countbl__select-listbox-popup .ui-popup .ui-header a")
-    if (!$btnClose) $btnClose = $('#usr_countbl__select-dialog .ui-header a')       //  doesn't work !!!
-    $btnClose.removeClass( "ui-icon-delete" ).addClass( "ui-icon-close" )
+    $('#usr_countbl__select-button').one('click', function(){
+      $('#usr_countbl__select-dialog .ui-dialog-contain .ui-header .ui-btn').removeClass( "ui-icon-delete" ).addClass( "ui-icon-close" )
+      $("#usr_countbl__select-listbox-popup .ui-popup .ui-header a").removeClass( "ui-icon-delete" ).addClass( "ui-icon-close" )
+    })
   },
   events: {
     'click @ui.submitBtn': 'sendPhoto',
@@ -1214,6 +1405,30 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         return validationFailed()
       }
     }
+    if(this.layerType.currentView){
+      var val = '',
+          layerTypeView = this.layerType.currentView 
+      if(val = layerTypeView.getLayerType()) {
+        $('#layer_type').val(val)
+      } else if(layerTypeView.model && layerTypeView.model.get('required')) {
+        alert("Поле 'Категорія повідомлення' є обов'язковим.")
+        return validationFailed()
+      } else {
+        $('#layer_type').val(null)
+      }
+    }
+    if(this.private.currentView){
+      var val = '',
+          privateView = this.private.currentView 
+      if(val = privateView.getLayerType()) {
+        $('#private_group').val(val)
+      } else if(privateView.model && privateView.model.get('required')) {
+        alert("Поле 'Оберіть групу' є обов'язковим.")
+        return validationFailed()
+      } else {
+        $('#private_group').val(null)
+      }
+    }
     return true
     function validationFailed(){
       that.ui.progressWrap.hide()
@@ -1274,28 +1489,6 @@ ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     closeBeaconNew()
     showBeaconsListView()
     setMultiBeaconMode()
-  },
-  addNewChild: function(region, ViewItem, req, lab){
-    if(region === 'sphere') {
-      var sphereMenus = new SphereMenuCollection(window.state.sphereJSON)
-      var viewItem = new SphereGeneralView({
-        collection: sphereMenus
-      });
-    } else {
-      var opt = {},
-          viewModel = null,
-          ViewItemExt = null,
-          viewItem = null
-      opt = {
-        'required': req ? 'required' : '',
-        'label': lab ? lab : undefined
-      }
-      viewModel = new Backbone.Model(opt) 
-      viewItem = new ViewItem({
-        model: viewModel
-      })
-    }
-    this.showChildView(region, viewItem)
   }
 })
 //    Object Create End
@@ -1860,8 +2053,8 @@ BeaconFullView = Backbone.Marionette.LayoutView.extend({
   },
   exit: function(){
     closeBeaconNew()
-    showBeaconsListView()
-    beaconsList.getNewCollection()
+    // showBeaconsListView()
+    // beaconsList.getNewCollection()
   },
   onClickStatusBtn: function(){
     showPopupStatusBeacon({ targetId: this.model.get('id') })
@@ -1883,7 +2076,7 @@ function showBeaconsListView() {
 }
 
 function showBeaconCreateView(options) {
-  var beaconModel = new BeaconCreateForm(options)
+  var beaconModel = new BeaconCreateModel(options)
   window.beaconCreateView = new BeaconCreateView({
     model: beaconModel
   })
@@ -1895,22 +2088,34 @@ function showObjectCreateView(model) {
   var titler = ''
   switch (+model.type) {
     case 1:
-      titler = 'голосування'
+      titler = 'Створення голосування'
       break;
     case 2:
-      titler = 'програми'
+      titler = 'Створення програми'
       break;
     case 3:
-      titler = 'проектної пропозиції'
+      titler = 'Створення проектної пропозиції'
       break;
     case 4:
-      titler = 'проекту'
+      titler = 'Створення проекту'
       break;
     case 5:
-      titler = 'запиту'
+      titler = 'Створення запиту'
+      break;
+    case 69:
+      titler = 'Створення маячка "Тут добре"'
+      break;
+    case 96:
+      titler = 'Створення маячка "Тут погано"'
       break;
     case 330:
-      titler = 'проекту по бюджету участі'
+      titler = 'Створення проекту по бюджету участі'
+      break;
+    case 777:
+      titler = 'Створення маячка "Важливо"'
+      break;
+    case 911:
+      titler = 'Створення маячка "СОС"'
       break;
   }
   $.extend(model, { titler: titler })

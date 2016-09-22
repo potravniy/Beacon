@@ -12586,6 +12586,7 @@ $.widget( "mobile.controlgroup", $.extend( {
 			tbPage = ( tbPage && tbPage.type === undefined && tbPage ) || this.page || $el.closest( ".ui-page" );
 			tbPage = ( !!this.page )? this.page: ".ui-page-active";
 			$( tbPage ).css( "padding-" + ( header ? "top" : "bottom" ), $el.outerHeight() + pos );
+			console.log( "padding-" + ( header ? "top" : "bottom" ), $el.outerHeight() + pos, $el )
 		},
 
 		_useTransition: function( notransition ) {

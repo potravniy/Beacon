@@ -1,5 +1,9 @@
 'use strict'
 
+$.fn.exists = function () { //  http://stackoverflow.com/questions/7141334/checking-if-a-jquery-selector-doesnt-find-any-results
+    return this.length !== 0;
+}
+
 $.ajax({
   url: "https://gurtom.mobi/nco.php",
   dataType: "json",
@@ -48,6 +52,7 @@ window.state.listMenu = [
     name: "SOS",
     type: "911",
     className: 'sos',
+    img: "/images/911.png"
   },
   { b_type: "777",
     layer_owner_id: "",
@@ -55,6 +60,7 @@ window.state.listMenu = [
     name: "Важливо",
     type: "777",
     className: 'important',
+    img: "/images/777.png"
   },
   { b_type: "69",
     layer_owner_id: "",
@@ -62,6 +68,7 @@ window.state.listMenu = [
     name: "Тут добре",
     type: "69",
     className: 'emo_good',
+    img: "/images/69.png"
   },
   { b_type: "96",
     layer_owner_id: "",
@@ -69,6 +76,7 @@ window.state.listMenu = [
     name: "Тут погано",
     type: "96",
     className: 'emo_bad',
+    img: "/images/96.png"
   },
   { b_type: "1",
     layer_owner_id: "",
@@ -76,6 +84,7 @@ window.state.listMenu = [
     name: "Голосування",
     type: "1",
     className: 'voting',
+    img: "/images/1.png"
   },
   { b_type: "2",
     layer_owner_id: "",
@@ -83,6 +92,7 @@ window.state.listMenu = [
     name: "Програма",
     type: "2",
     className: 'program',
+    img: "/images/2.png"
   },
   { b_type: "3",
     layer_owner_id: "",
@@ -90,6 +100,7 @@ window.state.listMenu = [
     name: "Проектна пропозиція",
     type: "3",
     className: 'project_proposal',
+    img: "/images/3.png"
   },
   { b_type: "4",
     layer_owner_id: "",
@@ -97,6 +108,7 @@ window.state.listMenu = [
     name: "Проект",
     type: "4",
     className: 'project',
+    img: "/images/4.png"
   },
   { b_type: "330",
     layer_owner_id: "",
@@ -104,6 +116,7 @@ window.state.listMenu = [
     name: "Бюджет участі",
     type: "330",
     className: 'p_budget',
+    img: "/images/330.png"
   },
   { b_type: "5",
     layer_owner_id: "",
@@ -111,6 +124,7 @@ window.state.listMenu = [
     name: "Запит",
     type: "5",
     className: 'request',
+    img: "/images/5.png"
   },
 ]
 
@@ -145,3 +159,38 @@ function getListMenuLMR() {
   })
 }
 
+function getIconURL(r, relative) {
+	var iconMainURL = ( relative ? '/' : window.iconMainURL )
+	if(r.b_type && +r.b_type < 1000) {
+		return iconMainURL + "images/" + r.b_type +'.png' 
+	} else if(r.b_type && r.layer_owner_id && r.layer_type && +r.b_type >= 1000 ){
+		return iconMainURL +"uploads/"+ r.layer_owner_id +"/" + r.b_type + "/" + r.layer_type +'.png'
+	}
+	return "//:0"
+}
+
+function minifyObj(obj){
+  return _.pick(obj, function(val){
+    return val !== '' 
+  })
+}
+
+window.transitionEndEventName = (function() {   //  http://stackoverflow.com/questions/5023514/how-do-i-normalize-css3-transition-functions-across-browsers
+  var i,
+    el = document.createElement('div'),
+    transitions = {
+      'transition':'transitionend',
+      'OTransition':'otransitionend',  // oTransitionEnd in very old Opera
+      'MozTransition':'transitionend',
+      'WebkitTransition':'webkitTransitionEnd'
+    };
+  for (i in transitions) {
+    if (transitions.hasOwnProperty(i) && el.style[i] !== undefined) {
+      return transitions[i];
+    }
+  }
+})()
+
+setTimeout(function(){
+  $('.warning').remove()
+}, 4000)

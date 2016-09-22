@@ -1,11 +1,12 @@
 # Local files
 package.json
 *.rar
+gulpfile.js
 
 # Local folders
 /node_modules/
 /.vscode/
-/.initial/
+/initial/
 
 # Windows image file caches
 Thumbs.db

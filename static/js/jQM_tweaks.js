@@ -13,91 +13,124 @@ function maxPopupHeightLimit(event) {
   event.data.el.css('max-height', maxHeight + 'px')
 }
 
-
 var MainRegion = function(){
   var $el = $('#container'),
-      isAllowed = $(window).width() < 880 
+      isFooterVisible = $(window).width() < 880 
   this.showMap = function(){
-    if(isAllowed) $el.css({ "transform": "translate(0,0)" })
+    if(isFooterVisible) {
+      if(document.readyState === 'complete'){
+        $el.one(window.transitionEndEventName, window.state.map.on)
+      }
+      $el.css({ "transform": "translate(0,0)" })
+    }
   }
-  this.showBeacons = function(){
-    if(isAllowed) $el.css({ "transform": "translate(-50%,0)" })
+  this.showBeaconsCards = function(){
+    if(isFooterVisible) {
+      if(document.readyState === 'complete'){
+        window.state.map.off()
+      }
+      $el.css({ "transform": "translate(-50%,0)" })
+    }
   }
-  this.close = function(){
+  this.hideFooter = function(){
     $el.css({ "transform": "" })
-    isAllowed = false
+    isFooterVisible = false
   }
-  this.open = function(){
-    isAllowed = true
+  this.showFooter = function(){
+    isFooterVisible = true
+    if ($btnCards.hasClass('ui-btn-active')) {
+      $el.css({ "transform": "translate(-50%,0)" })
+    } else if ($btnMap.hasClass('ui-btn-active')) {
+      $el.css({ "transform": "translate(0,0)" })
+    }
   }
   return this
 }
-var mainRegion = new MainRegion()
-window.setPanelContent = function () {
-  var maxHeight = $(window).height() - 59
-  $('.panel .ui-widget-content').css('max-height', maxHeight + 'px')
-}
+
+window.mainRegion = new window.MainRegion()
+$(window).on('resize', _.debounce(function(e, data){
+  window.setHeights(e, data)
+}, 500))
+
 var $btnMap = $('#btn__the-map') 
-var $btnBeacons = $('#btn__the-beacons') 
+var $btnCards = $('#btn__the-beacons') 
 $btnMap.click(function() {
   mainRegion.showMap()
 })
-$btnBeacons.click(function() {
-  mainRegion.showBeacons()
-})
-$(window).resize(function(){
-  if($(window).width() >= 880){
-    mainRegion.close()
-  } else {
-    mainRegion.open()
-    if ($btnBeacons.hasClass('ui-btn-active')) {
-      mainRegion.showBeacons()
-    } else if ($btnMap.hasClass('ui-btn-active')) {
-      mainRegion.showMap()
-    }
-  }
-  window.setPanelContent()
-  window.setMaxHeightOfInnerEl()
+$btnCards.click(function() {
+  mainRegion.showBeaconsCards()
 })
 
+function setHeights(e){
+  console.log('resize')
+  var $el = $('#container')
+  var maxHeight = $(window).height(),
+      rule = null
+  if($(window).width() >= 880){
+    rule = {
+      "padding-bottom": "0"
+    }
+    mainRegion.hideFooter()
+  } else {
+    rule = {
+      "padding-bottom": "35px"
+    }
+    mainRegion.showFooter()
+  }
+  $el.css( rule )
+  $( ".listview_wrapper" ).css({ "max-height": maxHeight - 88 + "px" })
+  $('.panel .ui-widget-content').css({'max-height': maxHeight - 59 + 'px'})
+}
+
 $(document).ready(function(){
-  var $initPopup = $("#create_beacon")
-  var $geoPopup = $('#create_beacon__geo')
-  var $noGeoPopup = $('#create_beacon__no_geo')
-  var $geoProectPropos = $('#create_beacon__geo .proect_prop')
-  var $noGeoProectPropos = $('#create_beacon__no_geo .proect_prop')
-  var $proectPropPopup = $('#proect_propos_popup')
-  $('#create_btn').on('click', showInitPopup)
-  $('#btn__create_beacon__geo').on('click', {el: $geoPopup}, togglePopup)
-  $('#btn__create_beacon__no_geo').on('click', {el: $noGeoPopup}, togglePopup)
-  $geoProectPropos.on('click', {el: $geoPopup}, openProectPopup)
-  $noGeoProectPropos.on('click', {el: $noGeoPopup}, openProectPopup)
-  function showInitPopup() {
+  $('#create_btn').on('click', showCreatePopup)
+  function showCreatePopup() {
     if(!window.state.user.id){
       window.logIn()
     } else {
-      var options = {
-        transition: 'turn',
-        positionTo: '#create_btn'
-      }
-      $initPopup.popup("open", options)
+      showBeaconCreateMenu()
     }
   }
-  function openProectPopup(event) {
-    event.data.el.one("popupafterclose", function() {
-      $proectPropPopup.popup("open")
-    })
-    event.data.el.popup("close")
-  }
-  function togglePopup(event) {
-    $initPopup.one("popupafterclose", function() {
-      // if(window.state.user.gov == 0) event.data.el.popup("open")
-      // else 
-      switchBeaconCreateMenuToLMR()
-    })
-    $initPopup.popup("close")
-  }
 })
+// $(document).ready(function(){
+//   var $createBeaconPopup = $("#create_beacon")
+//   var $createBeaconGeoPopup = $('#create_beacon__geo')
+//   var $createBeaconNoGeoPopup = $('#create_beacon__no_geo')
+//   var $geoProectPropos = $('#create_beacon__geo .proect_prop')
+//   var $noGeoProectPropos = $('#create_beacon__no_geo .proect_prop')
+//   var $proectPropPopup = $('#proect_propos_popup')
+//   $('#create_btn').on('click', showInitPopup)
+//   $('#btn__create_beacon__geo').on('click', {el: $createBeaconGeoPopup}, togglePopup)
+//   $('#btn__create_beacon__no_geo').on('click', {el: $createBeaconNoGeoPopup}, togglePopup)
+//   $geoProectPropos.on('click', {el: $createBeaconGeoPopup}, openProectPopup)
+//   $noGeoProectPropos.on('click', {el: $createBeaconNoGeoPopup}, openProectPopup)
+
+//   function showInitPopup() {
+//     if(!window.state.user.id){
+//       window.logIn()
+//     } else {
+//       var options = {
+//         transition: 'turn',
+//         positionTo: '#create_btn'
+//       }
+//       $createBeaconPopup.popup("open", options)
+//     }
+//   }
+
+//   function openProectPopup(event) {
+//     event.data.el.one("popupafterclose", function() {
+//       $proectPropPopup.popup("open")
+//     })
+//     event.data.el.popup("close")
+//   }
+
+//   function togglePopup(event) {
+//     $createBeaconPopup.one("popupafterclose", function() {
+//       showBeaconCreateMenu()
+//     })
+//     $createBeaconPopup.popup("close")
+//   }
+// })
 
 $( document ).on( "pagecreate", function() {
   $( ".photopopup" ).on({
@@ -106,39 +139,12 @@ $( document ).on( "pagecreate", function() {
       $( ".photopopup img" ).css( "max-height", maxHeight );
     }
   });
-  window.setPanelContent()
-  // $( "#beacons-map" ).loader( "option", "html", "<span class='ui-icon ui-icon-loading'><h2>Ми переходимо на новий інтерфейс<br>Перепрошуємо за тимчасові незручності</h2></span>" );
+  setHeights()
 });
-
-$(document).ready(photoPopupHanlder)
-function photoPopupHanlder(){
-  var $photoPopup = $('#popupPhoto')
-  var $popupPhotoImg = $('#popupPhoto .photopopup__img')
-  $('#beacons-map__the-beacons').on('click', 'img.photo', function(){
-    $popupPhotoImg.attr("src", $(this).attr('src'))
-    $photoPopup.popup('open')
-    $photoPopup.popup("reposition", {positionTo: 'window'})
-  })
-}
-//  NEED TO BE MOVED TO VIEW MODULE OF MVC TO DINAMIC CHANGE OF #beacons-map__the-beacons ELEMENT
 
 $( "#right-panel" ).panel({
   open: function() {
     $("#right-panel .navbar .ui-tabs-active a").addClass('ui-btn-active')
   }
 });
-
-function minifyObj(obj){
-  return _.pick(obj, function(val){
-    return val !== '' 
-  })
-}
-function setMaxHeightOfInnerEl(){
-  $( ".listview_wrapper" ).css( "max-height", function() {
-    return $(window).height() - 88
-  })
-}
-setInterval(function(){
-  $('.warning').remove()
-}, 4000)
 

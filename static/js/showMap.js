@@ -1,7 +1,9 @@
 'use strict'
 window.state = {
 	map: null,
-	zoom: 0,
+	initFromURL: false,
+	zoom: 6,
+	center: {lat: 49.0275009, lng: 31.4822306},
 	latmin: 0,
 	latmax: 0,
 	lngmin: 0,
@@ -20,6 +22,7 @@ window.state = {
 	sendGET: function(url){
 		this.oReq.open("GET", url + this.urlRequest(), true)
 		this.oReq.send()
+		Manager.trigger('state_update')
 		if(window.beaconsListView && !window.beaconsListView.isDestroyed) {
 			beaconsList.getNewCollection()
 		}
@@ -43,79 +46,143 @@ window.state = {
 		+ (this.filter ? '&filter=' + this.filter : '')
 		return result
 	},
-	singleBeacon: false
+	viewState: 'mm',	//	mm: mapMultiView, cardsMultiView;	  ms: mapMultiView, cardsSingleView;   ss: mapSingleView, cardsSingleView
+	viewStateIdArray: [],
+	singleBeacon: false,
+	mapWidth: 0,	// temp values for map resize investigation
+	mapHeight: 0	// temp values for map resize investigation
 }
-var iconMainURL = 'https://gurtom.mobi/'
 
 window.onload = function() {
-	window.MapOptions = null
-	window.bounds = null
-	window.myPosition = null
-	window.markerMyPosition = null
 	window.markers = []
 	window.i = 0
 	window.geocoder = new google.maps.Geocoder()
 	window.infowindow = new google.maps.InfoWindow;
 	window.isMapListeningClick = false
-	window.mapListenerClick
-	window.initCity = searchCityInHash() 	//	https://potravny.od.ua/test_b/beacon.html?city=Львів
-
-	window.MapOptions = {
-		zoom: 7,
-		center: {lat: 49.0, lng: 31.4},
-		mapTypeControl: false
-	}
-	window.state.map = new window.google.maps.Map(document.getElementById('the-map'), MapOptions)
-	window.state.oReq.addEventListener("load", renderMarkers)
-	window.requestMarkersListener = window.state.map.addListener('idle', requestMarkers)
-
-	window.initScaleListener = window.state.map.addListener('idle', function(){
-		window.address = initCity ? initCity + ", UA" : "UA"
-		window.geocoder.geocode({'address': address}, function (results, status) {
-			window.state.map.fitBounds(results[0].geometry.viewport)
-			window.google.maps.event.removeListener(initScaleListener)
-		})      
-	})
-
-	if(!window.initCity) {
-		if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
-			var listener = window.state.map.addListener('idle', renderGeolocation)
-		}
-		function renderGeolocation() {
-			navigator.geolocation.getCurrentPosition(function(position){
-				window.myPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
-				window.MapOptions = {
-					zoom: 15,
-					center: myPosition
-				}
-				window.state.map.setOptions(MapOptions)
-			})
-			window.google.maps.event.removeListener(listener)
-		}
-	}
+	window.mapListenerClick = undefined
 	window.Manager.start();
+	window.state.oReq.addEventListener("load", renderMarkers)
+	window.state.oReq.addEventListener("error", function(){
+		alert("Відсутній зв'язок або неполадки на сервері.")
+	})
+	mapInit()
+	window.state.map.off = function(){
+		if(window.requestMarkersListener.b) window.google.maps.event.removeListener(window.requestMarkersListener)
+		console.log('map.off')
+	}
+	window.state.map.on = function(){
+		if(!window.requestMarkersListener.b) window.requestMarkersListener = window.state.map.addListener('idle', requestMarkers)
+		google.maps.event.trigger(window.state.map,'resize')
+		console.log('map.on')
+	}
+	if(!window.state.initFromURL) tryGeoLocation()
+	$(":mobile-pagecontainer").pagecontainer({
+  	change: function( event, ui ) {
+    	if(ui.toPage.attr('id') === 'beacons-map'){
+				window.state.map.on()
+			} else if(ui.prevPage.attr('id') === 'beacons-map'){
+				window.state.map.off()
+			}
+  	}
+});
 } 	//	window.onload
 
+function mapInit(){
+	if(window.requestMarkersListener) window.google.maps.event.removeListener(window.requestMarkersListener)
+	window.state.map = new window.google.maps.Map(document.getElementById('the-map'), {
+		zoom: window.state.zoom,
+		center: window.state.center,
+		mapTypeControl: true,
+		mapTypeControlOptions: {
+			style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+			position: google.maps.ControlPosition.BOTTOM_CENTER,
+			mapTypeIds: ['roadmap', 'hybrid']
+		}
+	})
+	window.requestMarkersListener = window.state.map.addListener('idle', requestMarkers)
+}
+
+function tryGeoLocation() {
+	if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
+		var listener = window.state.map.addListener('idle', renderGeolocation)
+	}
+	function renderGeolocation() {
+		navigator.geolocation.getCurrentPosition(function(position){
+			var MapOptions = {
+				zoom: 15,
+				center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+			}
+			window.state.map.setOptions(MapOptions)
+			window.state.map.myPosition = MapOptions.center
+		})
+		window.google.maps.event.removeListener(listener)
+	}
+}
 
 function requestMarkers() {
+	console.log('on map idle')
+	// var tag = document.activeElement.tagName.toLowerCase()
+	// if(window.state.onResize && (tag === "input" ||  tag === "textarea")){
+	// 	window.state.onResize = false
+		// window.MapOptions = {
+		// 	zoom: window.state.zoom,
+		// 	center: new google.maps.LatLng(window.state.center.lat, window.state.center.lng)
+		// }
+		// window.state.map.setZoom(window.state.zoom)
+		// window.state.map.panTo(window.state.center)
+		// console.log('no request')
+	var $mapDiv = $('#the-map'),
+		  bounds = window.state.map.getBounds(),
+			mapHeight = $mapDiv.css('height'),
+			mapWidth  = $mapDiv.css('width'),
+			latmin = +(bounds.getSouthWest().lat().toFixed(8)),
+			latmax = +(bounds.getNorthEast().lat().toFixed(8)),
+			lngmin = +(bounds.getSouthWest().lng().toFixed(8)),
+			lngmax = +(bounds.getNorthEast().lng().toFixed(8)),
+			center = {
+				lat: +(window.state.map.center.lat().toFixed(8)),
+				lng: +(window.state.map.center.lng().toFixed(8))
+			},
+			zoom = window.state.map.getZoom()
+	if(window.state.mapHeight != mapHeight) console.log("mapHeight before: " + window.state.mapHeight + ", after: " + mapHeight)
+	if(window.state.mapWidth != mapWidth) console.log("mapWidth before: " + window.state.mapWidth + ", after: " + mapWidth)
+	if(window.state.latmin != latmin) console.log("latmin before: " + window.state.latmin + ", after: " + latmin)
+	if(window.state.latmax != latmax) console.log("latmax before: " + window.state.latmax + ", after: " + latmax)
+	if(window.state.lngmin != lngmin) console.log("lngmin before: " + window.state.lngmin + ", after: " + lngmin)
+	if(window.state.lngmax != lngmax) console.log("lngmax before: " + window.state.lngmax + ", after: " + lngmax)
+	if(window.state.center.lat != center.lat) console.log("center.lat before: " + window.state.center.lat + ", after: " + center.lat)
+	if(window.state.center.lng != center.lng) console.log("center.lng before: " + window.state.center.lng + ", after: " + center.lng)
+	if(window.state.zoom != zoom) console.log("zoom before: " + window.state.zoom + ", after: " + zoom)
+	
 	if(!window.state.singleBeacon) {
 		window.state.zoom = window.state.map.getZoom()
-		bounds = window.state.map.getBounds()
+		window.state.center.lat = +(window.state.map.center.lat().toFixed(8))
+		window.state.center.lng = +(window.state.map.center.lng().toFixed(8))
+		var bounds = window.state.map.getBounds()
 		window.state.latmin = +(bounds.getSouthWest().lat().toFixed(8))
 		window.state.lngmin = +(bounds.getSouthWest().lng().toFixed(8))
 		window.state.latmax = +(bounds.getNorthEast().lat().toFixed(8))
 		window.state.lngmax = +(bounds.getNorthEast().lng().toFixed(8))
 		var delta = (window.state.lngmax - window.state.lngmin)/(window.innerWidth/40)
 		window.state.signsAfterDot = Math.round(-Math.log(delta)/Math.LN10)
+		window.state.mapHeight = $mapDiv.css('height'),
+		window.state.mapWidth  = $mapDiv.css('width'),
+		console.log('request is send')
 		window.state.sendGET(window.state.urlMarkers)
 	}
+	
 }
 function renderMarkers() {
 	var contents = [],
-			image = ''
+			image = null
 	deleteMarkers()
-	var response = JSON.parse(this.responseText) 
-	if(myPosition) {
+	try {
+		var response = JSON.parse(this.responseText)
+	} catch (error) {
+		alert("Помилка на сервері.")
+		throw new Error("Invalid JSON received from "+ this.responseURL)
+	}
+	if(window.state.map.myPosition) {
 		image = {
 			url: './static/css/images/my_location.png',
 			size: new google.maps.Size(24, 24),
@@ -123,11 +190,11 @@ function renderMarkers() {
 			origin: new google.maps.Point(0, 0),
 			anchor: new google.maps.Point(12, 12)
 		}
-		markerMyPosition = new window.google.maps.Marker({
+		var markerMyPosition = new window.google.maps.Marker({
 			map: window.state.map,
 			icon: image,
 			title: 'You are here.',
-			position: myPosition
+			position: window.state.map.myPosition
 		});
 	}
 	//	Render clusters first
@@ -162,9 +229,9 @@ function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_t
 	var iconURL = getIconURL(r, true)
 	markers[index] = new window.google.maps.Marker({
 		map: window.state.map,
-		title: r.title + ', ' + iconURL,
+		title: r.title + ', id:' + r.id,
 		beaconID: r.id,
-		zIndex: 2,
+		zIndex: 2000,
 		position: new google.maps.LatLng(r.lat, r.lng),
 		draggable: !!draggable,
 		icon: {
@@ -184,7 +251,7 @@ function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_t
 		this.parent.iconImg = null
 	}
 	markers[index].iconImg.onerror = function () {
-			this.parent.setIcon(null); //This displays brick colored standard marker icon in case image is not found.
+			this.parent.setIcon(null); //This displays brick colored standard marker icon in case of image load fail.
 			this.parent.iconImg = null
 	}
 	markers[index].iconImg.src = iconURL
@@ -195,22 +262,12 @@ function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_t
 	})
 	if(draggable){
     markers[index].addListener('dragend',function(event) {
-			var createView = window.beaconCreateView || window.objectCreateView.latLng.currentView
-      createView.model.set({
+      window.objectCreateView.latLng.currentView.model.set({
 				'lat': +event.latLng.lat().toFixed(8),
 				'lng': +event.latLng.lng().toFixed(8)
 			}) 
     });
 	}
-}
-function getIconURL(r, relative) {
-	var iconMainURL = ( relative ? '/' : window.iconMainURL )
-	if(r.b_type && +r.b_type < 1000) {
-		return iconMainURL + "images/" + r.b_type +'.png' 
-	} else if(r.b_type && r.layer_owner_id && r.layer_type && +r.b_type >= 1000 ){
-		return iconMainURL +"uploads/"+ r.layer_owner_id +"/" + r.b_type + "/" + r.layer_type +'.png'
-	}
-	return "//:0"
 }
 function createSingleMarker(r, draggable) {
   google.maps.event.removeListener(requestMarkersListener)
@@ -230,43 +287,25 @@ function setMultiBeaconMode() {
 	window.state.singleBeacon = null
 	window.state.sendGET(window.state.urlMarkers)
 }	
-function setMapOnAll(map) {
+function setMapForAllMarkers(map) {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
   }
 }
 // Removes the markers from the map, but keeps them in the array.
 function hideMarkers() {
-  setMapOnAll(null);
+  setMapForAllMarkers(null);
 }
 // Shows any markers currently in the array.
 function showMarkers() {
-  setMapOnAll(window.state.map);
+  setMapForAllMarkers(window.state.map);
 }
 // Deletes all markers in the array by removing references to them.
 function deleteMarkers() {
   hideMarkers();
   markers = [];
 }
-
-function searchCityInHash() {
-	var hash = window.location.hash
-	var city = ''
-	var search = 'city='
-	var start = hash.indexOf(search)
-	if(start > 0) {
-		var end = hash.indexOf('&', start)
-		if (end > start + search.length){
-			city = hash.substring(start + search.length, end)
-			location.hash = hash.replace(search + city + '&', '')
-		} else {
-			city = hash.substr(start + search.length)
-			location.hash = hash.replace(search + city, '')
-		}
-	}
-	return city
-}
-
 function moveLastMarkerTo(lat, lng) {
 	markers[markers.length - 1].setPosition(new google.maps.LatLng(lat, lng))
 }
+

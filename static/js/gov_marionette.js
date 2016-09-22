@@ -1,30 +1,30 @@
 //  Popup add a beacon START
 
-GovItemModel = Backbone.Model.extend({
+BeaconCreatePopupListItemModel = Backbone.Model.extend({
   defaults: {
     targetId: "",
     name: '',
     img: "//:0"
   }
 })
-GovListModel = Backbone.Collection.extend({
-  model: GovItemModel
+BeaconCreatePopupList = Backbone.Collection.extend({
+  model: BeaconCreatePopupListItemModel
 })
-GovItemView = Backbone.Marionette.ItemView.extend({
+BeaconCreatePopupItemView = Backbone.Marionette.ItemView.extend({
   template: '#gov_single_menu_item__tpl',
   tagName: 'li',
   className: function(){
-    return 'menu_item '+ (this.model.get('className') ? this.model.get('className') : '' ) 
+    return 'menu_item '+ (this.model.get('className') || '' ) 
   },
   events: {
     'click .ui-btn': 'btnClick'
   },
   btnClick: function(){
-    createObjectLMR(this.model.attributes)
+    createObject(this.model.attributes)
   }
 })
 
-GovCreateBeaconView = Backbone.Marionette.CompositeView.extend({
+BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
   template: '#create_beacon__geo_tpl',
   id: 'create_beacon__geo',
   ui: {
@@ -33,15 +33,15 @@ GovCreateBeaconView = Backbone.Marionette.CompositeView.extend({
   events: {
     'click @ui.settings': 'onSettingsClick'
   },
-  childView: GovItemView,
+  childView: BeaconCreatePopupItemView,
   childViewContainer: '.listview',
-  collection: new GovListModel(),
+  collection: new BeaconCreatePopupList(),
   onSettingsClick: function(){
     showChangeGovMenuView()
   },
   initialize: function(options){
     var collection = []
-    if(window.state.user.gov == 0) collection = _.clone(window.state.listMenu)
+    if(window.state.user.gov === "0") collection = _.clone(window.state.listMenu)
     else collection = _.clone(window.state.listMenuLMR)
     collection = _.map(collection, function(item){
       return $.extend(item, options)
@@ -98,7 +98,7 @@ PopupStatusBeacon = Backbone.Marionette.ItemView.extend({
     var options = { targetId: this.model.get('id') }
     this.$el.one("popupafterclose", function() {
       window.popupStatusBeaconRegion.empty()
-      switchBeaconCreateMenuToLMR(options)
+      showBeaconCreateMenu(options)
     })
     this.$el.popup('destroy')
   },
@@ -233,8 +233,8 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
   },
   onShow: function(){
     this.$el.trigger('create')
-    window.setMaxHeightOfInnerEl()
-    this.reposition()
+    // window.setMaxHeightOfInnerEl()
+    // this.reposition()
   },
   ui: {
     btnAdd: '.add',
@@ -273,11 +273,11 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
     promise.done(function(response){
       console.log(response)
       window.state.listMenuLMR = response
-      // window.switchBeaconCreateMenuToLMRAfterChange()
-      $('#create_beacon__geo').one( "popupafterclose", function(event, ui) {
-        window.switchBeaconCreateMenuToLMR()
+      var $beaconCreatePopup = $('#create_beacon__geo')
+      $beaconCreatePopup.one( "popupafterclose", function(event, ui) {
+        window.showBeaconCreateMenu()
       })
-      $('#create_beacon__geo').popup( "close" )
+      $beaconCreatePopup.popup( "close" )
     })
     promise.fail(function(){
       alert("Немає зв'язку з сервером.")
@@ -301,8 +301,8 @@ window.govCreateBeaconRegion = new Backbone.Marionette.Region({el: "#create_beac
 window.popupStatusBeaconRegion = new Backbone.Marionette.Region({el: "#beacon-status__region"})
 window.changeGovMenuRegion = new Backbone.Marionette.Region({el: "#create_beacon__geo"})
 
-function switchBeaconCreateMenuToLMR(options) {
-  window.govCreateBeaconView = new GovCreateBeaconView(options)
+function showBeaconCreateMenu(options) {
+  window.govCreateBeaconView = new BeaconCreatePopup(options)
   window.govCreateBeaconRegion.show(window.govCreateBeaconView)
   console.log('Switch to govCreateBeaconView')
 }
@@ -322,7 +322,37 @@ function showChangeGovMenuView() {
   console.log('Switch to changeGovMenuView')
 }
 
-// function switchBeaconCreateMenuToLMRAfterChange(){
-//   window.govCreateBeaconView = new GovCreateBeaconView()
-//   window.changeGovMenuRegion.show(window.govCreateBeaconView);
-// }
+var Controller = Marionette.Object.extend({
+  _mapState: 'multi',
+  _cardsState: 'multi',
+  _id: [],
+  changeState: function(stateInURLformat, id){
+    if(stateInURLformat.length !== 2) throw new Error('Wrong controller.changeState options: '+ stateInURLformat)
+    if(stateInURLformat[0] === 'm') {
+      this._mapState = 'multi'
+    }else if(stateInURLformat[0] === 's') {
+      this._mapState = 'single'
+    }else{
+      throw new Error('Wrong controller.changeState options: '+ stateInURLformat)
+    }
+    if(stateInURLformat[1] === 'm') {
+      this._cardsState = 'multi'
+    }else if(stateInURLformat[1] === 's') {
+      this._cardsState = 'single'
+    }else{
+      throw new Error('Wrong controller.changeState options: '+ stateInURLformat)
+    }
+    this._id = _.map(id.split(','), function(item){
+      return parseInt(item, 10)
+    })
+  },
+  getMapState: function(){
+    return _mapState
+  },
+  getCardsState: function(){
+    return _cardsState
+  },
+  setMapState: function(){
+
+  }
+})
