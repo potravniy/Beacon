@@ -260,8 +260,9 @@ img[src=""] {
 #beacons-map__the-beacons .beacon .navbar li:last-child button {
     border-right-width: 0
 }
-#right-panel .navbar a:after {
-    margin-top: -3px;
+#right-panel .navbar a:after,
+.beacon .navbar button:after {
+    margin-top: -6px;
 }
 .chat > .input-message {
     margin: 0;
@@ -324,6 +325,52 @@ img[src=""] {
 #beacon-status .ui-btn-icon-left:after {
     left: .3em;
 }
+
+.status_item__paragraf_wrapper {
+  position: relative;
+}
+.status_item__paragraf_wrapper .status_item__paragraf {
+  padding-left: 2.2em;
+  font-weight: normal;
+  white-space: normal;
+}
+.status_item__paragraf:after {
+  left: -6px;
+}
+.status_item__paragraf:after {
+  background-color: #fff;
+}
+.status_list__wrapper .status_item.green {
+  background-color: #dfc;
+}
+.status_item.green .status_item__paragraf:after {
+  background-color: #0f0;
+}
+.status_list__wrapper .status_item.red {
+  background-color: #fdd;
+}
+.status_item.red .status_item__paragraf:after {
+  background-color: #f33;
+}
+.status_item .child_btns {
+  border-top: 1px solid #fff;
+}
+.status_item.green .child_btns {
+  border-top: 1px solid #dfc;
+}
+.status_item.red .child_btns {
+  border-top: 1px solid #fdd;
+}
+.status_item .ui-btn {
+  width: 95%;
+  white-space: normal;
+}
+.status_list__wrapper {
+  overflow-y: auto;
+}
+
+
+
 #create_beacon .ui-header {
     width: initial;
 }
@@ -365,91 +412,128 @@ img.photo {
 .panel .ui-listview > .ui-li-static {
     padding: 0.075em;
 }
+#right-panel #actions .ui-listview > li.ui-first-child{
+  padding-bottom: 1em;
+  padding-left: 2em;
+}
 .panel .ui-listview > .ui-li-static label {
-    display: inline-block;
-    cursor: pointer;
-    line-height: 2.5em;
-    width: 80%;
-    margin: 0;
+  display: inline-block;
+  cursor: pointer;
+  line-height: 2.5em;
+  width: 80%;
+  margin: 0;
 }
 .panel .listview li:nth-child(even),
-#time_range .ui-radio:nth-child(even) label,
-#categories .ui-checkbox:nth-child(even) label,
-#categories .ui-controlgroup-controls a:nth-child(even) {
-    background-color: #f9f9f9;
-    background-clip: padding-box;
-    font-weight: normal;
+#time_range .ui-radio:nth-child(even) label {
+  background-color: #f9f9f9;
+  background-clip: padding-box;
+  font-weight: normal;
 }
-#time_range .ui-radio:nth-child(odd) label,
-#categories .ui-checkbox:nth-child(odd) label,
-#categories .ui-controlgroup-controls a:nth-child(odd) {
-    background-color: #fff;
-    background-clip: padding-box;
-    font-weight: normal;
-}
-#categories .ui-controlgroup-controls a {
-    text-align: left;
-    white-space: normal;
+#time_range .ui-radio:nth-child(odd) label {
+  background-color: #fff;
+  background-clip: padding-box;
+  font-weight: normal;
 }
 .panel .scrollable_content {
-    overflow-y: auto;
-    padding-right: 6px;
+  overflow-y: auto;
+  padding-right: 3px;
+  padding-left: 3px;
 }
 .panel .date_picker {
     /*display: none;*/
-    padding: 0.5em;
-    margin: 0 1em 1em 1em;
-    border: 1px solid #ccc;
-    border-top: none;
-    border-bottom-right-radius: 0.3em;
-    border-bottom-left-radius: 0.3em;
+  padding: 0.5em;
+  margin: 0 1em 1em 1em;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-bottom-right-radius: 0.3em;
+  border-bottom-left-radius: 0.3em;
 }
 .date_picker .ui-field-contain {
-    width: 100%;
+  width: 100%;
 }
 .date_picker .ui-field-contain > label ~ [class*="ui-"] {
-    float: right;
-    width: 75%;
+  float: right;
+  width: 75%;
 }
 .date_picker .ui-field-contain input {
-    min-height: 1.5em;
+  min-height: 1.5em;
 }
-#categories .ui-btn.ui-checkbox-on:after,
-#categories .ui-input-search:after {
-    background-size: contain;
+
+.org__view {
+  position: rel
 }
-#categories .ui-input-search {
-    background-color: #efe;
-    border-color: #0f0;
-    border-width: 1px;
-    margin-left: 0.5em;
-    margin-right: 0.5em;
+.org_item_view, .org_layer_view {
+  position: relative;
 }
-#categories .checkbox-wrapper {
-    position: relative;
+.org_item_view .org__chk {
+  position: absolute;
+  top: -6px;
+  right: -3px;
+  width: 38px;
+  height: 38px;
 }
-#categories .ui-checkbox {
-    margin-right: 2em;
+.org_item_view .org__chk label {
+  width: 100%;
+  height: 100%;
+  padding-left: 0;
+  border: none;
+  background-color: transparent;
 }
-#categories .checkbox-wrapper:nth-child(even) {
-    background-color: #f9f9f9;
-    background-clip: padding-box;
-    font-weight: normal;
-} 
-#categories .checkbox-wrapper:nth-child(odd) {
-    background-color: #fff;
-    background-clip: padding-box;
-    font-weight: normal;
-} 
-#categories .checkbox-wrapper .checkbox_pin {
-    position: absolute;
-    height: 100%;
-    top: 0;
-    right: 0;
-    border: none;
-    border-radius: 0;
-    background-color: transparent !important;
+.org_item_view .org__chk label:after {
+  left: 5px;
+  top: 17px;
+  width: 21px;
+  height: 21px;
 }
+.org_item_view .org_title a {
+  padding-right: 26px;
+}
+.layers_container {
+  padding: 0 0.25em;
+}
+.org_layer__chk {
+  margin: 0;
+}
+.layers_container .org_layer__chk .ui-btn {
+  background-color: #fefefe;
+  margin-top: -1px;
+}
+.org_item_view .org__pin,
+.org_item_view .org_item__pin {
+  position: absolute;
+  top: 0px;
+  left: -2px;
+  z-index: 1000;
+  margin: 0;
+  width: 44px;
+  height: 44px
+}
+.org_item_view .org__pin:after,
+.org_item_view .org_item__pin:after {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  background-color: transparent;
+}
+.selected_layers .org_title .ui-btn,
+.selected_layers .org_layer__chk .ui-btn {
+  padding-left: 2em;
+}
+.org__view .search .ui-input-search {
+  background-color: #efe;
+  border-color: #0f0;
+  border-width: 1px;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+.org__view .search .ui-input-search:after {
+  background-size: contain;
+}
+.org__pin, .org_item__pin {
+  cursor: pointer;
+}
+
+
 .ui-controlgroup-vertical .checkbox-wrapper {
     border: 1px solid #ddd;
     border-bottom: none;
@@ -471,13 +555,8 @@ img.photo {
     border: none;
     background-color: transparent !important;
 }
-#categories .checkbox-wrapper .ui-checkbox {
-    background-color: transparent;
-}
-#categories .checkbox-wrapper .ui-btn-icon-left:after {
-    /*left: .446em;*/
-    display: none;
-}
+
+
 
 
 /* Custom indentations are needed because the length of custom labels differs from
@@ -582,6 +661,9 @@ img.photo {
   margin: 0 0 0.5em 0;
   font-size: 1.6em;
   text-align: center;
+}
+.header h4.follower {
+  margin-top: -22px;
 }
 
 .ui-filter-inset {
@@ -762,24 +844,24 @@ img.photo {
 
 
 /*  Object create section start  */
-#object_create_dialog {
+#beacons-map__the-beacons .css__create_form {
   background-color: #f9f9f9;
   margin: 0.5em;
-  border-radius: 0.7em;
+  border-radius: 0.5em;
 }
-#object_create_dialog .header,
+#beacons-map__the-beacons .css__create_form .header,
 .change_gov_menu .header {
-    border-top-left-radius: 0.3em;
-    border-top-right-radius: 0.3em;
+  border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;
 }
-#object_create_dialog .main {
+#beacons-map__the-beacons .css__create_form .main {
   padding-bottom: 100px;
   position: relative;
 }
-#object_create_dialog h6 {
+#beacons-map__the-beacons .css__create_form h6 {
   margin: 0;
 }
-#object_create_dialog .ui-input-search:after {
+#beacons-map__the-beacons .css__create_form .ui-input-search:after {
   width: 18px;
   height: 18px;
   margin-top: -9px;
@@ -836,7 +918,7 @@ img.photo {
   cursor: pointer;
   white-space: normal;
 }
-#submit {
+.submit {
   position: absolute;
   bottom: 20px;
   width: 60%;
@@ -1153,15 +1235,16 @@ hr {
 }
 #login_dialog .submit,
 #restore_pass_dialog .submit,
-#reset_pass_dialog .submit {
+#reset_pass_dialog .submit,
+#registration_dialog .submit {
   font-size: 1.5em;
   background-color: #0f0;
+  left: 50%;
+  top: -12px;
 }
 #restore_pass_dialog .submit {
   margin: 0;
-}
-#login_dialog .submit {
-  top: -12px;
+  top: 0;
 }
 #custom-border-radius .ui-btn-icon-notext.ui-corner-all {
   display: inline-block;
@@ -1273,13 +1356,14 @@ hr {
   padding-left: 1em; 
 }
 
-.wrapper__usr_countbl .usr_countbl__select__label {
+.wrapper__usr_countbl .select_option__label,
+.wrapper__funds .select_option__label {
   display: none;
 }
-#usr_countbl__select-button span:first-child {
+#options__select-button span:first-child {
   white-space: normal;
 }
-#object_create_dialog .wrapper__sphere fieldset {
+#beacons-map__the-beacons .css__create_form .wrapper__sphere fieldset {
   margin: 1em 0;
 }
 .ui-collapsible a.ui-collapsible-heading-toggle {
@@ -1394,12 +1478,13 @@ p.usr_category {
 }
 #change_gov_menu_list {
   margin: 0;
+  overflow-y: auto;
 }
 #change_gov_menu_list .change_gov_menu_item {
   position: relative;
 }
 #change_gov_menu_list .change_gov_menu_item .ui-input-text {
-  margin-right: 5em;
+  margin-right: 16em;
 }
 #change_gov_menu_list .change_gov_menu_item .change_gov_menu__icon,
 #change_gov_menu_list .change_gov_menu_item .change_gov_menu__delete_item {
@@ -1434,10 +1519,83 @@ p.usr_category {
 .change_gov_menu__input_wrapper {
   margin: 0.1em;
 }
+#change_gov_menu_list .ui-select.ui-btn-inline.ui-mini {
+  position: absolute;
+  top: -4px;
+  right: 80px;
+}
+.change_gov_menu__select_type .ui-btn {
+    width: 166px;
+}
 .ui-popup-container .listview_wrapper {
   overflow-y: auto;
 }
 #age .age_range {
   height: 100%;
 }
+/*p.project {
+  margin-top: 0.5em;
+}
+p.funds_item_view {
+  text-align: right;
+}
+strong.curr {
+  display: inline-block;
+  width: 2.5em;
+}*/
+.funds_table {
+  width: 100%;
+  margin: 0.5em 0;
+}
+.funds_table tr {
+  height: 2em;
+}
+.funds_table td:first-child {
+  text-align: right;
+  width: 50%;
+}
+.funds_table td:nth-child(2) {
+  text-align: left;
+  width: 2.5em;
+}
+.funds_table td:nth-child(3) {
+  text-align: right;
+}
+.funds_table .withdraw:after {
+  left: -0.2em;
+}
+
+#pay_by_card .main__right_popup__component {
+  width: 90%;
+  max-width: 600px;
+  margin: 1em auto;
+}
+#pay_by_card .main__right_popup__component form {
+  text-align: center;
+}
+.click_transparent {
+  pointer-events: none;
+}
+.click_transparent .ui-btn {
+  pointer-events: auto;
+}
+
+.ui-btn.red:after {
+  background-color: #f33;
+}
+.ui-btn.green:after {
+  background-color: #3f3;
+}
+img.ui-btn-icon-notext.ui-btn-inline {
+  max-height: 100%;
+  width: auto;
+}
+
+
+
+
+
+
+
+
 

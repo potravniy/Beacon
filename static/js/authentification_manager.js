@@ -243,8 +243,8 @@ function checkLoggedIn(){
 }
 
 function showUserInfo(){
-  if(+window.state.user.gov > 0){
-    getListMenuLMR()
+  if( getListMenuOrg.isAvailable() ){
+    getListMenuOrg()
   }
   getSpheresForVoting()
   var name = ''

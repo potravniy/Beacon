@@ -14,6 +14,7 @@ window.state = {
 	b_sources: '',
 	b_layer_type: '',
 	b_layer_owner_id: '',
+	b_link: '0',
 	user_auth: '0,1,7,8,9,10',
 	start: '',
 	finish: '',
@@ -44,6 +45,7 @@ window.state = {
 		+ (this.start ? '&start=' + this.start : '')
 		+ (this.finish ? '&finish=' + this.finish : '')
 		+ (this.filter ? '&filter=' + this.filter : '')
+		+ (this.b_link !== '0' ? '&b_link=' + this.b_link : '')
 		return result
 	},
 	viewState: 'mm',	//	mm: mapMultiView, cardsMultiView;	  ms: mapMultiView, cardsSingleView;   ss: mapSingleView, cardsSingleView
@@ -84,7 +86,7 @@ window.onload = function() {
 				window.state.map.off()
 			}
   	}
-});
+	});
 } 	//	window.onload
 
 function mapInit(){
@@ -256,8 +258,7 @@ function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_t
 	}
 	markers[index].iconImg.src = iconURL
 	markers[index].addListener('click', function(){
-		showBeaconFullView(this.beaconID)
-		// beaconsList.getBeaconById(this.beaconID)
+		showBeaconFullView({ id: this.beaconID })
 		setSingleBeaconMode()
 	})
 	if(draggable){
@@ -270,7 +271,7 @@ function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_t
 	}
 }
 function createSingleMarker(r, draggable) {
-  google.maps.event.removeListener(requestMarkersListener)
+  window.state.map.off()
   hideMarkers()
 	createMarker(r, markers.length, draggable)
 }

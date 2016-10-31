@@ -57,6 +57,8 @@ function userRatingRead(event){
 }
 
 //  this section processes TWO last tabs in right panel navbar --- START
+
+var $filter_all = $('#all')
 var $filter_votings = $('#votings')
 var $filter_programms = $('#programms')
 var $filter_project_proposals = $('#project_proposals')
@@ -118,6 +120,21 @@ function actionsRead(event){
     window.state.sendGET(window.state.urlMarkers)
   }
 }
+function setAllActions(e){
+  var isChecked = $filter_all.prop("checked")
+  $filter_votings.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_programms.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_project_proposals.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_projects.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_requests.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_positive.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_negative.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_budget.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_info.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_sos.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_organizations.prop('checked', isChecked).flipswitch( "refresh" )
+}
+
 //  this section processes TWO last tabs in right panel navbar --- END
 
 var $filter_date_picker = $('#time_range .date_picker'),
@@ -176,12 +193,17 @@ function datePickerChanged(){
   }
 }
 function normalizeInput(date) {
-  var temp = []
+  if(date.length < 10) return ""
+  var temp = [],
+      res
   if(date.indexOf('.') !== -1) temp = date.split('.')
-  else temp = date.split('-')
-  if(temp[temp.length - 1].length > 2) date = temp.reverse().join('-')
-  else date = temp.join('-')
-  return date
+  else if(date.indexOf('-') !== -1) temp = date.split('-')
+  else if(date.indexOf('/') !== -1) temp = date.split('/')
+  else alert( 'Будь-ласка, у полі "Дата" між днями, місяцем та роком '
+    + 'використовуте такі розділювачі, як: "." або "-" або "/".' )
+  if(temp[temp.length - 1].length > 2) res = temp.reverse().join('-')
+  else res = temp.join('-')
+  return res
 }
 function formatTime(date){
   var day = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2)
@@ -217,7 +239,11 @@ $(window).load(function(){
       document.activeElement.blur()
     }
   })
-  $('#actions').click(_.debounce(actionsRead, 1000))
+  $('#actions input').change(_.debounce(actionsRead, 1000))
+  $filter_all.change(setAllActions)
+  getListOrgs()
+  $filter_4__anchor = $('.categories')
+  $filter_4__anchor.on('click', window.showFourthFilter )
 })
 
 function mapSeachEventHandler(){
@@ -246,10 +272,30 @@ function mapSeachEventHandler(){
   }
 }
 
+function getListOrgs() {
+  return $.ajax({
+    url: "https://gurtom.mobi/filter_layers.php",
+    dataType: "json",
+    crossDomain: true,
+    success: function ( response ) {
+      if(response.length === 0){
+        console.log('listOrgs is empty')
+      } else if(response.length>1){
+        window.state.listOrgs = response
+      } else {
+        console.log( 'listOrgs is not received, error:'+ response[0].error )
+      }
+    },
+    error: function(){
+      console.log('listOrgs request error')
+    }
+  })
+}
+
 function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft) {
   $('#beacon_status').off()
   $('#user_rating').off()
-  $('#actions').off()
+  $('#actions input').off()
   $filter_date_picker.off()
   window.$filter_mapSearch.off('change keydown keyup paste')
 
@@ -293,7 +339,8 @@ function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft) {
 
   $('#beacon_status').click(_.debounce(beaconStatusRead, 1000))
   $('#user_rating').click(_.debounce(userRatingRead, 1000))
-  $('#actions').click(_.debounce(actionsRead, 1000))
+  $('#actions input').change(_.debounce(actionsRead, 1000))
+  $filter_all.change(setAllActions)
   $filter_date_picker.change(datePickerChanged)
   window.$filter_mapSearch.on('change keydown keyup paste', _.debounce(mapSeachEventHandler, 1000))
 

@@ -47,7 +47,7 @@ Manager.App.Router = Marionette.AppRouter.extend({
     "registration": 'registration',
     "pass_restore": 'passRestore',
     "pass_reset": 'passReset',
-    "create": 'create',
+    "create": 'create'
   },
   controller: window.API,
   onRoute: function(name, path, args){

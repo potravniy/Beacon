@@ -83,54 +83,10 @@ function setHeights(e){
 }
 
 $(document).ready(function(){
-  $('#create_btn').on('click', showCreatePopup)
-  function showCreatePopup() {
-    if(!window.state.user.id){
-      window.logIn()
-    } else {
-      showBeaconCreateMenu()
-    }
-  }
+  $('#create_btn').on('click', function() {
+    checkLoggedInThen(showBeaconCreateMenu)
+  })
 })
-// $(document).ready(function(){
-//   var $createBeaconPopup = $("#create_beacon")
-//   var $createBeaconGeoPopup = $('#create_beacon__geo')
-//   var $createBeaconNoGeoPopup = $('#create_beacon__no_geo')
-//   var $geoProectPropos = $('#create_beacon__geo .proect_prop')
-//   var $noGeoProectPropos = $('#create_beacon__no_geo .proect_prop')
-//   var $proectPropPopup = $('#proect_propos_popup')
-//   $('#create_btn').on('click', showInitPopup)
-//   $('#btn__create_beacon__geo').on('click', {el: $createBeaconGeoPopup}, togglePopup)
-//   $('#btn__create_beacon__no_geo').on('click', {el: $createBeaconNoGeoPopup}, togglePopup)
-//   $geoProectPropos.on('click', {el: $createBeaconGeoPopup}, openProectPopup)
-//   $noGeoProectPropos.on('click', {el: $createBeaconNoGeoPopup}, openProectPopup)
-
-//   function showInitPopup() {
-//     if(!window.state.user.id){
-//       window.logIn()
-//     } else {
-//       var options = {
-//         transition: 'turn',
-//         positionTo: '#create_btn'
-//       }
-//       $createBeaconPopup.popup("open", options)
-//     }
-//   }
-
-//   function openProectPopup(event) {
-//     event.data.el.one("popupafterclose", function() {
-//       $proectPropPopup.popup("open")
-//     })
-//     event.data.el.popup("close")
-//   }
-
-//   function togglePopup(event) {
-//     $createBeaconPopup.one("popupafterclose", function() {
-//       showBeaconCreateMenu()
-//     })
-//     $createBeaconPopup.popup("close")
-//   }
-// })
 
 $( document ).on( "pagecreate", function() {
   $( ".photopopup" ).on({
@@ -144,7 +100,7 @@ $( document ).on( "pagecreate", function() {
 
 $( "#right-panel" ).panel({
   open: function() {
-    $("#right-panel .navbar .ui-tabs-active a").addClass('ui-btn-active')
+    $("#right-panel .navbar .ui-tabs-active a").click()
   }
 });
 
