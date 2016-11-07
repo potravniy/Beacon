@@ -1233,6 +1233,10 @@ hr {
   margin-left: 0;
   margin-right: 0;
 }
+#login_dialog .org.ui-btn {
+  width: 270px;
+  margin: 0 auto;
+}
 #login_dialog .submit,
 #restore_pass_dialog .submit,
 #reset_pass_dialog .submit,
@@ -1310,8 +1314,8 @@ hr {
   font-size: 0.8em;
   border: 5px dashed;
 }
-.g-recaptcha > div > div {
-    margin: 0 auto;
+.g-recaptcha > div  {
+  margin: 0 auto;
 }
 .ui-header .ui-title {
   margin: 0 2em 0 0;

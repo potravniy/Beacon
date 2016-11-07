@@ -3,7 +3,7 @@
 var Manager = new Marionette.Application();
 Manager.App = {}
 var API = {
-    home: function(z, lt, ln, qw, al, bs, bt, st, ft, vs, ia){
+    home: function(z, lt, ln, qw, al, bs, bt, st, ft, ocp, oc, op, lcp, lc, lp, vs, ia){
       if(z && lt && ln){
         window.state.zoom = +z
         window.state.center.lat = +lt
@@ -14,7 +14,7 @@ var API = {
         window.state.b_types = (bt==='.' ? '' : bt)
         window.state.start = (st==='.' ? '' : encodeURIComponent(st))
         window.state.finish = (ft==='.' ? '' : encodeURIComponent(ft))
-        window.filterViewUpdateFromDataURL(al, bs, bt, qw, st, ft)
+        window.filterViewUpdateFromDataURL(al, bs, bt, qw, st, ft, ocp, oc, op, lcp, lc, lp)
         window.state.viewState = vs
         var viewStateIdArray = (ia==='.' ? [] : _.map(ia.split(','), function(item){ return parseInt(item, 10) }))
         window.state.viewStateIdArray = viewStateIdArray
@@ -42,7 +42,7 @@ Manager.App.Router = Marionette.AppRouter.extend({
   appRoutes: {
     "": 'home',
     'home/:zoom': 'home',
-    "main/:zoom/:lat/:lng/:mapSearch/:authLevel/:bStatus/:bTypes/:startTime/:finishTime/:viewState/:viewStateIdArray": 'home',
+    "main/:zoom/:lat/:lng/:mapSearch/:authLevel/:bStatus/:bTypes/:startTime/:finishTime/:ocp/:oc/:op/:lcp/:lc/:lp/:viewState/:viewStateIdArray": 'home',
     "login": 'login',
     "registration": 'registration',
     "pass_restore": 'passRestore',
@@ -51,7 +51,7 @@ Manager.App.Router = Marionette.AppRouter.extend({
   },
   controller: window.API,
   onRoute: function(name, path, args){
-    console.log("onRouteHandler\n" + name +'\n'+ path +'\n'+ args);
+    // console.log("onRouteHandler\n" + name +'\n'+ path +'\n'+ args);
   }
 })
 
@@ -76,7 +76,6 @@ Manager.on("start", function(){
   Backbone.history.start();
   $('.history_back').click(function(){
     window.history.back()
-    console.log('history_back')
   })
 });
 Manager.on('state_update', function(){
@@ -108,6 +107,7 @@ Manager.on('pass_reset', function(){
 })
 
 function serializeState() {
+  var fourthFilter = trans4thFilterStateToRoute()
   var str = 'main/' + window.state.zoom
     + '/'+ window.state.center.lat
     + '/'+ window.state.center.lng
@@ -117,6 +117,12 @@ function serializeState() {
     + '/'+ (window.state.b_types==='' ? "." : window.state.b_types)
     + '/'+ (window.state.start==='' ? "." : window.state.start)
     + '/'+ (window.state.finish==='' ? "." : window.state.finish)
+    + '/'+ (fourthFilter.ocp==='' ? "." : fourthFilter.ocp)
+    + '/'+ (fourthFilter.oc==='' ? "." : fourthFilter.oc)
+    + '/'+ (fourthFilter.op==='' ? "." : fourthFilter.op)
+    + '/'+ (fourthFilter.lcp==='' ? "." : fourthFilter.lcp)
+    + '/'+ (fourthFilter.lc==='' ? "." : fourthFilter.lc)
+    + '/'+ (fourthFilter.lp==='' ? "." : fourthFilter.lp)
     + '/'+ window.state.viewState
     + '/'+ (window.state.viewStateIdArray.length===0 ? '.' : window.state.viewStateIdArray.join())
   return str

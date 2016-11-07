@@ -1,103 +1,103 @@
 "use strict"
 
-window.state.listOrgs = [
-	{
-		"layer_owner_id": 14361,
-		"layer_owner_code": "testGOV",
-		"layer_owner_name": "testGOV",
-		"pined": 0,
-		"chkd": 0,
-		"layers": [
-			{
-				"uniq_id": 30,
-				"layer_name": "Авжеж",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 38,
-				"layer_name": "Дідька лисого",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 29,
-				"layer_name": "Дзуськи",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 39,
-				"layer_name": "Дуля з маком",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 41,
-				"layer_name": "Зрада",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 5,
-				"layer_name": "Личаківський район",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 1,
-				"layer_name": "Місто Львів",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 27,
-				"layer_name": "Нівроку",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 33,
-				"layer_name": "Незабаром",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 4,
-				"layer_name": "Сихівський район",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 3,
-				"layer_name": "Франківський район",
-				"pined": 0,
-				"chkd": 0
-			},
-			{
-				"uniq_id": 2,
-				"layer_name": "Шевченківський район",
-				"pined": 0,
-				"chkd": 0
-			}
-		]
-	},
-	{
-		"layer_owner_id": 14321,
-		"layer_owner_code": "26274568",
-		"layer_owner_name": "Громадська організація «Молодіжна корпорація»",
-		"pined": 0,
-		"chkd": 0,
-		"layers": [
-			{
-				"uniq_id": 40,
-				"layer_name": "ОСББ Одеси",
-				"pined": 0,
-				"chkd": 0
-			}
-		]
-	}
-]
+// window.state.listOrgs = [
+// 	{
+// 		"layer_owner_id": 14361,
+// 		"layer_owner_code": "testGOV",
+// 		"layer_owner_name": "testGOV",
+// 		"pined": 0,
+// 		"chkd": 0,
+// 		"layers": [
+// 			{
+// 				"uniq_id": 30,
+// 				"layer_name": "Авжеж",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 38,
+// 				"layer_name": "Дідька лисого",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 29,
+// 				"layer_name": "Дзуськи",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 39,
+// 				"layer_name": "Дуля з маком",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 41,
+// 				"layer_name": "Зрада",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 5,
+// 				"layer_name": "Личаківський район",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 1,
+// 				"layer_name": "Місто Львів",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 27,
+// 				"layer_name": "Нівроку",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 33,
+// 				"layer_name": "Незабаром",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 4,
+// 				"layer_name": "Сихівський район",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 3,
+// 				"layer_name": "Франківський район",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			},
+// 			{
+// 				"uniq_id": 2,
+// 				"layer_name": "Шевченківський район",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			}
+// 		]
+// 	},
+// 	{
+// 		"layer_owner_id": 14321,
+// 		"layer_owner_code": "26274568",
+// 		"layer_owner_name": "Громадська організація «Молодіжна корпорація»",
+// 		"pined": 0,
+// 		"chkd": 0,
+// 		"layers": [
+// 			{
+// 				"uniq_id": 40,
+// 				"layer_name": "ОСББ Одеси",
+// 				"pined": 0,
+// 				"chkd": 0
+// 			}
+// 		]
+// 	}
+// ]
 
 var OrgLayerView = Backbone.Marionette.ItemView.extend({
   template: '#org_layer__tpl',
@@ -161,6 +161,7 @@ var OrgView = Backbone.Marionette.CompositeView.extend({
   },
   initialize: function(options){
     this.isPinnable = options.isPinnable
+    this.searchStr = options.searchStr
     this.collection = new Backbone.Collection( this.model.get('layers') )
     Marionette.bindEntityEvents(this, this.collection, this.collectionEvents);
   },
@@ -174,7 +175,12 @@ var OrgView = Backbone.Marionette.CompositeView.extend({
   childViewContainer: '.layers_container',
   filter: function(child, index, collection){
     var isChildPinedOrChecked = ( child.get('pined')===1 || child.get('chkd')===1 )
-    return this.isPinnable ? isChildPinedOrChecked : !isChildPinedOrChecked
+    var isChildVisible = this.isPinnable ? isChildPinedOrChecked : !isChildPinedOrChecked
+    if( isChildVisible && this.searchStr!=='' ) {
+      return child.get('layer_name').toLowerCase().indexOf(this.searchStr) !== -1
+    } else {
+      return isChildVisible
+    }
   },
   ui: {
     'chk': '.org__chk input',
@@ -274,24 +280,27 @@ var OrgView = Backbone.Marionette.CompositeView.extend({
   }
 })
 var SearchView = Backbone.Marionette.ItemView.extend({
-  template: _.template('<input type="search" value="">'),
+  template: _.template('<input type="text" data-type="search" value="">'),
   tagName: 'label',
   className: 'search',
   ui: {
     'input': 'input'
   },
   events: {
-    'blur @ui.input': 'search',
-    'keyup @ui.input': 'keyup'
+    'keyup @ui.input': 'keyup',
+    'click .ui-input-clear': 'search'
   },
   keyup: function(e){
     if( (e.keyCode || e.which) == 13 ) {
       this.ui.input.blur()
+    } else {
+      this.search()
     }
   },
-  search: function(){
+  search: _.debounce(function(){
     console.log('Search requested with "' + this.ui.input.val() +'"')
-  }
+    this.searchblView.setSearchStr( this.ui.input.val().toLowerCase() )
+  }, 700)
 })
 function makeListOrgs(){
   if( window.state.user.filters ){
@@ -418,28 +427,30 @@ var ListOrgCollection = Backbone.Collection.extend({
       }
       return memo
     },[])
-    if(!window.state.user.id) {
+    window.state.sendGET(window.state.urlMarkers)
+    if( window.state.user.id ) {
+      var promise = $.ajax({
+        type: "POST",
+        url: "https://gurtom.mobi/filter_layers_change_user.php",
+        dataType: "json",
+        crossDomain: true,
+        data: { "filter": result.length===0 ? [{'filter':'empty'}] : result }
+      })
+      promise.done(function(response){
+        if(response.error===0){
+          console.log("UserPrefer4thFilter updated successfully")
+        } else if(response.error!==0){
+          console.log("UserPrefer4thFilter update failed, error:"+ response.error)
+        }
+      });
+      promise.fail(function(response){
+        console.log("UserPrefer4thFilter update failed.")
+      });
+    } else if ( !state.user.filters ) {
       state.user.filters = []
       state.user.filters[0] = {}
     }
     state.user.filters[0].filter4 = result
-    var promise = $.ajax({
-      type: "POST",
-      url: "https://gurtom.mobi/filter_layers_change_user.php",
-      dataType: "json",
-      crossDomain: true,
-      data: {"filter": result}
-    })
-    promise.done(function(response){
-      if(response.error===0){
-        console.log("ListOrgsFiler updated successfully")
-      } else if(response.error!==0){
-        console.log("ListOrgsFiler update failed, error:"+ response.error)
-      }
-    });
-    promise.fail(function(response){
-      console.log("ListOrgsFiler update failed.")
-    });
   }
 })
 var OrgsCollectionView = Backbone.Marionette.CollectionView.extend({
@@ -449,6 +460,7 @@ var OrgsCollectionView = Backbone.Marionette.CollectionView.extend({
   childView: OrgView,
   initialize: function(options){
     this.collection = listOrgCollection
+    $.extend(options, { searchStr: this.searchStr })
     this.childViewOptions = options
   },
   filter: function (child, index, collection) {
@@ -457,8 +469,26 @@ var OrgsCollectionView = Backbone.Marionette.CollectionView.extend({
       var isGrandChildPinedOrChecked = ( item.pined===1 || item.chkd===1 )
       return that.childViewOptions.isPinnable ? isGrandChildPinedOrChecked : !isGrandChildPinedOrChecked
     })
-    return childCollection.length===0 ? false : true
+    var isChildVisible = childCollection.length===0 ? false : true
+    if(isChildVisible && this.searchStr!==''){
+      var isSearchStrInChildModel =
+       child.get('layer_owner_name').toLowerCase().indexOf(this.searchStr) !== -1
+       || child.get('layer_owner_code').toLowerCase().indexOf(this.searchStr) !== -1
+      childCollection = _.filter(childCollection, function(item){
+        return item.layer_name.toLowerCase().indexOf(that.searchStr) !== -1
+      }) 
+      var isSearchStrInChildCollection = childCollection.length===0 ? false : true
+      return isSearchStrInChildModel || isSearchStrInChildCollection
+    } else {
+      return isChildVisible
+    }
   },
+  setSearchStr: function(option){
+    this.searchStr = option
+    $.extend(this.childViewOptions, { searchStr: option })
+    this.render().$el.collapsibleset().trigger('create')
+  },
+  searchStr: '',
   childEvents: {
     'render:expand': 'onChildRenderExpand',
     'render:me': 'renderOnChildViewRequest'
@@ -492,7 +522,8 @@ var FourthFilterView = Backbone.Marionette.LayoutView.extend({
   onShow: function(){
     this.$el.trigger('create')
     this.selected.currentView.twin = this.unselected.currentView
-    this.unselected.currentView.twin = this.selected.currentView 
+    this.unselected.currentView.twin = this.selected.currentView
+    this.search.currentView.searchblView = this.unselected.currentView
   },
   onBeforeShow: function(){
     this.showChildView('selected', new OrgsCollectionView({isPinnable: true}))
@@ -508,6 +539,71 @@ var FourthFilterView = Backbone.Marionette.LayoutView.extend({
   },
   onCollectionChange: function(){
     this.collection.exportListOrgSetts()
+    window.Manager.trigger('state_update')
   }
 })
+
+function trans4thFilterStateToRoute(){
+  if ( !window.state.user.filters ) return {
+    ocp: '',
+    oc: '',
+    op: '',
+    lcp: '',
+    lc: '',
+    lp: ''
+  } 
+  var owner_chk_pined = [],
+      owner_chk = [],
+      owner_pined = [],
+      layer_chk_pined = [],
+      layer_chk = [],
+      layer_pined = []
+  _.each(window.state.user.filters[0].filter4, function(item){
+    switch ( '' + item.chkd + item.pined ) {
+      case '11':
+        if ( item.hasOwnProperty('uniq_id') ) layer_chk_pined.push(item.uniq_id)
+        else owner_chk_pined.push(item.layer_owner_id)
+        break;
+      case '10':
+        if ( item.hasOwnProperty('uniq_id') ) layer_chk.push(item.uniq_id)
+        else owner_chk.push(item.layer_owner_id)
+        break;
+      case '01':
+        if ( item.hasOwnProperty('uniq_id') ) layer_pined.push(item.uniq_id)
+        else owner_pined.push(item.layer_owner_id)
+        break;
+    }
+  })
+  var res = {
+    ocp: owner_chk_pined.join(),
+    oc: owner_chk.join(),
+    op: owner_pined.join(),
+    lcp: layer_chk_pined.join(),
+    lc: layer_chk.join(),
+    lp: layer_pined.join()
+  }
+  return res
+}
+function trans4thFilterRouteToState(arr){
+  var res = []
+  _.each(arr, function(item, index){
+    if ( item!=='.' ){
+      var ar = item.split(',')
+      _.each(ar, function(it){
+        var ob = {}
+        ob.chkd = ( index===2 || index===5 ) ? 0 : 1
+        ob.pined = ( index===1 || index===4 ) ? 0 : 1
+        if ( index < 3 ) ob.layer_owner_id = +it
+        else ob.uniq_id = +it
+        res.push( ob )
+        ob = {}
+      })
+    }
+  })
+  if ( !window.state.user.filters ) {
+    window.state.user.filters = []
+    window.state.user.filters[0] = {}
+  }
+  window.state.user.filters[0].filter4 = res
+}
 

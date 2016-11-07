@@ -6,7 +6,6 @@ window.rightRegion = new Backbone.Marionette.Region({el: "#beacons-map__the-beac
 window.createBeaconMenuRegion = new Backbone.Marionette.Region({el: "#create_beacon__geo_region"})
 window.rightPopupRegion = new Backbone.Marionette.Region({el: "#right_popup__region"})
 window.fourthFilterRegion = new Backbone.Marionette.Region({el: "#categories"})
-// window.changeGovMenuRegion = new Backbone.Marionette.Region({el: "#create_beacon__geo"})
 window.showBeaconsListView()
 
 function showBeaconsListView() {
@@ -20,14 +19,6 @@ function showBeaconsListView() {
 function beaconsListGetNewCollection(){
   window.beaconsList.getNewCollection()
 }
-
-// function showBeaconCreateView(options) {
-//   var beaconModel = new BeaconCreateModel(options)
-//   window.beaconCreateView = new BeaconCreateView({
-//     model: beaconModel
-//   })
-//   window.rightRegion.show(beaconCreateView);
-// }
 
 function showObjectCreateView(model) {
   var titler = ''
@@ -149,6 +140,7 @@ function showPayByCardView(options) {
 
 function showFourthFilter() {
   window.listOrgCollection = new ListOrgCollection( makeListOrgs() )
+  // console.log('listOrgCollection:', listOrgCollection.toJSON(), 'filter4', window.state.user.filters[0].filter4, 'listOrg', window.state.listOrgs)
   window.fourthFilterView = new FourthFilterView()
   window.fourthFilterRegion.show(window.fourthFilterView)
   console.log('Switch to fourthFilterView')

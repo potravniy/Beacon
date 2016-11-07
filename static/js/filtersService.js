@@ -241,9 +241,6 @@ $(window).load(function(){
   })
   $('#actions input').change(_.debounce(actionsRead, 1000))
   $filter_all.change(setAllActions)
-  getListOrgs()
-  $filter_4__anchor = $('.categories')
-  $filter_4__anchor.on('click', window.showFourthFilter )
 })
 
 function mapSeachEventHandler(){
@@ -273,26 +270,33 @@ function mapSeachEventHandler(){
 }
 
 function getListOrgs() {
-  return $.ajax({
-    url: "https://gurtom.mobi/filter_layers.php",
-    dataType: "json",
-    crossDomain: true,
-    success: function ( response ) {
-      if(response.length === 0){
-        console.log('listOrgs is empty')
-      } else if(response.length>1){
-        window.state.listOrgs = response
-      } else {
-        console.log( 'listOrgs is not received, error:'+ response[0].error )
+  if ( window.state.listOrgs ){
+    window.showFourthFilter()
+    window.Manager.trigger('state_update')
+  } else {
+    $.ajax({
+      url: "https://gurtom.mobi/filter_layers.php",
+      dataType: "json",
+      crossDomain: true,
+      success: function ( response ) {
+        if(response.length === 0){
+          console.log('listOrgs is empty')
+        } else if(response.length>1){
+          window.state.listOrgs = response
+          window.showFourthFilter()
+          window.Manager.trigger('state_update')
+        } else {
+          console.log( 'listOrgs is not received, error:'+ response[0].error )
+        }
+      },
+      error: function(){
+        console.log('listOrgs request error')
       }
-    },
-    error: function(){
-      console.log('listOrgs request error')
-    }
-  })
+    })
+  }
 }
 
-function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft) {
+function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft, ocp, oc, op, lcp, lc, lp) {
   $('#beacon_status').off()
   $('#user_rating').off()
   $('#actions input').off()
@@ -336,6 +340,11 @@ function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft) {
       $customRangeRadioBtn.click()
     })
   }
+  if ( window.fourthFilterView && !window.fourthFilterView.isDestroyed ) {
+    window.fourthFilterView.destroy()
+  }
+  window.trans4thFilterRouteToState( [ocp, oc, op, lcp, lc, lp] )
+  if ( window.state.listOrgs ) window.showFourthFilter()
 
   $('#beacon_status').click(_.debounce(beaconStatusRead, 1000))
   $('#user_rating').click(_.debounce(userRatingRead, 1000))

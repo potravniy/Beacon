@@ -246,6 +246,13 @@ function showUserInfo(){
   if( getListMenuOrg.isAvailable() ){
     getListMenuOrg()
   }
+  console.log('showUserInfo')
+  if ( !state.user.id ) {
+      state.user.filters = []
+      state.user.filters[0] = {}
+      state.user.filters[0].filter4 = []
+    }
+  window.getListOrgs()
   getSpheresForVoting()
   var name = ''
   if(window.state.user.user_first && window.state.user.user_last){

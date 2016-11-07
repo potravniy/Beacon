@@ -19,6 +19,24 @@ window.state = {
 	start: '',
 	finish: '',
 	filter: '',
+	get4thFilter: function(){
+		if ( !window.listOrgCollection ) return ''
+		var uniq_id = []
+		var layer_owner_id = _.reduce(window.listOrgCollection.toJSON(), function( memo, item ){
+			if ( item.chkd ) {
+				memo.push( item.layer_owner_id )
+			} else {
+				uniq_id = uniq_id.concat(_.reduce(item.layers, function( mem, it ){
+					if ( it.chkd ) mem.push( it.uniq_id )
+					return mem
+				}, []))
+			}
+			return memo 
+		}, [])
+		var res = (uniq_id.length===0 ? '' : '&uniq_id=' + uniq_id.join())
+		  + (layer_owner_id.length===0 ? '' : '&layer_owner_id=' + layer_owner_id.join())
+		return res
+	},
 	oReq: new XMLHttpRequest(),
 	sendGET: function(url){
 		this.oReq.open("GET", url + this.urlRequest(), true)
@@ -27,6 +45,7 @@ window.state = {
 		if(window.beaconsListView && !window.beaconsListView.isDestroyed) {
 			beaconsList.getNewCollection()
 		}
+		console.log('request is send')
 	},
 	urlMarkers: 'https://gurtom.mobi/map_cluster.php?',
 	urlRequest: function(){
@@ -46,6 +65,7 @@ window.state = {
 		+ (this.finish ? '&finish=' + this.finish : '')
 		+ (this.filter ? '&filter=' + this.filter : '')
 		+ (this.b_link !== '0' ? '&b_link=' + this.b_link : '')
+		+ this.get4thFilter()
 		return result
 	},
 	viewState: 'mm',	//	mm: mapMultiView, cardsMultiView;	  ms: mapMultiView, cardsSingleView;   ss: mapSingleView, cardsSingleView
@@ -169,7 +189,6 @@ function requestMarkers() {
 		window.state.signsAfterDot = Math.round(-Math.log(delta)/Math.LN10)
 		window.state.mapHeight = $mapDiv.css('height'),
 		window.state.mapWidth  = $mapDiv.css('width'),
-		console.log('request is send')
 		window.state.sendGET(window.state.urlMarkers)
 	}
 	
