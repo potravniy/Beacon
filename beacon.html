@@ -692,7 +692,7 @@
       <div data-role="beacon" class="beacon ui-corner-all">
         <div data-role="header" class="header">
           <% if(full){ %>
-            <div class="ui-btn-left ui-icon-<% if(full){ %>close<% } else { %><%-source%><% } %> ui-btn-icon-notext ui-btn-inline">Origin Icon</div>
+            <div class="ui-btn-left ui-icon-<% if(full){ %>close<% } else { %><%-source%><% } %> ui-btn-icon-notext ui-btn-inline">Left Icon</div>
           <% } else { %>
             <img src="<%- icon_url %>" alt="icon" class="ui-btn-left ui-btn-icon-notext ui-btn-inline">
           <% } %>
@@ -736,6 +736,10 @@
       </div>
     </script>
     
+    <script id="sos_extention_view_tpl" type="text/template">
+      <p class="phone_view">   <span >Тел. </span>   <%- phone %>   </p>
+    </script>
+
     <script id="chat_item_view_tpl" type="text/template">
       <p><img src="<%-avatar%>" alt="avatar"><span class="nickname"><%- user_id %>: </span><%- text %></p>
       <p class="date"><%- ts %><button class="abuse-spam ui-shadow ui-btn ui-corner-all ui-btn-inline ui-btn-right ui-icon-error_outline ui-btn-icon-notext ui-btn-a">Поскажитись</button></p>

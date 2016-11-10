@@ -163,7 +163,7 @@ var VotingModel = Backbone.Model.extend({
     }
   }
 })
-var ResulItemtModel = Backbone.Model.extend({
+var VotingResultItemtModel = Backbone.Model.extend({
   defaults: {
     title: '',
     minus: '0',
@@ -172,7 +172,7 @@ var ResulItemtModel = Backbone.Model.extend({
   }
 })
 var ResultCollectionModel = Backbone.Collection.extend({
-  model: ResulItemtModel
+  model: VotingResultItemtModel
 })
 var ResultView = Backbone.Marionette.ItemView.extend({
   template: '#voting_results__bar__tpl',
@@ -202,7 +202,7 @@ var ResultView = Backbone.Marionette.ItemView.extend({
       abstView: this.model.get('abstView')
     }
   },
-  model: ResulItemtModel,
+  model: VotingResultItemtModel,
   ui: {
     'no': '.votes_no',
     'yes': '.votes_yes',
@@ -574,6 +574,17 @@ var ProjProposModel = Backbone.Model.extend({
     amount: ''
   }
 })
+var SOS_View = Backbone.Marionette.ItemView.extend({
+  template: '#sos_extention_view_tpl',
+  templateHelpers: function(){
+    var mayUserSeePhone =  
+      (  window.state.user.bankid  === '1' || window.state.user.gov === '1' 
+      || window.state.user.payment === '1' || window.state.user.nco === '1' )
+    return {
+      phone: mayUserSeePhone ? this.model.get('phone') : 'Перегляд недоступний.'  
+    }
+  }
+})
 var BeaconFullModel = BeaconModel.extend({
   parse: function(response){
     return response[0]
@@ -683,10 +694,12 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     } else if(this.model.get('b_type') == 2 || this.model.get('type') == 2){
       Model = ProgramModel
       View = ProgramView
+    } else if(this.model.get('b_type') == 911 || this.model.get('type') == 911){
+      Model = Backbone.Model
+      View = SOS_View
     }
     if ( Model && View ) {
       var extModel = this.model.get('full')[0]
-      // extModel.beaconID = this.model.get('id')
       View = View.extend({model: new Model(extModel)}) 
       this.showChildView('extention', new View())
     }
@@ -709,9 +722,7 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     showDonateView(param)
   },
   exit: function(){
-    closeBeaconNew()
-    // showBeaconsListView()
-    // beaconsList.getNewCollection()
+    window.closeSingleBeaconMode()
   },
   onClickStatusBtn: function(){
     showPopupStatusBeacon({ targetId: this.model.get('id') })

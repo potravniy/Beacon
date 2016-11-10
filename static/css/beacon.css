@@ -246,6 +246,9 @@ img[src=""] {
 #right-panel .ui-panel-inner {
     padding: 0.5em;
 }
+.beacon .header img.ui-btn-left:after {
+  content: none;
+}
 .beacon .navbar {
   background-color: #f9f9f9;
 }

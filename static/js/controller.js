@@ -118,11 +118,10 @@ function getGeoOptions(type){
   return options  
 }
 
-function closeBeaconNew() {
+function closeSingleBeaconMode() {
   requestMarkersListener = window.state.map.addListener('idle', requestMarkers)
-  showBeaconsListView()
-  requestMarkers()
-  setSingleBeaconMode()
+  window.showBeaconsListView()
+  window.setMultiBeaconMode()
 }
 
 function showDonateView(param) {

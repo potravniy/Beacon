@@ -142,41 +142,8 @@ function tryGeoLocation() {
 }
 
 function requestMarkers() {
-	console.log('on map idle')
-	// var tag = document.activeElement.tagName.toLowerCase()
-	// if(window.state.onResize && (tag === "input" ||  tag === "textarea")){
-	// 	window.state.onResize = false
-		// window.MapOptions = {
-		// 	zoom: window.state.zoom,
-		// 	center: new google.maps.LatLng(window.state.center.lat, window.state.center.lng)
-		// }
-		// window.state.map.setZoom(window.state.zoom)
-		// window.state.map.panTo(window.state.center)
-		// console.log('no request')
-	var $mapDiv = $('#the-map'),
-		  bounds = window.state.map.getBounds(),
-			mapHeight = $mapDiv.css('height'),
-			mapWidth  = $mapDiv.css('width'),
-			latmin = +(bounds.getSouthWest().lat().toFixed(8)),
-			latmax = +(bounds.getNorthEast().lat().toFixed(8)),
-			lngmin = +(bounds.getSouthWest().lng().toFixed(8)),
-			lngmax = +(bounds.getNorthEast().lng().toFixed(8)),
-			center = {
-				lat: +(window.state.map.center.lat().toFixed(8)),
-				lng: +(window.state.map.center.lng().toFixed(8))
-			},
-			zoom = window.state.map.getZoom()
-	if(window.state.mapHeight != mapHeight) console.log("mapHeight before: " + window.state.mapHeight + ", after: " + mapHeight)
-	if(window.state.mapWidth != mapWidth) console.log("mapWidth before: " + window.state.mapWidth + ", after: " + mapWidth)
-	if(window.state.latmin != latmin) console.log("latmin before: " + window.state.latmin + ", after: " + latmin)
-	if(window.state.latmax != latmax) console.log("latmax before: " + window.state.latmax + ", after: " + latmax)
-	if(window.state.lngmin != lngmin) console.log("lngmin before: " + window.state.lngmin + ", after: " + lngmin)
-	if(window.state.lngmax != lngmax) console.log("lngmax before: " + window.state.lngmax + ", after: " + lngmax)
-	if(window.state.center.lat != center.lat) console.log("center.lat before: " + window.state.center.lat + ", after: " + center.lat)
-	if(window.state.center.lng != center.lng) console.log("center.lng before: " + window.state.center.lng + ", after: " + center.lng)
-	if(window.state.zoom != zoom) console.log("zoom before: " + window.state.zoom + ", after: " + zoom)
-	
 	if(!window.state.singleBeacon) {
+		window.state.$map = window.state.$map || $('#the-map')
 		window.state.zoom = window.state.map.getZoom()
 		window.state.center.lat = +(window.state.map.center.lat().toFixed(8))
 		window.state.center.lng = +(window.state.map.center.lng().toFixed(8))
@@ -187,11 +154,10 @@ function requestMarkers() {
 		window.state.lngmax = +(bounds.getNorthEast().lng().toFixed(8))
 		var delta = (window.state.lngmax - window.state.lngmin)/(window.innerWidth/40)
 		window.state.signsAfterDot = Math.round(-Math.log(delta)/Math.LN10)
-		window.state.mapHeight = $mapDiv.css('height'),
-		window.state.mapWidth  = $mapDiv.css('width'),
+		window.state.mapHeight = window.state.$map.css('height'),
+		window.state.mapWidth  = window.state.$map.css('width'),
 		window.state.sendGET(window.state.urlMarkers)
 	}
-	
 }
 function renderMarkers() {
 	var contents = [],
@@ -291,6 +257,7 @@ function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_t
 }
 function createSingleMarker(r, draggable) {
   window.state.map.off()
+	window.state.singleBeacon = true
   hideMarkers()
 	createMarker(r, markers.length, draggable)
 }
@@ -305,7 +272,7 @@ function setMultiBeaconMode() {
 	google.maps.event.removeListener(window.mapListenerClick)
 	window.isMapListeningClick = false
 	window.state.singleBeacon = null
-	window.state.sendGET(window.state.urlMarkers)
+	window.requestMarkers()
 }	
 function setMapForAllMarkers(map) {
   for (var i = 0; i < markers.length; i++) {

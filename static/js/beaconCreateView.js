@@ -755,8 +755,6 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     } else this.sendForm()
   },
   verifyInputs: function(that){
-    // if(this.startDate.currentView) this.startDate.currentView.checkInput()
-    // if(this.endDate.currentView) this.endDate.currentView.checkInput()
     if(this.tag.currentView){
       var tags = ''
       if(tags = this.tag.currentView.getTags()) {
@@ -909,8 +907,6 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     })
   },
   exit: function(){
-    closeBeaconNew()
-    showBeaconsListView()
-    setMultiBeaconMode()
+    window.closeSingleBeaconMode()
   }
 })

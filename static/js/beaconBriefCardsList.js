@@ -158,9 +158,10 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
     'click @ui.img': 'onClickImg'
   },
   onBeforeShow: function(){
-    if(this.model.get('b_type') == '330' || this.model.get('type') == '330'
-      || this.model.get('b_type') == '1' || this.model.get('type') == '1'
-      || this.model.get('b_type') == '2' || this.model.get('type') == '2' ) {
+    if(this.model.get('b_type') == '330'   || this.model.get('type') == '330'
+      || this.model.get('b_type') == '911' || this.model.get('type') == '911'
+      || this.model.get('b_type') == '1'   || this.model.get('type') == '1'
+      || this.model.get('b_type') == '2'   || this.model.get('type') == '2' ) {
       this.ui.expandBtn.show()
     }
   },
