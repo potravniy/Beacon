@@ -1,5 +1,3 @@
-//  Settings of gov beacon create popup START
-
 ChangeGovMenuItemModel = Backbone.Model.extend({
   defaults: {
     "act": '0',   //  act: '0'=nothing, '1'=add, '2'=edit, '3'=del 
@@ -163,11 +161,13 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
   onShow: function(){
     this.onResize()
     this.$el.trigger('create')
+    var that = this
     setTimeout(function(){
-      var thisPopup = $('#create_beacon__geo_region')
-      thisPopup.popup({ overlayTheme: "b" });
-      thisPopup.popup('open')
-      thisPopup.popup('reposition', {'positionTo': "#beacons-map__the-map"})
+      var $thisPopup = $('#create_beacon__geo_region')
+      $thisPopup.popup({ overlayTheme: "b" });
+      $thisPopup.popup('open')
+      $thisPopup.popup('reposition', {'positionTo': "#beacons-map__the-map"})
+      if ( that.collection.length === 0 ) that.ui.btnAdd.click()
     }, 500)
   },
   ui: {
@@ -256,5 +256,3 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
   }
 })
 
-
-//  Settings of gov beacon create popup END

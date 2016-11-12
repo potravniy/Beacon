@@ -226,6 +226,9 @@ function checkLoggedIn(){
     success: function ( response ) {
       if(response[0] && response[0].id && response[0].id > 0){
         window.state.user = response[0]
+        if ( window.state.user.email.length > 20 ) {
+          window.state.user.email = window.state.user.email.replace('@', ' @')
+        }
       } else {
         window.state.user = {
           user_first: 'Гість',
@@ -243,15 +246,10 @@ function checkLoggedIn(){
 }
 
 function showUserInfo(){
-  if( getListMenuOrg.isAvailable() ){
-    getListMenuOrg()
+  if( window.getListMenuOrg.isAvailable() ){
+    window.getListMenuOrg()
   }
   console.log('showUserInfo')
-  if ( !state.user.id ) {
-      state.user.filters = []
-      state.user.filters[0] = {}
-      state.user.filters[0].filter4 = []
-    }
   window.getListOrgs()
   getSpheresForVoting()
   var name = ''
@@ -266,7 +264,7 @@ function showUserInfo(){
   }
   $('#header h1').text( name )
   $('#left-panel .username').text(window.state.user.login)
-  $('#left-panel .email').text(window.state.user.email)
+  $('#left-panel .email').text(window.state.user.email || '')
   $('#left-panel .avatar').css({'background-image': 'url(../..'+ window.state.user.avatar +')'})
   if(window.state.user.id){
     $('#left-panel.auth-panel .menu li.login').hide()

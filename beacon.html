@@ -169,54 +169,57 @@
             </ul>
           </div>
           <div id="user_rating" class="scrollable_content">
+            <h4 class="filter_title">Показати маячки від користувачів, авторизованих:</h4>
             <ul data-role="listview" class="listview">
               <li>
                 <input type="checkbox" data-role="flipswitch" name="e-mail" id="e-mail" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="e-mail">E-mail</label>
-              </li>
-              <li>
-                <input type="checkbox" data-role="flipswitch" name="co-owners" id="co-owners" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="co-owners">Co-owners</label>
-              </li>
-              <li>
-                <input type="checkbox" data-role="flipswitch" name="organisations" id="organisations" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="organisations">Organisations</label>
+                <label for="e-mail">за електронною поштою</label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="payments" id="payments" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="payments">Payments</label>
+                <label for="payments">за платежем</label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="bank-id" id="bank-id" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="bank-id">Bank ID</label>
+                <label for="bank-id">за Bank ID</label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="social_net" id="social_net" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="social_net">Social network</label>
+                <label for="social_net">за соціальною мережею</label>
+              </li>
+              <li>
+                <input type="checkbox" data-role="flipswitch" name="organisations" id="organisations" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
+                <label for="organisations">організацією</label>
+              </li>
+              <li>
+                <input type="checkbox" data-role="flipswitch" name="co-owners" id="co-owners" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
+                <label for="co-owners">як співвласники</label>
               </li>
             </ul>
           </div>
           <div id="beacon_status" class="scrollable_content">
+            <h4 class="filter_title">Показати маячки зі статусом:</h4>
             <ul data-role="listview" class="listview">
               <li>
                 <input type="checkbox" data-role="flipswitch" name="new_beacons" id="new_beacons" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="new_beacons">New beacons</label>
+                <label for="new_beacons">Нові</label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="confirmed_beacons" id="confirmed_beacons" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="confirmed_beacons">Confirmed beacons</label>
+                <label for="confirmed_beacons">Підтверджені</label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="processing_beacons" id="processing_beacons" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="processing_beacons">Processing beacons</label>
+                <label for="processing_beacons">В стані обробки</label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="closed_beacons" id="closed_beacons" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="closed_beacons">Closed beacons</label>
+                <label for="closed_beacons">Закриті</label>
               </li>
             </ul>
           </div>
           <div id="time_range" class="scrollable_content">
+            <h4 class="filter_title">Показати маячки:</h4>
             <fieldset data-role="controlgroup">
               <input type="radio" name="radio-time" id="any" value="any" checked="checked">
               <label for="any">За весь час</label>
@@ -249,48 +252,9 @@
 
 
 
-          <div id="categories" class="scrollable_content">
-<!--            
-            <fieldset data-role="controlgroup" class="selected">
-              <div class="checkbox-wrapper">
-                <input type="checkbox" name="sos_frozen" id="sos_frozen" checked>
-                <label for="sos_frozen">SOS: Frozen</label>
-                <a href="#" class="checkbox_pin ui-btn ui-btn-icon-notext ui-nodisc-icon ui-icon-brightness_1">Remove</a>
-              </div>
-              <div class="checkbox-wrapper">
-                <input type="checkbox" name="info_hospital" id="info_hospital" checked>
-                <label for="info_hospital">Info: Hospitals</label>
-                <a href="#" class="checkbox_pin ui-btn ui-btn-icon-notext ui-nodisc-icon ui-icon-brightness_1">Remove</a>
-              </div>
-              <div class="checkbox-wrapper">
-                <input type="checkbox" name="rgb_zakhyst-mista" id="rgb_zakhyst-mista" checked>
-                <label for="rgb_zakhyst-mista">РГБ: Захист міста</label>
-                <a href="#" class="checkbox_pin ui-btn ui-btn-icon-notext ui-nodisc-icon ui-icon-pin_on">Remove</a>
-              </div>
-            </fieldset>
-
-            <form>
-              <input data-type="search" id="filterControlgroup-input">
-            </form>
-            <div data-role="controlgroup" data-filter="true" data-input="#filterControlgroup-input">
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">МНС: Тренування</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">МНС: Пожежі</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">МНС: Мор риби</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">МНС: Пункти обігріву</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">МНС: Розлив ртуті</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">ЛМР: Соціальний захист</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">ЛМР: Медицина</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">ЛМР: Спорт</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">ЛМР: Велодоріжки</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">ЛМР: Реклама</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">РГБ: Допомога для АТО</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">РГБ: Допомога бійцям після АТО</a>
-              <a href="#" class="ui-btn ui-shadow ui-corner-all">РГБ: Громадський порядок</a>
-            </div>
--->
-
-          </div>
+          <div id="categories" class="scrollable_content"></div>
           <div id="actions" class="scrollable_content">
+            <h4 class="filter_title">Показати маячки за типом:</h4>
             <ul data-role="listview" class="listview">
               <li>
                 <input type="checkbox" data-role="flipswitch" name="all" id="all" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
@@ -334,12 +298,12 @@
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="requests" id="sos" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="sos">SOS</label>
+                <label for="sos">СОС</label>
               </li>
-              <li>
+              <!--<li>
                 <input type="checkbox" data-role="flipswitch" name="requests" id="organizations" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
                 <label for="organizations">Організації</label>
-              </li>
+              </li>-->
             </ul>
           </div>
         </div>
@@ -552,16 +516,6 @@
         <label for="beneficiar_name"><strong>Визначте вигодонабувача&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
         <input id="beneficiar_name" type="text" name="ben" pattern=".{100,}" <%-required%>>
     </script>
-<!--
-    <script id="programID__tpl" type="text/template">
-      <p><strong>Виберіть ID програми, якої стосується ця пропозиція&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></p>
-      <h6>Автодоповнення починається з першого символу.</h6>
-      <form class="ui-filterable">
-        <input id="programID__input" type="number" data-type="search" placeholder="Вводьте лише цифри." data-wrapper-class="input" title="Вводьте лише цифри." pattern="{12,}" <%-required%> value="<%- program_id %>">
-      </form>
-      <ul id="programID__ul" data-role="listview" data-inset="true" data-filter="true" data-input="programID__input"></ul>
-    </script>
--->
     <script id="nco__tpl" type="text/template">
       <div id="nco__wrapper">
         <p><strong>Запропонуйте неприбуткову організацію для адміністрування проекту&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></p>
@@ -873,10 +827,11 @@
       </div>
       <div data-role="main" class="listview_wrapper">
         <ul data-role="listview" class="listview"></ul>
+        <h4 class="info">Щоб створити новий шар <br> натисніть ліву кнопку</h3>
       </div>
     </script>
 
-    <script id="gov_single_menu_item__tpl" type="text/template">
+    <script id="create_beacon_menu_item__tpl" type="text/template">
       <a href="#" data-rel="dialog" class="ui-btn">
         <%- name %>
         <img class="a_la_icon" src="<%- img %>" alt="">
@@ -1006,6 +961,7 @@
     </script>
 
     <script id="fourth_filter__tpl" type="text/template">
+      <h4 class="filter_title">Показати маячки організацій:</h4>
       <div class="selected_layers"></div>
       <div class="search_wrapper"></div>
       <div class="unselected_layers"></div>

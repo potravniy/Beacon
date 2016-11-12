@@ -63,7 +63,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         break;
       case '330':
         alert('Status window is not ready for this beacon type')
-        return
+        return this.destroy()
       case '96':
         statusList = window.state.statusList.goodAndBad
         break;
@@ -72,7 +72,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         break;
       case '6':
         alert('Status window is not ready for this beacon type')
-        return
+        return this.destroy()
       case '5':
         statusList = window.state.statusList.projPropAndProjectAndRequest
         break;
@@ -87,7 +87,10 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         break;
       case '1':
         alert('Status window is not ready for this beacon type')
-        return
+        return this.destroy()
+      default:
+        alert('Beacon type is undefined')
+        return this.destroy()
     }
     var collection = _.reduce(statusList, function(res, item){
       var tmp = {}

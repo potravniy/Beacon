@@ -306,7 +306,7 @@ function makeListOrgs(){
   if( window.state.user.filters ){
     var res = _.map(window.state.listOrgs, function(item){
       var unit = {}
-      var ownrSetts = _.findWhere(state.user.filters[0].filter4, {layer_owner_id: +item.layer_owner_id})
+      var ownrSetts = _.findWhere(window.state.user.filters[0].filter4, {layer_owner_id: +item.layer_owner_id})
       if ( ownrSetts && ownrSetts.chkd===1 && ownrSetts.pined===1 ) {
         unit.layer_owner_id = +item.layer_owner_id
         unit.layer_owner_code = item.layer_owner_code
@@ -328,7 +328,7 @@ function makeListOrgs(){
         unit.chkd = ownrSetts.chkd
         unit.pined = ownrSetts.pined
         unit.layers = _.map(item.layers, function(layer){
-          var layerSetts = _.findWhere(state.user.filters[0].filter4, {uniq_id: +layer.uniq_id})
+          var layerSetts = _.findWhere(window.state.user.filters[0].filter4, {uniq_id: +layer.uniq_id})
           var res = {}
           if ( layerSetts ) {
             res.uniq_id = +layer.uniq_id
@@ -350,7 +350,7 @@ function makeListOrgs(){
         unit.chkd = 0
         unit.pined = 0
         unit.layers = _.map(item.layers, function(layer){
-          var layerSetts = _.findWhere(state.user.filters[0].filter4, {uniq_id: +layer.uniq_id})
+          var layerSetts = _.findWhere(window.state.user.filters[0].filter4, {uniq_id: +layer.uniq_id})
           var res = {}
           if ( layerSetts ) {
             res.uniq_id = +layer.uniq_id
@@ -374,13 +374,13 @@ function makeListOrgs(){
       unit.layer_owner_id = +item.layer_owner_id
       unit.layer_owner_code = item.layer_owner_code
       unit.layer_owner_name = item.layer_owner_name
-      unit.chkd = 0
+      unit.chkd = 1
       unit.pined = 0
       unit.layers = _.map(item.layers, function(layer){
         var res = {}
         res.uniq_id = +layer.uniq_id
         res.layer_name = layer.layer_name
-        res.chkd = 0
+        res.chkd = 1
         res.pined = 0
         return res
       })

@@ -118,10 +118,13 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
     var i = window.indexOfLastNonEmptyElement(bs) || 0
     var obj = {
       full: this.model.get('full') || '',
+      title: window.lib.htmlEntityDecode(this.model.get('title')),
+      details: window.lib.htmlEntityDecode(this.model.get('details')),
       b_status: i,
       color: bs[i]>0 ? 'green' : bs[i]<0 ? 'red' : '',
-      icon_url: window.getIconURL(this.model.attributes, true) 
-    }  
+      icon_url: this.model.get('img') || window.getIconURL(this.model.attributes, true) 
+    }
+    
     return $.extend({}, window.lib.tagList(this), obj )
   },
   childView: MsgView,

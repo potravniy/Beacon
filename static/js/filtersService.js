@@ -69,53 +69,48 @@ var $filter_negative = $('#negative')
 var $filter_budget = $('#budget')
 var $filter_info = $('#info')
 var $filter_sos = $('#sos')
-var $filter_organizations = $('#organizations')
+// var $filter_organizations = $('#organizations')
 function actionsRead(event){
   if(event.target.nodeName === 'INPUT'){
-    var result = ''
+    var result = '',
+        push = function(val){
+          if(result) result += "," + val
+          else result += val
+        }
     if($filter_votings.prop("checked")) {
-      result += "1"
+      push(1)
     }
     if($filter_programms.prop("checked")){
-      if(result) result += ",2"
-      else result += "2"
+      push(2)
     }
     if($filter_project_proposals.prop("checked")){
-      if(result) result += ",3"
-      else result += "3"
+      push(3)
     }
     if($filter_projects.prop("checked")){
-      if(result) result += ",4"
-      else result += "4"
+      push(4)
     }
     if($filter_requests.prop("checked")){
-      if(result) result += ",5"
-      else result += "5"
+      push(5)
     }
     if($filter_positive.prop("checked")){
-      if(result) result += ",69"
-      else result += "69"
+      push(69)
     }
     if($filter_negative.prop("checked")){
-      if(result) result += ",96"
-      else result += "96"
+      push(96)
     }
     if($filter_budget.prop("checked")){
-      if(result) result += ",330"
-      else result += "330"
+      push(330)
     }
     if($filter_info.prop("checked")){
-      if(result) result += ",777"
-      else result += "777"
+      push(777)
     }
     if($filter_sos.prop("checked")){
-      if(result) result += ",911"
-      else result += "911"
+      push(911)
     }
-    if($filter_organizations.prop("checked")){
-      if(result) result += ",1000"
-      else result += "1000"
-    }
+    // if($filter_organizations.prop("checked")){
+    //   if(result) result += ",1000"
+    //   else result += "1000"
+    // }
     window.state.b_types = result
     window.state.sendGET(window.state.urlMarkers)
   }
@@ -132,7 +127,7 @@ function setAllActions(e){
   $filter_budget.prop('checked', isChecked).flipswitch( "refresh" )
   $filter_info.prop('checked', isChecked).flipswitch( "refresh" )
   $filter_sos.prop('checked', isChecked).flipswitch( "refresh" )
-  $filter_organizations.prop('checked', isChecked).flipswitch( "refresh" )
+  // $filter_organizations.prop('checked', isChecked).flipswitch( "refresh" )
 }
 
 //  this section processes TWO last tabs in right panel navbar --- END
@@ -326,7 +321,7 @@ function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft, ocp, oc, op, lcp, 
   if(_.indexOf(arr, '330') === -1 ) $filter_budget.prop('checked', false).flipswitch( "refresh" )
   if(_.indexOf(arr, '777') === -1 ) $filter_info.prop('checked', false).flipswitch( "refresh" )
   if(_.indexOf(arr, '911') === -1 ) $filter_sos.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '1000') === -1 ) $filter_organizations.prop('checked', false).flipswitch( "refresh" )
+  // if(_.indexOf(arr, '1000') === -1 ) $filter_organizations.prop('checked', false).flipswitch( "refresh" )
   if(qw !== '.') window.$filter_mapSearch.val( decodeURIComponent(qw) )
   if(st!=='.' && ft!=='.') {
     var $customRangeRadioBtn = $('#custom_range'),

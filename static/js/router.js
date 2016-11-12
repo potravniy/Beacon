@@ -4,6 +4,7 @@ var Manager = new Marionette.Application();
 Manager.App = {}
 var API = {
     home: function(z, lt, ln, qw, al, bs, bt, st, ft, ocp, oc, op, lcp, lc, lp, vs, ia){
+    	console.log('router.home')
       if(z && lt && ln){
         window.state.zoom = +z
         window.state.center.lat = +lt
@@ -51,7 +52,7 @@ Manager.App.Router = Marionette.AppRouter.extend({
   },
   controller: window.API,
   onRoute: function(name, path, args){
-    // console.log("onRouteHandler\n" + name +'\n'+ path +'\n'+ args);
+    console.log("onRouteHandler\n" + name +'\n'+ path +'\n'+ args);
   }
 })
 
@@ -77,6 +78,7 @@ Manager.on("start", function(){
   $('.history_back').click(function(){
     window.history.back()
   })
+  console.log('router is ready')
 });
 Manager.on('state_update', function(){
   Manager.navigate(serializeState())
@@ -125,5 +127,5 @@ function serializeState() {
     + '/'+ (fourthFilter.lp==='' ? "." : fourthFilter.lp)
     + '/'+ window.state.viewState
     + '/'+ (window.state.viewStateIdArray.length===0 ? '.' : window.state.viewStateIdArray.join())
-  return str
+  return str + '/'
 }

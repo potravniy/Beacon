@@ -47,6 +47,54 @@ if (!Object.keys) {
   }());
 }
 
+/*
+ * DOMParser HTML extension
+ * 2012-09-04
+ * 
+ * By Eli Grey, http://eligrey.com
+ * Public domain.
+ * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+ */
+
+/*! @source https://gist.github.com/1129031 */
+/*global document, DOMParser*/
+
+(function(DOMParser) {
+	"use strict";
+
+	var
+	  DOMParser_proto = DOMParser.prototype
+	, real_parseFromString = DOMParser_proto.parseFromString
+	;
+
+	// Firefox/Opera/IE throw errors on unsupported types
+	try {
+		// WebKit returns null on unsupported types
+		if ((new DOMParser).parseFromString("", "text/html")) {
+			// text/html parsing is natively supported
+			return;
+		}
+	} catch (ex) {}
+
+	DOMParser_proto.parseFromString = function(markup, type) {
+		if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {
+			var
+			  doc = document.implementation.createHTMLDocument("")
+			;
+	      		if (markup.toLowerCase().indexOf('<!doctype') > -1) {
+        			doc.documentElement.innerHTML = markup;
+      			}
+      			else {
+        			doc.body.innerHTML = markup;
+      			}
+			return doc;
+		} else {
+			return real_parseFromString.apply(this, arguments);
+		}
+	};
+}(DOMParser));
+
+
 $.ajax({
   url: "https://gurtom.mobi/nco.php",
   dataType: "json",
@@ -64,7 +112,11 @@ window.Lib = Marionette.Object.extend({
     var list = '',
         tags = that.model.get('tags')
     if(tags && tags.length > 0){
-      list = "#"+_.map(tags, function(item){ return item.tag }).join(', #')
+      list = "#"+_.map(tags, function(item){
+        var tag = window.lib.htmlEntityDecode( item.tag )
+        return tag
+      })
+      .join(', #')
     }
     return { tagList: list }
   },
@@ -93,6 +145,12 @@ window.Lib = Marionette.Object.extend({
       }
       return undefined
     }
+  },
+  //  http://stackoverflow.com/questions/1912501/unescape-html-entities-in-javascript
+  htmlEntityDecode: function(htmlString){
+    var doc1 = new DOMParser().parseFromString(htmlString, "text/html");
+    var doc2 = new DOMParser().parseFromString(doc1.documentElement.textContent, "text/html");
+    return doc2.documentElement.textContent
   }
 })
 window.lib = new window.Lib()
@@ -519,7 +577,8 @@ function getIconURL(r, relative) {
 	if(r.b_type && +r.b_type < 1000) {
 		return iconMainURL + "images/" + r.b_type +'.png' 
 	} else if(r.b_type && r.layer_owner_id && r.layer_type && +r.b_type >= 1000 ){
-		return iconMainURL +"uploads/"+ r.layer_owner_id +"/" + r.b_type + "/" + r.layer_type +'.png'
+		// return iconMainURL +"uploads/"+ r.layer_owner_id +"/" + r.b_type + "/" + r.layer_type +'.png'
+    return iconMainURL +"uploads/"+ r.layer_owner_id +"/" + r.b_type + "/" + r.id +'.png'
 	}
 	return "//:0"
 }
@@ -549,3 +608,4 @@ window.transitionEndEventName = (function() {   //  http://stackoverflow.com/que
 setTimeout(function(){
   $('.warning').remove()
 }, 4000)
+

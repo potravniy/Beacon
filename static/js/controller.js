@@ -91,8 +91,11 @@ function showBeaconCreateMenu(options) {
 
 function showPopupStatusBeacon(options) {
   window.popupStatusBeacon = new PopupStatusBeacon(options)
-  window.rightPopupRegion.show(window.popupStatusBeacon)
-  console.log('Switch to popupStatusBeacon')
+  if ( !window.popupStatusBeacon.isDestroyed ) {
+    window.rightPopupRegion.show(window.popupStatusBeacon)
+    console.log('Switch to popupStatusBeacon')
+  }
+  console.log('popupStatusBeacon selfdestroyed due abcence of beacon type')
 }
 
 function showChangeGovMenuView() {
@@ -139,7 +142,6 @@ function showPayByCardView(options) {
 
 function showFourthFilter() {
   window.listOrgCollection = new ListOrgCollection( makeListOrgs() )
-  // console.log('listOrgCollection:', listOrgCollection.toJSON(), 'filter4', window.state.user.filters[0].filter4, 'listOrg', window.state.listOrgs)
   window.fourthFilterView = new FourthFilterView()
   window.fourthFilterRegion.show(window.fourthFilterView)
   console.log('Switch to fourthFilterView')

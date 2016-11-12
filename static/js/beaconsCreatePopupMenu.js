@@ -10,7 +10,7 @@ BeaconCreatePopupList = Backbone.Collection.extend({
   model: BeaconCreatePopupListItemModel
 })
 BeaconCreatePopupItemView = Backbone.Marionette.ItemView.extend({
-  template: '#gov_single_menu_item__tpl',
+  template: '#create_beacon_menu_item__tpl',
   tagName: 'li',
   className: function(){
     return 'menu_item '+ (this.model.get('className') || '' ) 
@@ -27,7 +27,8 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
   id: 'create_beacon__geo',
   ui: {
     settings: '.settings',
-    listView: '.listview_wrapper > .listview'
+    listView: '.listview_wrapper > .listview',
+    info: '.info'
   },
   events: {
     'click @ui.settings': 'onSettingsClick',
@@ -41,7 +42,7 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
   },
   initialize: function(options){
     var collection = []
-    if( getListMenuOrg.isAvailable() ) {
+    if( window.getListMenuOrg.isAvailable() ) {
       collection = $.extend([], window.state.listMenuOrg)
     }
     else {
@@ -61,7 +62,10 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
     window.mainRegion.showMap()
   },
   onDomRefresh: function(){
-    if( state.user.gov !== '1' ) this.ui.settings.hide()
+    if( state.user.gov === '1' || state.user.nco === '1' ) {
+      this.ui.settings.show()
+      if ( this.collection.length === 0 ) this.ui.info.show()
+    }
     this.$el.popup({
       positionTo: "#beacons-map__the-map",
       transition: "slideup",
