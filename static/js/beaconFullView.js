@@ -530,7 +530,7 @@ var ProgramView = Backbone.Marionette.LayoutView.extend({
     console.log('Кнопка "Відкликати" натиснута.')
   },
   showListPP: function(){
-    console.log('Кнопка "Перелік" натиснута.')
+    alert("Ця функція поки що недоступна.")
   },
   triggers: {
     'click .donate': 'pay:donate'
@@ -574,20 +574,33 @@ var ProjProposModel = Backbone.Model.extend({
     amount: ''
   }
 })
-var SOS_View = Backbone.Marionette.ItemView.extend({
+var SOS_Info_Emo_View = Backbone.Marionette.ItemView.extend({
   template: '#sos_extention_view_tpl',
   templateHelpers: function(){
     var mayUserSeePhone =  
       (  window.state.user.bankid  === '1' || window.state.user.gov === '1' 
       || window.state.user.payment === '1' || window.state.user.nco === '1' )
     return {
-      phone: mayUserSeePhone ? this.model.get('phone') : 'Перегляд недоступний.'  
+      phone: mayUserSeePhone ? this.model.get('phone') : 'Перегляд доступний лише юридичним особам.'  
     }
   }
 })
 var BeaconFullModel = BeaconModel.extend({
-  parse: function(response){
-    return response[0]
+  parse: function(response) {
+    var res = response[0]
+      for (key in res){
+        if(res[key]==='') {
+          delete res[key]
+        } else if( key==='details' || key==='title' ){
+          res[key] = window.lib.htmlEntityDecode( res[key] ) 
+        } else if( key==='tags' ){
+          res[key] = _.map(res[key], function(item){
+            item.tag = window.lib.htmlEntityDecode( item.tag )
+            return item
+          })
+        }
+      }
+    return res
   },
   initialize: function(){
     this.url = 'https://gurtom.mobi/beacon_cards.php?b_id=' + this.get('id')
@@ -650,8 +663,12 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     this.$el.trigger("create")
   },
   onClickShare: function (event) {
-    event.stopPropagation()
-    console.log('button "share" clicked id=' + this.model.get('id'))
+    var options = {
+      title: this.model.get('details'),
+      link: window.location.origin + window.location.pathname + '#' 
+       + serializeState(this.model.get('id'), this.model.get('lat'), this.model.get('lng')) 
+    }
+    window.showPopupShare(options)
   },
   onClickLink: function (event) {
     if( window.state.b_link === this.model.get('id') ){
@@ -675,7 +692,8 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     event.stopPropagation()
     var options = {
       'parent_id': this.model.get('id'),
-      'parent_type': +this.model.get('b_type') === 1000 ? this.model.get('type') : this.model.get('b_type')  
+      'parent_type': +this.model.get('b_type') === 1000 ? this.model.get('type') : this.model.get('b_type'),
+      'parent_model': this.model.attributes
     }
     if(options.parent_type == '2'){
       $.extend(options, { 'program_id': this.model.get('full')[0].id })
@@ -694,9 +712,12 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     } else if(this.model.get('b_type') == 2 || this.model.get('type') == 2){
       Model = ProgramModel
       View = ProgramView
-    } else if(this.model.get('b_type') == 911 || this.model.get('type') == 911){
+    } else if(this.model.get('b_type') == 911 || this.model.get('type') == 911
+           || this.model.get('b_type') == 777 || this.model.get('type') == 777
+           || this.model.get('b_type') == 96  || this.model.get('type') == 96
+           || this.model.get('b_type') == 69  || this.model.get('type') == 69){
       Model = Backbone.Model
-      View = SOS_View
+      View = SOS_Info_Emo_View
     }
     if ( Model && View ) {
       var extModel = this.model.get('full')[0]
@@ -725,7 +746,7 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     window.closeSingleBeaconMode()
   },
   onClickStatusBtn: function(){
-    showPopupStatusBeacon({ targetId: this.model.get('id') })
+    showPopupStatusBeacon( this.model.attributes )
   },
   onClickImg: function(){
     var $photoPopup = $('#popupPhoto')

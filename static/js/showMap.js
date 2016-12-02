@@ -76,8 +76,8 @@ window.state = {
 }
 
 window.onload = function() {
-	window.Manager.start();
 	console.log('window.onload')
+	if (!History.started) window.Manager.start();
 	window.markers = []
 	window.i = 0
 	window.geocoder = new google.maps.Geocoder()
@@ -90,11 +90,13 @@ window.onload = function() {
 	})
 	mapInit()
 	window.state.map.off = function(){
-		if(window.requestMarkersListener.b) window.google.maps.event.removeListener(window.requestMarkersListener)
+		if(window.requestMarkersListener.b) {
+			window.google.maps.event.removeListener(window.requestMarkersListener)
+		}
 		console.log('map.off')
 	}
 	window.state.map.on = function(){
-		if(!window.requestMarkersListener.b) window.requestMarkersListener = window.state.map.addListener('idle', requestMarkers)
+		if(!window.requestMarkersListener.b) window.requestMarkersListener = window.state.map.addListener('idle', _.debounce(requestMarkers, 500))
 		google.maps.event.trigger(window.state.map,'resize')
 		console.log('map.on')
 	}
@@ -122,7 +124,11 @@ function mapInit(){
 			mapTypeIds: ['roadmap', 'hybrid']
 		}
 	})
-	window.requestMarkersListener = window.state.map.addListener('idle', requestMarkers)
+	window.requestMarkersListener = window.state.map.addListener('idle', _.debounce(requestMarkers, 500))
+	window.listenerForSearchInit = window.state.map.addListener('idle', function(){
+		mapGoogleSearchInit()
+		window.google.maps.event.removeListener(window.listenerForSearchInit)
+	})
 }
 
 function tryGeoLocation() {
@@ -222,7 +228,7 @@ function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_t
 		beaconID: r.id,
 		zIndex: 2000,
 		position: new google.maps.LatLng(r.lat, r.lng),
-		draggable: !!draggable,
+		draggable: (draggable === true || draggable === 'draggable') ? true : false,
 		icon: {
 			url: iconURL,
 			// This marker is 20 pixels wide by 32 pixels high.

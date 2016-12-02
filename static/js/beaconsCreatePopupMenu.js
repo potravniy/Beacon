@@ -11,15 +11,24 @@ BeaconCreatePopupList = Backbone.Collection.extend({
 })
 BeaconCreatePopupItemView = Backbone.Marionette.ItemView.extend({
   template: '#create_beacon_menu_item__tpl',
+  templateHelpers: function(){
+    var obj = {
+      disabled: this.options.type ? ( this.model.get('type') === this.options.type ? '' : ' disabled' ) : ''   
+    }
+    return obj
+  },
   tagName: 'li',
   className: function(){
     return 'menu_item '+ (this.model.get('className') || '' ) 
   },
+  ui: {
+    btn: '.ui-btn'
+  },
   events: {
-    'click .ui-btn': 'btnClick'
+    'click @ui.btn': 'btnClick'
   },
   btnClick: function(){
-    createObject(this.model.attributes)
+    createObject(this.model.attributes, this.options)
   }
 })
 BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
@@ -31,11 +40,14 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
     info: '.info'
   },
   events: {
-    'click @ui.settings': 'onSettingsClick',
+    'click .settings': 'onSettingsClick',
     'resize window': 'onResize'
   },
   childView: BeaconCreatePopupItemView,
   childViewContainer: '.listview',
+  childViewOptions: function(){
+    return this.options
+  },
   collection: new BeaconCreatePopupList(),
   onSettingsClick: function(){
     showChangeGovMenuView()
@@ -48,18 +60,24 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
     else {
       collection = $.extend([], window.state.listMenu)
     }
-
-    if( !(options.parent_type && options.parent_type === '2') ) {
-      collection = _.filter(collection, function(item) {
-        return item.type !== '3';   //  Project proposal can be created as object linked to Program object only/
-      })
+    if ( options.b_id && options.type ){
+      this.canCopy = _.some(collection, function(item){
+        return item.type === options.type
+      }) 
+    } else {
+      this.canCopy = true
     }
+    // if( !(options.parent_type && options.parent_type === '2') ) {
+    //   collection = _.filter(collection, function(item) {
+    //     return item.type !== '3';   //  Project proposal can be created as object linked to Program object only/
+    //   })
+    // }
 
-    collection = _.map(collection, function(item){
-      return $.extend(item, options)
-    })
+    // collection = _.map(collection, function(item){
+    //   return $.extend(item, options)
+    // })
     this.collection.set(collection)
-    window.mainRegion.showMap()
+    // window.mainRegion.showMap()
   },
   onDomRefresh: function(){
     if( state.user.gov === '1' || state.user.nco === '1' ) {
@@ -77,6 +95,12 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
   },
   onShow: function(){
     this.onResize()
+    var that = this
+    if ( !this.canCopy ) {
+      this.$el.one("popupafteropen", function( event, ui ) {
+        alert('Ви не маєте шару з типом "' + window.lib.bType.getName( that.options.type ) + '"')
+      });
+    }
   },
   onResize: function(){
     this.ui.listView.css({ 'max-height': 0.7*window.innerHeight })

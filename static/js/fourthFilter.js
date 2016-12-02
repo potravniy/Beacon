@@ -369,23 +369,31 @@ function makeListOrgs(){
       return unit
     })
   } else {
+    var filter4 = []
     var res = _.map(window.state.listOrgs, function(item){
-      var unit = {}
-      unit.layer_owner_id = +item.layer_owner_id
+      var unit = {},
+          filt = {}
       unit.layer_owner_code = item.layer_owner_code
       unit.layer_owner_name = item.layer_owner_name
-      unit.chkd = 1
-      unit.pined = 0
+      filt.layer_owner_id = unit.layer_owner_id = +item.layer_owner_id
+      filt.chkd = unit.chkd = 1
+      filt.pined = unit.pined = 0
+      filter4.push( filt )
       unit.layers = _.map(item.layers, function(layer){
-        var res = {}
-        res.uniq_id = +layer.uniq_id
+        var res = {},
+            flt = {}
         res.layer_name = layer.layer_name
-        res.chkd = 1
-        res.pined = 0
+        flt.uniq_id = res.uniq_id = +layer.uniq_id
+        flt.chkd = res.chkd = 1
+        flt.pined = res.pined = 0
+        filter4.push( flt )
         return res
       })
       return unit
     })
+    window.state.user.filters = []
+    window.state.user.filters[0] = {}
+    window.state.user.filters[0].filter4 = filter4
   }
   return res
 }
@@ -587,7 +595,7 @@ function trans4thFilterStateToRoute(){
 function trans4thFilterRouteToState(arr){
   var res = []
   _.each(arr, function(item, index){
-    if ( item!=='.' ){
+    if ( item!=='-' ){
       var ar = item.split(',')
       _.each(ar, function(it){
         var ob = {}

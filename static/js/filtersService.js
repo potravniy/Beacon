@@ -244,23 +244,11 @@ function mapSeachEventHandler(){
     window.state.filter = ""
     window.state.sendGET(window.state.urlMarkers)
   } else {
-    var first = res[0]
-    if( +first >= 0 && +first <= 9 ){
-      res = _.filter(res, function(item){
-        return item !== "#"
-      }).join('')
-      window.state.filter = encodeURIComponent(res)
-      window.state.sendGET(window.state.urlMarkers)
-    } else if(first === '#'){
-      res = _.filter(res, function(item){
-        return item !== "#"
-      }).join('')
-      window.state.filter = encodeURIComponent(res)
-      window.state.sendGET(window.state.urlMarkers)
-    } else {
-      console.log(first, 'string')
-      //  Adress search is not written yet.
-    }
+    res = _.filter(res, function(item){
+      return item !== "#"
+    }).join('')
+    window.state.filter = encodeURIComponent(res)
+    window.state.sendGET(window.state.urlMarkers)
   }
 }
 
@@ -322,8 +310,8 @@ function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft, ocp, oc, op, lcp, 
   if(_.indexOf(arr, '777') === -1 ) $filter_info.prop('checked', false).flipswitch( "refresh" )
   if(_.indexOf(arr, '911') === -1 ) $filter_sos.prop('checked', false).flipswitch( "refresh" )
   // if(_.indexOf(arr, '1000') === -1 ) $filter_organizations.prop('checked', false).flipswitch( "refresh" )
-  if(qw !== '.') window.$filter_mapSearch.val( decodeURIComponent(qw) )
-  if(st!=='.' && ft!=='.') {
+  if(qw !== '-') window.$filter_mapSearch.val( decodeURIComponent(qw) )
+  if(st!=='-' && ft!=='-') {
     var $customRangeRadioBtn = $('#custom_range'),
         $timeTabBtn = $(".time_range")
     $customRangeRadioBtn.click()

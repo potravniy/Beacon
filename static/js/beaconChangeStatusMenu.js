@@ -4,7 +4,7 @@ var LiItemBtnView = Backbone.Marionette.ItemView.extend({
   attributes: function(){
     var attrib = {
       "data-mini": "true",
-      "data-data": this.model.get('index') +','+ this.model.get('val'),
+      "data-data": this.model.get('index') +','+ this.model.get('chngTo'),
     }
     return attrib
   },
@@ -42,16 +42,12 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
   id: 'beacon-status',
   childView: LiItemView,
   childViewContainer: '.listview',
-  modelEvents: {
-    "change": 'onModelChange'
-  },
   initialize: function(options){
-    this.model = new StatusModel(options)
     this.setCollection(options)
   },
   setCollection: function(options, diff){
     var statusList = null
-    switch (this.model.get('type') || this.model.get('b_type')) {
+    switch (options.type || options.b_type) {
       case '911':
         statusList = window.state.statusList.SOS
         break;
@@ -62,8 +58,8 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         statusList = window.state.statusList.infoAndEvent
         break;
       case '330':
-        alert('Status window is not ready for this beacon type')
-        return this.destroy()
+        statusList = window.state.statusList.partBudg_Vot_WeightVot
+        break;
       case '96':
         statusList = window.state.statusList.goodAndBad
         break;
@@ -71,8 +67,8 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         statusList = window.state.statusList.goodAndBad
         break;
       case '6':
-        alert('Status window is not ready for this beacon type')
-        return this.destroy()
+        statusList = window.state.statusList.partBudg_Vot_WeightVot
+        break;
       case '5':
         statusList = window.state.statusList.projPropAndProjectAndRequest
         break;
@@ -86,8 +82,8 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         statusList = window.state.statusList.program
         break;
       case '1':
-        alert('Status window is not ready for this beacon type')
-        return this.destroy()
+        statusList = window.state.statusList.partBudg_Vot_WeightVot
+        break;
       default:
         alert('Beacon type is undefined')
         return this.destroy()
@@ -96,7 +92,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
       var tmp = {}
       var index = item.bStatusIndex
       var b_st = diff ? diff.status[index] : options.b_status[index]
-      var btns = getCurrentBtns(item.btns, options, b_st, index ) || []
+      var btns = getCurrentBtns(item.btns, options, b_st, index )
       if ( btns.length > 0 ) tmp.btns = btns
       if ( $.isNumeric(index) ){
         tmp.index = index
@@ -113,7 +109,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
           if ( el.isAvailable(options, b_st) ) {
             var elm = {}
             elm.text = el.text
-            elm.val = el.val || 'NA'
+            elm.chngTo = el.chngTo || 'NA'
             elm.className = el.className
             elm.index = index
             memo.push( elm )
@@ -123,8 +119,17 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         return result
       } 
     }, [])
+    if ( collection.length === 0 ) {
+      collection.push({
+        color: "",
+        icon: "ui-icon-progress_empty",
+        index: 0,
+        text: "Cтатуси відсутні"
+      })
+    }
     this.collection = new Backbone.Collection(collection)
     if( diff ) this.render()
+
   },
   events: {
     'click button': 'onClickBtn'
@@ -132,23 +137,24 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
   onClickBtn: function(e){
     var btnClassName = e.target.className.split(' ')[0]
     var data = e.target.attributes.getNamedItem('data-data').value.split(',')
+    var that = this
     data = {
-      'b_id': this.model.get('b_id'),
+      'b_id': this.options.b_id,
       'status': data[0],
       'value': data[1]
     }
     switch (btnClassName) {
       case 'verify':
-        // console.log('Btn verify clicked.')
+        console.log('Btn verify clicked.')
         break;
       case 'confirm':
-        // console.log('Btn confirm clicked.')
+        console.log('Btn confirm clicked.')
         break;
       case 'disprove':
-        // console.log('Btn disprove clicked.')
+        console.log('Btn disprove clicked.')
         break;
       case 'lendhand':
-        // console.log('Btn lendhand clicked.')
+        console.log('Btn lendhand clicked.')
         var phone = prompt('Введіть номер телефону у форматі 380XXXXXXXXX:', window.state.user.phone)
         if (phone) {
           data.phone = phone
@@ -157,33 +163,38 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
           return
         }
       case 'complete':
-        // console.log('Btn complete clicked.')
+        console.log('Btn complete clicked.')
         break;
       case 'copy':
-        // console.log('Btn copy clicked.')
-        var options = { targetId: this.model.get('b_id') }
         this.$el.one("popupafterclose", function() {
-          window.rightPopupRegion.empty()
-          showBeaconCreateMenu(options)
+          var options = $.extend({}, that.options, {
+            b_id: that.options.id,
+            targetId: that.options.id
+          })
+          delete options.id
+          showBeaconCreateMenu( options )
         })
         this.exit()
         return
       case 'delete':
-        // console.log('Btn delete clicked.')
         var r = confirm("Видалити маячок?");
-        if (r == true) {
+        if (r === true) {
           var that = this
           $.ajax({
             url: "https://gurtom.mobi/beacon_del.php",
             dataType: "json",
             data: {
-              b_id: this.model.get('b_id')
+              b_id: this.options.b_id
             },
             crossDomain: true,
             success: function ( response ) {
               if(response.error === 0){
+                window.state.sendGET(window.state.urlMarkers)
+                if (window.state.singleBeacon) closeSingleBeaconMode()
                 alert('Маячок видалено')
-                beaconsList.getNewCollection()
+                that.exit()
+              } else {
+                alert('Помилка при видаленні маячка')
                 that.exit()
               }
             },
@@ -194,10 +205,10 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         }
         return
       case 'start':
-        // console.log('Btn start clicked.')
+        console.log('Btn start clicked.')
         break;
       case 'transfer':
-        // console.log('Btn transfer clicked.')
+        console.log('Btn transfer clicked.')
         break;
       default:
         alert('Button "'+ btnClassName + '" is not processed.')
@@ -215,11 +226,13 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
       success: function ( response ) {
         if(response.length === 0){
           console.log('Status list is empty')
+          return
         }
         if ( response.error === 3 ) {
           alert ( 'Невірний формат номеру телефону' )
+          return
         }
-        that.setCollection(that.model.attributes, response)
+        that.setCollection(that.options, response)
         var theModel = window.beaconsList.models.find(function(model){
           return model.get('b_id') == response.id
         })
@@ -247,11 +260,10 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
     var height = $('#beacons-map__the-beacons').height()*0.7
     $('.status_list__wrapper').css({ "max-height": height })
   },
-  onModelChange: function(){
-    console.log('Model changed to ', this.model.get('b_id'))
-  },
   exit: function(){
-    this.$el.popup('destroy')
-    window.rightPopupRegion.empty()
+    this.$el.one("popupafterclose", function() {
+      window.rightPopupRegion.empty()
+    })
+    this.$el.popup('close')
   }
 })

@@ -45,9 +45,14 @@
       </div>
       <div id="container" data-role="main" class="ui-panel-wrapper">
         <div id="beacons-map__the-map">
+<!--
+          <input id="pac-input" class="controls" type="text" placeholder="Пошук на карті Google" data-enhanced="true">
+-->
           <div id="the-map"></div>
+
           <label for="map_search" class="ui-hidden-accessible map_search"></label>
           <input data-wrapper-class="wrapper_map_search" type="search" name="map_search" id="map_search" placeholder="#хеш-тег чи числовий id">
+
           <div class="ui-nodisc-icon buttons-wrapper upper-right unused">
             <a href="#" class="ui-btn ui-corner-all ui-icon-nearby ui-btn-icon-notext ui-btn-inline">nearby</a><br>
             <a href="#" class="ui-btn ui-corner-all ui-icon-my_location ui-btn-icon-notext ui-btn-inline">location</a><br>
@@ -169,7 +174,7 @@
             </ul>
           </div>
           <div id="user_rating" class="scrollable_content">
-            <h4 class="filter_title">Показати маячки від користувачів, авторизованих:</h4>
+            <h4 class="filter_title">Показати маячки від фізичних осіб, авторизованих:</h4>
             <ul data-role="listview" class="listview">
               <li>
                 <input type="checkbox" data-role="flipswitch" name="e-mail" id="e-mail" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
@@ -254,7 +259,7 @@
 
           <div id="categories" class="scrollable_content"></div>
           <div id="actions" class="scrollable_content">
-            <h4 class="filter_title">Показати маячки за типом:</h4>
+            <h4 class="filter_title">Показати маячки фізичних осіб:</h4>
             <ul data-role="listview" class="listview">
               <li>
                 <input type="checkbox" data-role="flipswitch" name="all" id="all" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
@@ -329,7 +334,7 @@
             <input class="submit" type="submit" value="Увійти">
           </div>
           <div class="ui-block-b">
-            <div id="custom-border-radius">
+            <div class="custom-border-radius">
               <h5>Приєднатися через мережу</h5>
               <a href="./sn/gp.php" data-ajax="false" class="gp ui-btn ui-icon-google_plus ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Google+</a>
               <a href="./sn/fb.php" data-ajax="false" class="ui-btn ui-icon-facebook ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Facebook</a>
@@ -408,8 +413,11 @@
     <script id="object_create_tpl" type="text/template">
         <div data-role="header" class="header">
           <h4><%-titler%></h4>
-          <% if(parent_id !== '0') { %>
+          <% if(parent_id !== '') { %>
             <h4 class="follower">пов'язаного з маячком id=<%- parent_id %></h4>
+          <% } %>
+          <% if(targetId !== '') { %>
+            <h4 class="follower">як копії маячка id=<%- targetId %></h4>
           <% } %>
           <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
         </div>
@@ -436,12 +444,14 @@
             <input id="nco" type="hidden" name="nco">
             <input id="img" type="hidden" name="img">
             <input id="program_id" type="hidden" name="program_id">
-            <input id="layer_type" type="hidden" name="layer_type" value="<%- layer_type||'' %>">
+            <input id="uniq_id" type="hidden" name="uniq_id" value="<%- uniq_id %>">
+            <input id="layer_owner_id" type="hidden" name="layer_owner_id" value="<%- layer_owner_id %>">
             <input id="type" type="hidden" name="type" value="<%- type||'' %>">
             <input id="targetId" type="hidden" name="targetId" value="<%- targetId||'' %>">
             <input id="private_group" type="hidden" name="private">
             <input id="parent_id" type="hidden" name="parent_id" value="<%- parent_id %>">
             <input id="parent_type" type="hidden" name="parent_type" value="<%- parent_type %>">
+            <input id="chat" type="hidden" name="chat" value="<%- chat %>">
             <div id="submit" class="submit">
               <label for="submit_btn" class="ui-hidden-accessible">Submit</label>
               <button id="submit_btn" type="submit">Створити</button>
@@ -480,7 +490,7 @@
     <script id="money__tpl" type="text/template">
       <fieldset id="money" class="ui-field-contain" data-role="controlgroup" data-type="horizontal">
         <legend><strong><%- ( label ? label : 'Необхідна сума' ) %>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></legend>
-        <input id="amount" type="number" name="amount" pattern=".{12,}" <%-required%>>
+        <input id="amount" type="number" name="amount" pattern=".{12,}" value="<%-parent_amount%>" <%-required%>>
         <label for="currency">у валюті</label>
         <select id="currency" name="curr" data-inline="true" data-mini="true" data-iconpos="noicon" data-native-menu="false">
           <option value="980">UAH</option>
@@ -528,7 +538,7 @@
     </script>
     <script id="description_tpl" type="text/template">
       <label for="description"><strong>Детальний опис&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
-      <textarea id="description" name="descr" placeholder="Розмістіть детальний опис тут." cols="40" rows="2" maxlength="10000" <%-required%>></textarea>
+      <textarea id="description" name="descr" placeholder="Розмістіть детальний опис тут." cols="40" rows="2" maxlength="10000" <%-required%>><%-parent_descr%></textarea>
     </script>
 
     <script id="response_tpl" type="text/template">
@@ -539,6 +549,7 @@
       <label for="details"><strong>Повідомлення&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
       <textarea id="details" name="details" placeholder="Довжина повідомлення - до 240 символів." cols="40" rows="2" maxlength="240" data-wrapper-class="textarea" <%-required%>></textarea>
     </script>
+<!--
     <script id="layer_type_tpl" type="text/template">
       <p><strong>Категорія повідомлення&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></p>
       <h6>Автодоповнення починається з першої літери.</h6>
@@ -547,7 +558,7 @@
       </form>
       <ul id="layer_type__ul" data-role="listview" data-inset="true" data-filter="true" data-input="#layer_type__input"></ul>
     </script>
-
+-->
     <script id="private_tpl" type="text/template">
         <div class="public_private_switch ui-content" data-role="content">
           <label for="public_private_switch__input" class=" ui-hidden-accessible">Flip toggle switch checkbox:</label>
@@ -577,7 +588,7 @@
     <script id="photo_tpl" type="text/template">
       <div class="hiddenfile">
         <label for="photo__input">Завантажити фото:</label>
-        <input id="photo__input" type="file" data-clear-btn="true" name="photo__input" accept="image/*" capture>
+        <input id="photo__input" type="file" data-clear-btn="true" name="photo__input" accept="image/*">
       </div>
       <div class="preview_wrapper clearfix">
         <div id="photo__preview"></div>
@@ -832,7 +843,7 @@
     </script>
 
     <script id="create_beacon_menu_item__tpl" type="text/template">
-      <a href="#" data-rel="dialog" class="ui-btn">
+      <a href="#" data-rel="dialog" class="ui-btn<%-disabled%>">
         <%- name %>
         <img class="a_la_icon" src="<%- img %>" alt="">
       </a>
@@ -862,6 +873,21 @@
         <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
       </div>
       <div data-role="main" class="main__right_popup__component"></div>
+    </script>
+
+    <script id="right_popup__share_tpl" type="text/template">
+      <div class="custom-border-radius">
+        <a target="_blank" href="https://plus.google.com/share?url=<%-link%>"
+          data-ajax="false" class="gp ui-btn ui-icon-google_plus ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Google+</a>
+        <a target="_blank" href="https://www.facebook.com/sharer.php?u=<%-link%>&t=<%-title%>"
+          data-ajax="false" class="ui-btn ui-icon-facebook ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Facebook</a>
+        <a target="_blank" href="https://www.linkedin.com/cws/share?url=<%-link%>"
+          data-ajax="false" class="ui-btn ui-icon-linkedin ui-btn-icon-notext ui-nodisc-icon ui-corner-all">LinkedIn</a>
+<!--
+        <a target="_blank" href="https://twitter.com/intent/tweet?url=<%-link%>&text=<%-title%>"
+          data-ajax="false" class="tw ui-btn ui-icon-twitter_box ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Twitter</a>
+-->
+      </div>
     </script>
 
     <script id="change_gov_menu__tpl" type="text/template">
@@ -996,7 +1022,7 @@
     <script src="./static/js/vendor/jquery.mobile-1.4.5.js"></script>
     <script src="./static/js/vendor/backbone.js"></script>
     <script src="./static/js/vendor/backbone.marionette.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9GrBwQ_NFlEMzjrAkE4KzsZcTsqf0_h8&language=uk&region=UA"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9GrBwQ_NFlEMzjrAkE4KzsZcTsqf0_h8&language=uk&region=UA&libraries=places"></script>
 
     <script src="./static/js/showMap.js"></script>
     <script src="./static/js/init.js" async defer></script>
@@ -1014,6 +1040,8 @@
     <script src="./static/js/controller.js"></script>
     <script src="./static/js/authentification_manager.js"></script>
     <script src="./static/js/fourthFilter.js"></script>
+    <script src="./static/js/shareInSocialNet.js"></script>
+    <script src="./static/js/googleMapSearch.js"></script>
 
   </body>
 </html>

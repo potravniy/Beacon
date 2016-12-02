@@ -130,7 +130,7 @@ function registerDialogInit(){
 
 function restoreDialogInit(){
   console.log("restoreDialogInit")
-  var $email = $('#restore_pass_dialog #email-rest'),
+  var $email = $('#email-rest'),
       $btnSubmit = $('#restore_pass_dialog .submit')
   
   $btnSubmit.click(requestRestore)
@@ -141,7 +141,6 @@ function restoreDialogInit(){
   }
 
   function requestRestore() {
-    console.log("requestRestore")
     var data = {
       email: $email.val(),
       request_password_reset: 'Reset my password'
@@ -164,10 +163,9 @@ function restoreDialogInit(){
   }
 }
 
-function resetDialogInit(){
-  console.log("resetDialogInit")
-  var $pass1 = $('#reset_pass_dialog #password_reset'),
-      $pass2 = $('#reset_pass_dialog #password_reset-repeat'),
+function resetDialogInit(verif_code){
+  var $pass1 = $('#password_reset'),
+      $pass2 = $('#password_reset-repeat'),
       $btnSubmit = $('#reset_pass_dialog .submit')
   
   $btnSubmit.click(resetPass)
@@ -185,17 +183,15 @@ function resetDialogInit(){
       alert('Пароль не може мати менше 6 символів.')
       return
     }
-    var i = location.hash.indexOf('=')
-    // if(i < 36) Manager.trigger('home')
-    var hash = location.hash.substring(i+1, location.hash.length),
-    promise = $.ajax({
+    $.mobile.loading('show')
+    var promise = $.ajax({
       type: "POST",
       url: "https://gurtom.mobi/user_pass_reset.php",
       dataType: "json",
       crossDomain: true,
       data: {
           pass: $pass1.val(),
-          hash: hash
+          hash: verif_code
         }
     })
     promise.done(function(response){
@@ -211,10 +207,44 @@ function resetDialogInit(){
       console.log("error")
       alert("Error: "+ response[0].error_uk)
     });
-    promise.always(function(){
+    promise.always(function(response){
       console.log(response[0])
+      $.mobile.loading('hide')
     })
   }
+}
+
+function confirmVerification(usr_id, verif_code){
+  $.mobile.loading('show')
+  var promise = $.ajax({
+    type: "GET",
+    url: "https://gurtom.mobi/l/index.php",
+    dataType: "json",
+    crossDomain: true,
+    data: {
+        m: '5',
+        id: usr_id,
+        verification_code: verif_code
+      }
+  })
+  promise.done(function(response){
+    if(response.error && response.error===2001){
+      alert("Ваш обліковий запис створено успішно. Ласкаво просимо до спільноти.")
+    } else if(response.error && response.error===1002){
+      alert("Активація облікового запису не відбулася.\nБудьласка, спробуйте відновити пароль.")
+      Manager.trigger('pass_restore')
+    } else {
+      alert("Упс... щось пішло не так. Повторіть спробу через деякий час.")
+      Manager.trigger('home')
+    } 
+  });
+  promise.fail(function(response){
+    alert("Упс... щось пішло не так. Повторіть спробу через деякий час.")
+    Manager.trigger('home')
+  });
+  promise.always(function(response){
+    $.mobile.loading('hide')
+  })
 }
 
 function checkLoggedIn(){

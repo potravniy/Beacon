@@ -39,17 +39,35 @@ var LatLngView = Backbone.Marionette.ItemView.extend({
   }
 })
 var TitleView = Backbone.Marionette.ItemView.extend({
-  template: '#title__tpl'
+  template: '#title__tpl',
+  templateHelpers: function(){
+    var obj = {
+      parent_details: this.options.model.attributes.parent_model ? this.options.model.attributes.parent_model.details : '' 
+    }
+    return obj
+  },
+  ui: { input: '#title' },
+  setTitle: function(titleStr){
+    this.ui.input.val(titleStr)
+  }
 })
 var MoneyView = Backbone.Marionette.ItemView.extend({
   template: '#money__tpl',
   templateHelpers: function(){
-    if( this.model.get('realCurrencyOnly') !== true ){
-      return { realCurrencyOnly: false }
+    var obj = {
+      parent_amount: this.options.model.attributes.parent_model ? this.options.model.attributes.parent_model.full[0].amount : '',
+      realCurrencyOnly: !!this.model.get('realCurrencyOnly') 
+    }
+    return obj
+  },
+  initialize: function(){
+    if ( this.options.model.attributes.parent_model ){
+      this.selectCurrency( this.options.model.attributes.parent_model.full[0].curr )
     }
   },
   ui: {
-    selector: '#currency'
+    selector: '#currency',
+    input: '#amount'
   },
   setAndLockCurrencySelector: function(curr){
     this.ui.selector.selectmenu( "enable" )
@@ -66,6 +84,10 @@ var MoneyView = Backbone.Marionette.ItemView.extend({
     $("#currency-menu .ui-btn")
       .filter(function(){ return $(this).contents().text() === currName})
       .click()
+  },
+  setMoney: function(curr, amount){
+    this.selectCurrency(curr)
+    this.ui.input.val(amount)
   }
 })
 var CurrencyView = Backbone.Marionette.ItemView.extend({
@@ -163,11 +185,24 @@ var DescriptionView = Backbone.Marionette.ItemView.extend({
   id: 'description_view',
   ui: {
     'textarea': '#description'
+  },
+  templateHelpers: function(){
+    var obj = {
+      parent_descr: this.options.model.attributes.parent_model ? lib.htmlEntityDecode(this.options.model.attributes.parent_model.full[0].descr) : '' 
+    }
+    return obj
+  },
+  setDescr: function(descr){
+    this.ui.textarea.val(descr)
   }
 })
 var DetailsView = Backbone.Marionette.ItemView.extend({
   template: '#details_tpl',
-  className: 'message_input'
+  className: 'message_input',
+  ui: { input: '#details' },
+  setDetails: function(str){
+    this.ui.input.val(str)
+  }
 })
 var ResponseView = Backbone.Marionette.ItemView.extend({
   template: '#response_tpl',
@@ -258,74 +293,74 @@ var TagsView = Backbone.Marionette.ItemView.extend({
   },
   setTags: function(tagsArray){
     for(var i=0; i< tagsArray.length; i++){
-      $("#tag_storage").append( "<div class='ui-icon-delete'>" +'#'+ tagsArray[i].tag +"</div>" )
+      $("#tag_storage").append( "<div class='ui-icon-delete'>#" + tagsArray[i].tag +"</div>" )
     }
   }
 })
-var LayerTypeView = Backbone.Marionette.ItemView.extend({
-  template: '#layer_type_tpl',
-  id: 'layer_type__view',
-  ui: {
-    layerTypeInput: '#layer_type__input',
-    layerTypeUl: '#layer_type__ul',
-  },
-  events: {
-    'click @ui.layerTypeInput': 'input_click',
-    'filterablebeforefilter @ui.layerTypeUl': _.debounce(function(e, data){
-        this.layerTypeAutocomplete(e, data)
-      }, 700),
-    'click @ui.layerTypeUl': 'layerTypeAutocompleteClick',
-    'click #layer_type__view .ui-input-search .ui-input-clear': 'layerTypeBtnClearClick'
-  },
-  input_click: function(e){
-    $(e.target).attr('data-id', '').val('')
-  },
-  layerTypeAutocomplete: function(e, data){
-    var $ul = $( '#layer_type__ul' ),
-      $input = $( data.input ),
-      value = $input.val(),
-      html = "";
-    $ul.html( "" );
-    if ( value && value.length > 0 ) {
-      $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
-      $ul.listview( "refresh" );
-      $.ajax({
-        type: "POST",
-        url: "https://gurtom.mobi/beacon_list.php", //  !!!
-        dataType: "json",
-        xhrFields: { withCredentials: true },
-        crossDomain: true,
-        data: {
-          b_type: this.model.get('b_type'),
-          type: $input.val()
-        },
-        success: function ( response ) {
-          $.each( response, function ( i, val ) {
-            html += '<li data-id="'+ val.id +'">' + val.type + '</li>';
-          });
-          $ul.html( html );
-          $ul.listview( "refresh" );
-          $ul.trigger( "updatelayout");
-        } 
-      })
-    }
-  },
-  layerTypeAutocompleteClick: function(e){
-    var $input = $('#layer_type__input') 
-    $input.attr('data-id', $(e.target).attr('data-id'))
-    $input.val(e.target.innerText)
-    var $ul = $( '#layer_type__ul' )
-    $ul.html( '' );
-    $ul.listview( "refresh" );
-    $ul.trigger( "updatelayout");
-  },
-  layerTypeBtnClearClick: function(){
-    $('#layer_type__input').attr('data-id', '')
-  },
-  getLayerType: function(){
-    var str = this.ui.layerTypeInput.val()
-  }
-})
+// var LayerTypeView = Backbone.Marionette.ItemView.extend({
+//   template: '#layer_type_tpl',
+//   id: 'layer_type__view',
+//   ui: {
+//     layerTypeInput: '#layer_type__input',
+//     layerTypeUl: '#layer_type__ul',
+//   },
+//   events: {
+//     'click @ui.layerTypeInput': 'input_click',
+//     'filterablebeforefilter @ui.layerTypeUl': _.debounce(function(e, data){
+//         this.layerTypeAutocomplete(e, data)
+//       }, 700),
+//     'click @ui.layerTypeUl': 'layerTypeAutocompleteClick',
+//     'click #layer_type__view .ui-input-search .ui-input-clear': 'layerTypeBtnClearClick'
+//   },
+//   input_click: function(e){
+//     $(e.target).attr('data-id', '').val('')
+//   },
+//   layerTypeAutocomplete: function(e, data){
+//     var $ul = $( '#layer_type__ul' ),
+//       $input = $( data.input ),
+//       value = $input.val(),
+//       html = "";
+//     $ul.html( "" );
+//     if ( value && value.length > 0 ) {
+//       $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+//       $ul.listview( "refresh" );
+//       $.ajax({
+//         type: "POST",
+//         url: "https://gurtom.mobi/beacon_list.php", //  !!!
+//         dataType: "json",
+//         xhrFields: { withCredentials: true },
+//         crossDomain: true,
+//         data: {
+//           b_type: this.model.get('b_type'),
+//           type: $input.val()
+//         },
+//         success: function ( response ) {
+//           $.each( response, function ( i, val ) {
+//             html += '<li data-id="'+ val.id +'">' + val.type + '</li>';
+//           });
+//           $ul.html( html );
+//           $ul.listview( "refresh" );
+//           $ul.trigger( "updatelayout");
+//         } 
+//       })
+//     }
+//   },
+//   layerTypeAutocompleteClick: function(e){
+//     var $input = $('#layer_type__input') 
+//     $input.attr('data-id', $(e.target).attr('data-id'))
+//     $input.val(e.target.innerText)
+//     var $ul = $( '#layer_type__ul' )
+//     $ul.html( '' );
+//     $ul.listview( "refresh" );
+//     $ul.trigger( "updatelayout");
+//   },
+//   layerTypeBtnClearClick: function(){
+//     $('#layer_type__input').attr('data-id', '')
+//   },
+//   getLayerType: function(){
+//     var str = this.ui.layerTypeInput.val()
+//   }
+// })
 var PhotoView = Backbone.Marionette.ItemView.extend({
   template: '#photo_tpl',
   id: 'photo',
@@ -368,11 +403,13 @@ var PhotoView = Backbone.Marionette.ItemView.extend({
       }
     }
   },
-  showLoadedPhoto: function(imgURL){
+  setLoadedPhoto: function(imgURL){
     var container = document.getElementById("photo__preview"),
         img = document.createElement("img")
     img.src = 'https://gurtom.mobi' + imgURL
     container.appendChild(img);
+    $('#img').val(imgURL)
+    this.ui.removePhotoBtn.show()
   },
   removePhoto: function(){
     this.ui.previewPhoto.empty()
@@ -382,9 +419,18 @@ var PhotoView = Backbone.Marionette.ItemView.extend({
 })
 var PhoneView = Backbone.Marionette.ItemView.extend({
   template: '#phone_tpl',
+  templateHelpers: function(){
+    var obj = {
+      parent_phone: this.options.model.attributes.parent_model ? this.options.model.attributes.parent_model.full[0].amount : '',
+    }
+    return obj
+  },
   className: 'phone_number ui-field-contain',
   ui: {
     'input': '#phone_num__input'
+  },
+  setPhone: function(numStr){
+    this.ui.input.val(numStr)
   }
 })
 var UsrCountblOptionView = Backbone.Marionette.ItemView.extend({
@@ -557,14 +603,19 @@ var SphereGeneralView = Marionette.CompositeView.extend({
   childView: SphereCompositeView,
   childViewContainer: ".composite"
 });
-var ObjectCreateModel = Backbone.Model.extend({
-  defaults: {
-    parent_id: '0',
-    parent_type: '0'
-  }
-})
 var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   template: '#object_create_tpl',
+  templateHelpers: function(){
+    var obj = {
+      layer_owner_id: this.model.get('layer_owner_id') || '',
+      uniq_id: this.model.get('id') || '',
+      parent_id: this.options.parent_id || '',
+      parent_type: this.options.parent_type || '',
+      targetId: this.options.targetId || '',
+      chat: +this.options.targetId>0 ? serializeState(this.options.targetId, this.options.lat, this.options.lng) : ''
+    }
+    return obj
+  },
   id: 'object_create_dialog',
   className: 'project_create__wrapper css__create_form',
   attributes: {
@@ -604,7 +655,9 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     closeBtn: '.header a'
   },
   onBeforeShow: function() {
-    if(this.model.get('targetId') && +this.model.get('targetId') > 0) this.fetchObjectModelById()
+    // if(this.options.targetId && +this.options.targetId > 0 && !this.options.full) {
+    //   this.fetchObjectModelById()
+    // }
     if(this.model.get('lat') && this.model.get('lng')) {
       var latLngModel = new LatLngModel({
         'lat': this.model.get('lat'),
@@ -628,12 +681,10 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     if(       t==2                                                                         ) this.addNewChild('currency', CurrencyView, true)
     if(t==1 ||       t==3 ||t==4 ||t==5                                                    ) this.addNewChild('endDate', EndDateView, true, (t==1 ? 'Оберіть дату закінчення голосування' : undefined))
     if(t==1 ||              t==4                                                           ) this.addNewChild('startDate', StartDateView, true, (t==1 ? 'Оберіть дату початку голосування' : undefined))
-    // if(              t==3                                                                  ) this.addNewChild('programID', ProgramIdView, true)
     if(                            t==5                                                    ) this.addNewChild('beneficiar', BeneficiarView, true)
     if(                                   t==330                          ||t==911         ) this.addNewChild('phone', PhoneView, true)
     if(                                            t==69 ||t==96 ||t==777                  ) this.addNewChild('phone', PhoneView, false)
     if(              t==3 ||t==4 ||t==5 ||t==330                                           ) this.addNewChild('money', MoneyView, true, (t==330 ? 'Орієнтовна вартість проекту' : undefined))
-    if(                                   t==330                                   && g==0 ) this.addNewChild('admLevel', AdmLevelView, true)
     if(t==1                                                                                ) this.addNewChild('usrCountbl', UsrCountblView, true)
     if(t==1                                                                                ) this.addNewChild('age', AgeView, true)
     if(t==1                                                                                ) this.addNewChild('support', SupportView, true)
@@ -641,9 +692,11 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     if(t==1                                                                                ) this.addNewChild('sphere', SphereGeneralView, true)
     if(                                                            t==777 ||t==911         ) this.addNewChild('details', DetailsView, true)
     if(                                            t==69 ||t==96                           ) this.addNewChild('details', DetailsView, false)
-    if(                                                            t==777 ||t==911         ) this.addNewChild('response', ResponseView, false)
-    if(                                                            t==777 ||t==911         ) this.addNewChild('layerType', LayerTypeView, false)
     if(                                                            t==777 ||t==911         ) this.addNewChild('private', PrivateView, false)
+ // if(                                   t==330                                   && g==0 ) this.addNewChild('admLevel', AdmLevelView, true)
+ // if(                                                            t==777 ||t==911         ) this.addNewChild('response', ResponseView, false)
+ // if(                                                            t==777 ||t==911         ) this.addNewChild('layerType', LayerTypeView, false)
+ // if(              t==3                                                                  ) this.addNewChild('programID', ProgramIdView, true)
   },
   addNewChild: function(region, ViewItem, req, label){
     if(region === 'sphere') {
@@ -660,7 +713,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         'required': req ? 'required' : '',
         'label': label ? label : undefined
       }
-      // if(region==='programID') $.extend(opt, { 'program_id': this.model.get('program_id') })
+      if( this.model.attributes.parent_model ) $.extend(opt, { 'parent_model': this.model.attributes.parent_model })
       viewModel = new Backbone.Model(opt) 
       viewItem = new ViewItem({
         model: viewModel
@@ -668,39 +721,60 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     }
     this.showChildView(region, viewItem)
   },
-  fetchObjectModelById: function(){
-    this.model.url = 'https://gurtom.mobi/beacon_cards.php?b_id=' + this.model.get('targetId')
-    $.mobile.loading('show')
-    var that = this
-    this.model.fetch({
-      success: function(){
-        $.mobile.loading('hide')
-        that.fillFormWithTargetData()
-      },
-      error: function(){
-        $.mobile.loading('hide')
-      }
-    })
-  },
+  // fetchObjectModelById: function(){
+  //   this.model.url = 'https://gurtom.mobi/beacon_cards.php?b_id=' + this.model.get('targetId')
+  //   $.mobile.loading('show')
+  //   var that = this
+  //   this.model.fetch({
+  //     success: function(){
+  //       $.mobile.loading('hide')
+  //       that.fillFormWithTargetData()
+  //     },
+  //     error: function(){
+  //       $.mobile.loading('hide')
+  //     }
+  //   })
+  // },
   fillFormWithTargetData: function(){   //  Not completed. It lacks fields and conditions to display
-    var brief = this.model.changedAttributes()[0],
-        full = brief.full[0]
-    this.model.set({'lat': brief.lat})
-    this.model.set({'lng': brief.lng})
-    this.latLng.currentView.model.set({'lat': +brief.lat, 'lng': +brief.lng})
-    // this.latLng.currentView.render()
-    $('#title').val(full.title || '')
-    $('#description').val(full.descr || '')
-    $('#currency').val(full.curr || '').trigger( "change" )
-    $('#amount').val(full.amount || '')
-    $('#phone_num__input').val(full.title || '')
-    this.tag.currentView.setTags(brief.tags || '')
-    $('#img').val((brief.b_img || ''))
-    if(brief.b_img) {
-      this.photo.currentView.showLoadedPhoto(brief.b_img)
+    switch ( +this.options.type || +this.options.b_type ) {
+      case 911:
+      case 777:
+      case 69:
+      case 96:
+        this.details.currentView.setDetails(this.options.details)
+        this.photo.currentView.setLoadedPhoto(this.options.b_img)
+        this.tag.currentView.setTags(this.options.tags)
+        this.phone.currentView.setPhone(
+          this.options.full ? this.options.full[0].phone : ''
+        )
+        break;
+      case 330:
+        this.title.currentView.setTitle(this.options.details)
+        this.description.currentView.setDescr(
+          this.options.full ? this.options.full[0].descr : ''
+        )
+        this.photo.currentView.setLoadedPhoto(this.options.b_img)
+        this.tag.currentView.setTags(this.options.tags)
+        this.money.currentView.setMoney(
+          this.options.full ? this.options.full[0].curr : '',
+          this.options.full ? this.options.full[0].amount : ''
+        )
+        this.phone.currentView.setPhone(
+          this.options.full ? this.options.full[0].phone : ''
+        )
+        break;
+      default:
+        alert('Для маячків цього типу автозаповнення поки що не працює.\nКоординати нового маячка співпадають з оригіналом.')
+        return
     }
   },
   onShow: function(){
+    var that = this
+    this.$el.one('create', function(){
+      if ( that.options.targetId && +that.options.targetId > 0 ){
+        that.fillFormWithTargetData()
+      }
+    })
     this.$el.trigger('create')
     $('#options__select-button').one('click', function(){
       $('#options__select-dialog .ui-dialog-contain .ui-header .ui-btn').removeClass( "ui-icon-delete" ).addClass( "ui-icon-close" )
@@ -747,6 +821,12 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       client.onreadystatechange = function(){
         if (client.readyState == 4 && client.status == 200){
           console.log(client.responseText);
+          if ( client.responseText.indexOf("The") === 0 
+            || client.responseText.indexOf("This") === 1 ) {
+            that.ui.progressWrap.hide()
+            alert ( client.responseText )
+            return
+          }
           $('#img').val(client.responseText)
           that.sendForm()
         }
@@ -806,18 +886,18 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         return validationFailed()
       }
     }
-    if(this.layerType.currentView){
-      var val = '',
-          layerTypeView = this.layerType.currentView 
-      if(val = layerTypeView.getLayerType()) {
-        $('#layer_type').val(val)
-      } else if(layerTypeView.model && layerTypeView.model.get('required')) {
-        alert("Поле 'Категорія повідомлення' є обов'язковим.")
-        return validationFailed()
-      } else {
-        $('#layer_type').val(null)
-      }
-    }
+    // if(this.layerType.currentView){
+    //   var val = '',
+    //       layerTypeView = this.layerType.currentView 
+    //   if(val = layerTypeView.getLayerType()) {
+    //     $('#layer_type').val(val)
+    //   } else if(layerTypeView.model && layerTypeView.model.get('required')) {
+    //     alert("Поле 'Категорія повідомлення' є обов'язковим.")
+    //     return validationFailed()
+    //   } else {
+    //     $('#layer_type').val(null)
+    //   }
+    // }
     if(this.private.currentView){
       var privateView = this.private.currentView,
           val = privateView.getPrivate()
@@ -828,6 +908,20 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         return validationFailed()
       } else {
         $('#private_group').val(null)
+      }
+    }
+    if(this.phone.currentView){
+      var val = this.phone.currentView.ui.input.val(),
+          reg = /^\d+$/
+      if(val.length === 12 && reg.test(val) && val.substring(0,3) === '380') {
+      } else if(val.length === 0) {
+        if (this.model.get('required') === 'required'){
+          alert("Номер телефону є обов'язковим.")
+          return validationFailed()
+        }
+      } else {
+        alert("Виправте номер телефону.")
+        return validationFailed()
       }
     }
     return true
@@ -857,20 +951,10 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         url = "https://gurtom.mobi/request_add.php"
         break;
       case 69:
-        url = "https://gurtom.mobi/beacon_add.php"
-        break;
       case 96:
-        url = "https://gurtom.mobi/beacon_add.php"
-        break;
       case 330:
-        url = "https://gurtom.mobi/beacon_add.php"
-        break;
       case 555:
-        url = "https://gurtom.mobi/beacon_add.php"
-        break;
       case 777:
-        url = "https://gurtom.mobi/beacon_add.php"
-        break;
       case 911:
         url = "https://gurtom.mobi/beacon_add.php"
         break;
@@ -908,5 +992,14 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   },
   exit: function(){
     window.closeSingleBeaconMode()
+  },
+  initialize: function(options){
+    this.model = new Backbone.Model(options.model)
+    delete options.model
+    this.options = options
+    this.childViewOptions = function() {
+      return this.options
+    }
+    // if ( this.options )
   }
 })

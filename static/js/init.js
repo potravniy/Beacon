@@ -151,6 +151,29 @@ window.Lib = Marionette.Object.extend({
     var doc1 = new DOMParser().parseFromString(htmlString, "text/html");
     var doc2 = new DOMParser().parseFromString(doc1.documentElement.textContent, "text/html");
     return doc2.documentElement.textContent
+  },
+  bType: {
+    _data: {
+      'голосування': '1',
+      'програма': '2',
+      'проектна пропозиція': '3',
+      'проект': '4',
+      'запит': '5',
+      'тут добре': '69',
+      'тут погано': '96',
+      'проект по бюджету участі': '330', 
+      'важливо': '777',
+      'СОС': '911'
+    },
+    getCode: function(name){
+      return window.lib.bType._data[name]
+    },
+    getName: function(code){
+      for(var name in window.lib.bType._data){
+        if(window.lib.bType._data[name] == code) return name
+      }
+      return undefined
+    }
   }
 })
 window.lib = new window.Lib()
@@ -246,6 +269,25 @@ window.state.listMenu = [
   },
 ]
 
+var btnsCopyDel = [
+  {
+    text: 'Скопіювати до себе',
+    className: 'copy',
+    isAvailable: function(options){
+      var full = options.full && options.full.length > 0
+      var isNotAuthor = window.state.user.id && window.state.user.id !== options.author_id  
+      return full && isNotAuthor 
+    }
+  },
+  {
+    text: 'Видалити маячок',
+    className: 'delete',
+    isAvailable: function(options){
+      return window.state.user.id === options.author_id && options.b_status.join() === "0,0,0,0"
+    }
+  }
+]
+
 window.state.statusList = {}
 window.state.statusList.SOS = [
   {
@@ -260,7 +302,7 @@ window.state.statusList.SOS = [
       {
         text: 'Прийняти до перевірки',
         className: 'verify',
-        val: 1,
+        chngTo: 1,
         isAvailable: function(options){
           return +window.state.user.id > 0 && window.state.user.id !== options.author_id
         }
@@ -279,7 +321,7 @@ window.state.statusList.SOS = [
       {
         text: 'Підтвердити',
         className: 'confirm',
-        val: 1,
+        chngTo: 1,
         isAvailable: function(options){
           return +window.state.user.nco > 0 || +window.state.user.gov > 0 
         }
@@ -287,7 +329,7 @@ window.state.statusList.SOS = [
       {
         text: 'Спростувати',
         className: 'disprove',
-        val: -1,
+        chngTo: -1,
         isAvailable: function(options){
           return +window.state.user.nco > 0 || +window.state.user.gov > 0
         }
@@ -306,7 +348,7 @@ window.state.statusList.SOS = [
       {
         text: 'Запропонувати свою допомогу',
         className: 'lendhand',
-        val: 1,
+        chngTo: 1,
         isAvailable: function(options){
           return +window.state.user.id > 0  && window.state.user.id !== options.author_id
         }
@@ -325,7 +367,7 @@ window.state.statusList.SOS = [
       {
         text: 'Завершити',
         className: 'complete',
-        val: 1,
+        chngTo: 1,
         isAvailable: function(options){
           return +window.state.user.nco > 0 || +window.state.user.gov > 0 || window.state.user.id === options.author_id
         }
@@ -334,24 +376,7 @@ window.state.statusList.SOS = [
   },
   {
     bStatusIndex: 'addLast',
-    btns: [
-      {
-        text: 'Скопіювати',
-        className: 'copy',
-        isAvailable: function(options){
-          var pb = options.b_type=='330' || options.type=='330'
-          var fv = !!options.full
-          return (+window.state.user.nco > 0 || +window.state.user.gov > 0) && pb && fv 
-        }
-      },
-      {
-        text: 'Видалити',
-        className: 'delete',
-        isAvailable: function(options){
-          return window.state.user.id === options.author_id && options.b_status.join() === "0,0,0,0"
-        }
-      }
-    ]
+    btns: btnsCopyDel
   }
 ]
 window.state.statusList.infoAndEvent = [
@@ -367,7 +392,7 @@ window.state.statusList.infoAndEvent = [
       {
         text: 'Розпочати',
         className: 'start',
-        val: 1,
+        chngTo: 1,
         isAvailable: function(options, b_st){
           return window.state.user.id === options.author_id && b_st < 1 
         }
@@ -386,7 +411,7 @@ window.state.statusList.infoAndEvent = [
       {
         text: 'Завершити',
         className: 'complete',
-        val: 1,
+        chngTo: 1,
         isAvailable: function(options, b_st){
           return window.state.user.id === options.author_id && b_st < 1
         }
@@ -394,37 +419,12 @@ window.state.statusList.infoAndEvent = [
     ]
   },
   {
-    btns: [
-      {
-        text: 'Скопіювати',
-        className: 'copy',
-        isAvailable: function(){
-          var pb = options.b_type=='330' || options.type=='330'
-          var fv = !!options.full
-          return (+window.state.user.nco > 0 || +window.state.user.gov > 0) && pb && fv 
-        }
-      },
-      {
-        text: 'Видалити',
-        className: 'delete',
-        isAvailable: function(options){
-          return window.state.user.id === options.author_id && options.b_status.join() === "0,0,0,0"
-        }
-      }
-    ]
+    btns: btnsCopyDel
   }
 ]
 window.state.statusList.goodAndBad = [
   {
-    btns: [
-      {
-        text: 'Видалити',
-        className: 'delete',
-        isAvailable: function(options){
-          return window.state.user.id === options.author_id
-        }
-      }
-    ]
+    btns: btnsCopyDel
   }
 ]
 window.state.statusList.projPropAndProjectAndRequest = [
@@ -458,7 +458,7 @@ window.state.statusList.projPropAndProjectAndRequest = [
       {
         text: 'Перевести кошти НКО',
         className: 'transfer',
-        val: 1,
+        chngTo: 1,
         isAvailable: function(){
           return +window.state.user.id === 4618
         }
@@ -477,7 +477,7 @@ window.state.statusList.projPropAndProjectAndRequest = [
       {
         text: 'Завершити',
         className: 'complete',
-        val: 1,
+        chngTo: 1,
         isAvailable: function(options){
           return !!options.full && window.state.user.id === options.nco_id && +options.nco_acceptance === 1
         }
@@ -486,46 +486,17 @@ window.state.statusList.projPropAndProjectAndRequest = [
   },
   {
     bStatusIndex: 'addLast',
-    btns: [
-      {
-        text: 'Скопіювати',
-        className: 'copy',
-        isAvailable: function(options){
-          var pb = options.b_type=='330' || options.type=='330'
-          var fv = !!options.full
-          return (+window.state.user.nco > 0 || +window.state.user.gov > 0) && pb && fv 
-        }
-      },
-      {
-        text: 'Видалити',
-        className: 'delete',
-        isAvailable: function(options){
-          return window.state.user.id === options.author_id && options.b_status.join() === "0,0,0,0"
-        }
-      }
-    ]
+    btns: btnsCopyDel
   }
 ]
 window.state.statusList.program = [
   {
-    btns: [
-      {
-        text: 'Скопіювати',
-        className: 'copy',
-        isAvailable: function(options){
-          var pb = options.b_type=='330' || options.type=='330'
-          var fv = !!options.full
-          return (+window.state.user.nco > 0 || +window.state.user.gov > 0) && pb && fv 
-        }
-      },
-      {
-        text: 'Видалити',
-        className: 'delete',
-        isAvailable: function(options){
-          return window.state.user.id === options.author_id && options.b_status.join() === "0,0,0,0"
-        }
-      }
-    ]
+    btns: btnsCopyDel
+  }
+]
+window.state.statusList.partBudg_Vot_WeightVot = [
+  {
+    btns: btnsCopyDel
   }
 ]
 

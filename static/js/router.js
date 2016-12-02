@@ -4,27 +4,29 @@ var Manager = new Marionette.Application();
 Manager.App = {}
 var API = {
     home: function(z, lt, ln, qw, al, bs, bt, st, ft, ocp, oc, op, lcp, lc, lp, vs, ia){
-    	console.log('router.home')
+    	console.log('router.home', Manager.getCurrentRoute())
       if(z && lt && ln){
+      	console.log('router.home resets state')
         window.state.zoom = +z
         window.state.center.lat = +lt
         window.state.center.lng = +ln
-        window.state.filter = (qw==='.' ? '' : encodeURIComponent(qw))
-        window.state.user_auth = (al==='.' ? '' : al)
-        window.state.b_status = (bs==='.' ? '' : bs)
-        window.state.b_types = (bt==='.' ? '' : bt)
-        window.state.start = (st==='.' ? '' : encodeURIComponent(st))
-        window.state.finish = (ft==='.' ? '' : encodeURIComponent(ft))
+        window.state.filter = (qw==='-' ? '' : encodeURIComponent(qw))
+        window.state.user_auth = (al==='-' ? '' : al)
+        window.state.b_status = (bs==='-' ? '' : bs)
+        window.state.b_types = (bt==='-' ? '' : bt)
+        window.state.start = (st==='-' ? '' : encodeURIComponent(st))
+        window.state.finish = (ft==='-' ? '' : encodeURIComponent(ft))
         window.filterViewUpdateFromDataURL(al, bs, bt, qw, st, ft, ocp, oc, op, lcp, lc, lp)
         window.state.viewState = vs
-        var viewStateIdArray = (ia==='.' ? [] : _.map(ia.split(','), function(item){ return parseInt(item, 10) }))
+        var viewStateIdArray = (ia==='-' ? [] : _.map(ia.split(','), function(item){ return parseInt(item, 10) }))
         window.state.viewStateIdArray = viewStateIdArray
         window.state.initFromURL = true
       }
       $(":mobile-pagecontainer").pagecontainer("change", $('#beacons-map'), {changeHash: false})
     },
-    login: function(){
+    login: function(usr_id, verif_code){
       $(":mobile-pagecontainer").pagecontainer("change", $('#login_dialog'), {changeHash: false})
+      if ( usr_id && verif_code ) confirmVerification(usr_id, verif_code)
     },
     registration: function(){
       $(":mobile-pagecontainer").pagecontainer("change", $('#registration_dialog'), {changeHash: false})
@@ -32,7 +34,8 @@ var API = {
     passRestore: function(){
       $(":mobile-pagecontainer").pagecontainer("change", $('#restore_pass_dialog'), {changeHash: false})
     },
-    passReset: function(){
+    passReset: function(verif_code){
+      resetDialogInit(verif_code)
       $(":mobile-pagecontainer").pagecontainer("change", $('#reset_pass_dialog'), {changeHash: false})
     },
     create: function(){
@@ -45,9 +48,10 @@ Manager.App.Router = Marionette.AppRouter.extend({
     'home/:zoom': 'home',
     "main/:zoom/:lat/:lng/:mapSearch/:authLevel/:bStatus/:bTypes/:startTime/:finishTime/:ocp/:oc/:op/:lcp/:lc/:lp/:viewState/:viewStateIdArray": 'home',
     "login": 'login',
+    "login/:usr_id/:verif_code": 'login',
     "registration": 'registration',
     "pass_restore": 'passRestore',
-    "pass_reset": 'passReset',
+    "pass_reset/:verif_code": 'passReset',
     "create": 'create'
   },
   controller: window.API,
@@ -57,7 +61,7 @@ Manager.App.Router = Marionette.AppRouter.extend({
 })
 
 Manager.navigate = function(route, options){
-  options || (options = {});
+  options = options || {}
   Backbone.history.navigate(route, options);
 };
 Manager.getCurrentRoute = function(){
@@ -78,7 +82,7 @@ Manager.on("start", function(){
   $('.history_back').click(function(){
     window.history.back()
   })
-  console.log('router is ready')
+  console.log('router started')
 });
 Manager.on('state_update', function(){
   Manager.navigate(serializeState())
@@ -103,29 +107,29 @@ Manager.on('pass_restore', function(){
   console.log("pass_restore event handler");
 })
 Manager.on('pass_reset', function(){
-  Manager.navigate('pass_reset')
   API.passReset()
+  Manager.navigate('pass_reset')
   console.log("pass_reset event handler");
 })
 
-function serializeState() {
+function serializeState(id, lat, lng) {
   var fourthFilter = trans4thFilterStateToRoute()
   var str = 'main/' + window.state.zoom
-    + '/'+ window.state.center.lat
-    + '/'+ window.state.center.lng
-    + '/'+ (window.state.filter==='' ? "." : window.state.filter)
-    + '/'+ (window.state.user_auth==='' ? "." : window.state.user_auth)
-    + '/'+ (window.state.b_status==='' ? "." : window.state.b_status)
-    + '/'+ (window.state.b_types==='' ? "." : window.state.b_types)
-    + '/'+ (window.state.start==='' ? "." : window.state.start)
-    + '/'+ (window.state.finish==='' ? "." : window.state.finish)
-    + '/'+ (fourthFilter.ocp==='' ? "." : fourthFilter.ocp)
-    + '/'+ (fourthFilter.oc==='' ? "." : fourthFilter.oc)
-    + '/'+ (fourthFilter.op==='' ? "." : fourthFilter.op)
-    + '/'+ (fourthFilter.lcp==='' ? "." : fourthFilter.lcp)
-    + '/'+ (fourthFilter.lc==='' ? "." : fourthFilter.lc)
-    + '/'+ (fourthFilter.lp==='' ? "." : fourthFilter.lp)
+    + '/'+ ( lat===undefined ? window.state.center.lat : lat )
+    + '/'+ ( lng===undefined ? window.state.center.lng : lng )
+    + '/'+ ( +id>0 ? id : (window.state.filter==='' ? '-' : window.state.filter) )
+    + '/'+ (window.state.user_auth==='' ? '-' : window.state.user_auth)
+    + '/'+ (window.state.b_status==='' ? '-' : window.state.b_status)
+    + '/'+ (window.state.b_types==='' ? '-' : window.state.b_types)
+    + '/'+ (window.state.start==='' ? '-' : window.state.start)
+    + '/'+ (window.state.finish==='' ? '-' : window.state.finish)
+    + '/'+ (fourthFilter.ocp==='' ? '-' : fourthFilter.ocp)
+    + '/'+ (fourthFilter.oc==='' ? '-' : fourthFilter.oc)
+    + '/'+ (fourthFilter.op==='' ? '-' : fourthFilter.op)
+    + '/'+ (fourthFilter.lcp==='' ? '-' : fourthFilter.lcp)
+    + '/'+ (fourthFilter.lc==='' ? '-' : fourthFilter.lc)
+    + '/'+ (fourthFilter.lp==='' ? '-' : fourthFilter.lp)
     + '/'+ window.state.viewState
-    + '/'+ (window.state.viewStateIdArray.length===0 ? '.' : window.state.viewStateIdArray.join())
-  return str + '/'
+    + '/'+ (window.state.viewStateIdArray.length===0 ? '-' : window.state.viewStateIdArray.join())
+  return str
 }

@@ -90,6 +90,13 @@ BeaconsList = Backbone.Collection.extend({
       for (key in i){
         if(i[key]==='') {
           delete i[key]
+        } else if( key==='details' || key==='title' ){
+          i[key] = window.lib.htmlEntityDecode( i[key] ) 
+        } else if( key==='tags' ){
+          i[key] = _.map(i[key], function(item){
+            item.tag = window.lib.htmlEntityDecode( item.tag )
+            return item
+          })
         }
       }
       return i
@@ -118,8 +125,8 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
     var i = window.indexOfLastNonEmptyElement(bs) || 0
     var obj = {
       full: this.model.get('full') || '',
-      title: window.lib.htmlEntityDecode(this.model.get('title')),
-      details: window.lib.htmlEntityDecode(this.model.get('details')),
+      // title: window.lib.htmlEntityDecode(this.model.get('title')),
+      // details: window.lib.htmlEntityDecode(this.model.get('details')),
       b_status: i,
       color: bs[i]>0 ? 'green' : bs[i]<0 ? 'red' : '',
       icon_url: this.model.get('img') || window.getIconURL(this.model.attributes, true) 
@@ -131,7 +138,7 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
   childViewContainer: '.sent-message__wrapper',
   className: function(){
     var index = _.indexOf(this.model.collection.models, this.model)
-    return "ui-content ui-block-" + ((index % 2) ? "b" : "a") + ' ' + index
+    return "ui-content ui-block-" + ((index % 2) ? "b" : "a")
   },
   attributes: {
     "data-role": "content"
@@ -161,8 +168,11 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
     'click @ui.img': 'onClickImg'
   },
   onBeforeShow: function(){
-    if(this.model.get('b_type') == '330'   || this.model.get('type') == '330'
+    if(  this.model.get('b_type') == '330' || this.model.get('type') == '330'
       || this.model.get('b_type') == '911' || this.model.get('type') == '911'
+      || this.model.get('b_type') == '777' || this.model.get('type') == '777'
+      || this.model.get('b_type') == '96'  || this.model.get('type') == '96'
+      || this.model.get('b_type') == '69'  || this.model.get('type') == '69'
       || this.model.get('b_type') == '1'   || this.model.get('type') == '1'
       || this.model.get('b_type') == '2'   || this.model.get('type') == '2' ) {
       this.ui.expandBtn.show()
@@ -178,8 +188,12 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
     }
   },
   onClickShare: function (event) {
-    event.stopPropagation()
-    console.log('button "share" clicked id=' + this.model.get('id'))
+    var options = {
+      title: this.model.get('details'),
+      link: window.location.origin + window.location.pathname + '#' 
+       + serializeState(this.model.get('id'), this.model.get('lat'), this.model.get('lng')) 
+    }
+    window.showPopupShare(options)
   },
   onClickLink: function (event) {
     event.stopPropagation()

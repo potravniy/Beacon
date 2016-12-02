@@ -20,7 +20,7 @@ function beaconsListGetNewCollection(){
   window.beaconsList.getNewCollection()
 }
 
-function showObjectCreateView(model) {
+function showObjectCreateView(model, options) {
   var titler = ''
   switch (+model.type) {
     case 1:
@@ -54,11 +54,14 @@ function showObjectCreateView(model) {
       titler = 'Створення маячка "СОС"'
       break;
   }
-  $.extend(model, { titler: titler })
-  var View = ObjectCreateView.extend({
-    model: new ObjectCreateModel(model)
-  })
-  window.objectCreateView = new View()
+  model = $.extend({}, model, { titler: titler })
+
+  if ( options ){
+    options.model = model
+  } else {
+    var options = {model: model}
+  }
+  window.objectCreateView = new ObjectCreateView(options)
   window.rightRegion.show(objectCreateView);
 }
 
@@ -94,8 +97,9 @@ function showPopupStatusBeacon(options) {
   if ( !window.popupStatusBeacon.isDestroyed ) {
     window.rightPopupRegion.show(window.popupStatusBeacon)
     console.log('Switch to popupStatusBeacon')
+  } else {
+    console.log('popupStatusBeacon selfdestroyed due abcence of beacon type')
   }
-  console.log('popupStatusBeacon selfdestroyed due abcence of beacon type')
 }
 
 function showChangeGovMenuView() {
@@ -104,15 +108,24 @@ function showChangeGovMenuView() {
   console.log('Switch to changeGovMenuView')
 }
 
-function createObject(model) {
-  model = $.extend({}, getGeoOptions(model.type), model)
-  showObjectCreateView(model)
-  createSingleMarker(model, true)
+function createObject(model, options) {
+  $('#create_beacon__geo').popup('close')
+  if ( options.lat && options.lng && options.b_type ) {
+    var geoOptions = {
+      'lat': +options.lat,
+      'lng': +options.lng,
+      'b_type': +options.b_type
+    }
+  } else {
+    var geoOptions = getGeoOptions(model.type)
+  }
+  model = $.extend({}, geoOptions, model)
+  showObjectCreateView(model, options)
+  createSingleMarker(model, 'draggable')
   window.mainRegion.showBeaconsCards()
 }
 
 function getGeoOptions(type){
-  $('#create_beacon__geo').popup('close')
   var options = {
     'lat': +window.state.map.getCenter().lat().toFixed(8),
     'lng': +window.state.map.getCenter().lng().toFixed(8),
@@ -140,6 +153,12 @@ function showPayByCardView(options) {
   console.log('Switch to popupPayByCardView')
 }
 
+function showPopupShare(options) {
+  window.popupShareInSocial = new PopupShareInSocial(options)
+  window.rightPopupRegion.show(window.popupShareInSocial)
+  console.log('Switch to popupShareInSocial')
+}
+
 function showFourthFilter() {
   window.listOrgCollection = new ListOrgCollection( makeListOrgs() )
   window.fourthFilterView = new FourthFilterView()
@@ -148,14 +167,14 @@ function showFourthFilter() {
 }
 
 function checkLoggedInThen(func, args) {
-  if(!window.state.user.id){
+  if( window.state.user.id ){
+    func(args)
+  } else {
     window.defferedAfterLogin = jQuery.Deferred()
     .done(function(){
       func(args)
     })
     window.logIn()
-  } else {
-    func(args)
   }
 }
 window.onpopstate = function(){
