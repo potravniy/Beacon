@@ -4,6 +4,7 @@ $.fn.exists = function () { //  http://stackoverflow.com/questions/7141334/check
     return this.length !== 0; //  true if selector returned not empty jquery object
 }
 var indexOfLastNonEmptyElement = function(array){
+  if (!Array.isArray( array )) return undefined
   for ( var i=array.length-1; i>=0; i--){
     if ( array[i] ) return i
   }
@@ -323,7 +324,7 @@ window.state.statusList.SOS = [
         className: 'confirm',
         chngTo: 1,
         isAvailable: function(options){
-          return +window.state.user.nco > 0 || +window.state.user.gov > 0 
+          return (+window.state.user.nco > 0 || +window.state.user.gov > 0 || +window.state.user.voting_status > 0) && window.state.user.id !== options.author_id && options.b_status[3] < 1
         }
       },
       {
@@ -331,7 +332,7 @@ window.state.statusList.SOS = [
         className: 'disprove',
         chngTo: -1,
         isAvailable: function(options){
-          return +window.state.user.nco > 0 || +window.state.user.gov > 0
+          return (+window.state.user.nco > 0 || +window.state.user.gov > 0 || +window.state.user.voting_status > 0) && window.state.user.id !== options.author_id && options.b_status[3] < 1
         }
       }
     ]
@@ -350,7 +351,7 @@ window.state.statusList.SOS = [
         className: 'lendhand',
         chngTo: 1,
         isAvailable: function(options){
-          return +window.state.user.id > 0  && window.state.user.id !== options.author_id
+          return +window.state.user.id > 0 && window.state.user.id !== options.author_id
         }
       }
     ]
@@ -368,8 +369,8 @@ window.state.statusList.SOS = [
         text: 'Завершити',
         className: 'complete',
         chngTo: 1,
-        isAvailable: function(options){
-          return +window.state.user.nco > 0 || +window.state.user.gov > 0 || window.state.user.id === options.author_id
+        isAvailable: function(options, b_st){
+          return (+window.state.user.nco > 0 || +window.state.user.gov > 0 || window.state.user.id === options.author_id) && b_st < 1
         }
       }
     ]

@@ -17,7 +17,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Beacon">
-    <link rel="apple-touch-icon-precomposed" href="./static/img/ios-desktop.png">
+    <link rel="apple-touch-icon-precomposed" href="./static/img/android-desktop.png">
 
     <!-- Tile icon for Win8 (144x144 + tile color) -->
     <meta name="msapplication-TileImage" content="./static/img/ms-touch-icon-144x144.png">
@@ -30,6 +30,7 @@
     <style>
       h1 {display: none;}
       a {display: none;}
+      .page {display: none;}
     </style>
     <link rel="stylesheet" href="./static/css/vendor/jquery.mobile-1.4.5_modified.css">
     <link rel="stylesheet" href="./static/css/beacon.css">
@@ -45,13 +46,14 @@
       </div>
       <div id="container" data-role="main" class="ui-panel-wrapper">
         <div id="beacons-map__the-map">
-<!--
-          <input id="pac-input" class="controls" type="text" placeholder="Пошук на карті Google" data-enhanced="true">
--->
-          <div id="the-map"></div>
 
-          <label for="map_search" class="ui-hidden-accessible map_search"></label>
-          <input data-wrapper-class="wrapper_map_search" type="search" name="map_search" id="map_search" placeholder="#хеш-тег чи числовий id">
+          <div id="the-map"></div>
+          <div class="ui-input-search searsh-buttons-wrapper ">
+            <a href="#" class="searsh-buttons hash-search ui-btn ui-btn-inline">#</a>
+            <a href="#" class="searsh-buttons id-search ui-btn ui-btn-inline">id</a>
+            <a href="#" class="searsh-buttons google-search ui-btn ui-btn-inline ui-icon-flag ui-btn-icon-notext">address</a>
+          </div>
+          <div id="map_search_container"></div>
 
           <div class="ui-nodisc-icon buttons-wrapper upper-right unused">
             <a href="#" class="ui-btn ui-corner-all ui-icon-nearby ui-btn-icon-notext ui-btn-inline">nearby</a><br>
@@ -65,7 +67,7 @@
         </div> <!-- /beacons-map__the-map -->
         
         <div id="beacons-map__the-beacons">
-          <!--<p>Place for Beacon Cards or Beacon Create. The incertion is processing with app_marionette.js</p>-->
+          <!--<p>Place for Beacon Cards or Beacon Create.</p>-->
         </div>    <!-- /beacons-map__the-beacons -->
         
         
@@ -145,7 +147,7 @@
             <a class="menu-icon-tasks ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#my-tasks-page">My Tasks</a>
           </li>
           <li>
-            <a class="profile menu-icon-profile ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#profile-page">My Profile</a>
+            <a class="profile menu-icon-profile" data-ajax="false" href="#">My Profile</a>
           </li>
           <li class="sep">
             &nbsp;
@@ -318,7 +320,7 @@
     </div>    <!-- /beacons-map page -->
 
 
-    <div data-role="page" data-dialog="true" id="login_dialog" data-close-btn="none" data-title="Вхід">
+    <div data-role="page" data-dialog="true" id="login_dialog" data-close-btn="none" data-title="Вхід" class="page">
       <form id="login" action="https://gurtom.mobi/l/index.php?m=0" method="post">
         <div data-role="header">
           <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
@@ -348,7 +350,7 @@
       </form>
     </div>
 
-    <div data-role="page" data-dialog="true" id="registration_dialog" data-close-btn="none" data-title="Реєстрація">
+    <div data-role="page" data-dialog="true" id="registration_dialog" data-close-btn="none" data-title="Реєстрація" class="page">
       <div data-role="header" data-position="fixed">
         <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
         <h1>Реєстрація</h1>
@@ -377,7 +379,7 @@
       </form>
     </div>
 
-    <div data-role="page" data-dialog="true" id="restore_pass_dialog" data-close-btn="none" data-title="Відновлення паролю">
+    <div data-role="page" data-dialog="true" id="restore_pass_dialog" data-close-btn="none" data-title="Відновлення паролю" class="page">
       <div data-role="header">
         <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
         <h1>Відновлення паролю</h1>
@@ -391,7 +393,7 @@
       </div>
     </div>
 
-    <div data-role="page" data-dialog="true" id="reset_pass_dialog" data-close-btn="none" data-title="Відновлення паролю">
+    <div data-role="page" data-dialog="true" id="reset_pass_dialog" data-close-btn="none" data-title="Відновлення паролю" class="page">
       <div data-role="header">
         <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
         <h1>Відновлення паролю</h1>
@@ -407,7 +409,9 @@
       </div>
     </div>
 
-    <span class='warning'><h2>Ми переходимо на новий інтерфейс<br>Перепрошуємо за тимчасові незручності</h2></span>
+    <span class='warning'><h2>Прототип</h2></span>
+
+    <div class="profile_page__wrapper"></div>
 
 
     <script id="object_create_tpl" type="text/template">
@@ -672,7 +676,7 @@
           <a href="#" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-beacons" class="beacon_status <%- color %> ui-btn ui-corner-all ui-btn-right ui-btn-inline ui-icon-progress_<% if(b_status===0){ %>empty<% } else if(b_status===1){ %>one<% } else if(b_status===2){ %>two<% } else if(b_status===3){ %>full<% } %> ui-btn-icon-notext">Status</a>
         </div>
         <div data-role="content" class="beacon-content clearfix">
-          <h3><%- title %></h3>                                                
+          <h3><%- title %></h3>
           <p><img class="photo" src="<%-b_img%>" alt="Photo"><strong><%- details %></strong></p>
           <p class="tags"><%- tagList %></p>
           <div class="expanding_view click_transparent">
@@ -691,14 +695,27 @@
           </ul>
         </div>
         <div data-role="chat" class="chat">
-          <div class="input-message ui-field-contain">                                                                                                      <!--msg input section-->
-            <label for="text-message" class="ui-hidden-accessible">Відправити</label>                                                                       <!--use locale-->
-            <input type="text" data-clear-btn="true" data-mini="true" name="text-message" id="text-message" value="" placeholder="Повідомлення">            <!--use locale for placeholder-->
-            <button class="input-message__send ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-send ui-btn-icon-notext ui-btn-a">Надіслати</button>    <!--use locale-->
+          <div class="input-message ui-field-contain">
+            <label for="text-message" class="ui-hidden-accessible">Відправити</label>
+            <input type="text" data-clear-btn="true" data-mini="true" name="text-message" id="text-message" value="" placeholder="Повідомлення">
+            <button class="input-message__send ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-send ui-btn-icon-notext ui-btn-a">Надіслати</button>
           </div>
           <div class="sent-message__wrapper"></div>
         </div>
       </div>
+    </script>
+
+    <script id="chat_tpl" type="text/template">
+      <div class="input-message ui-field-contain">
+        <label for="text-message" class="ui-hidden-accessible">Відправити</label>
+        <input type="text" data-clear-btn="true" data-mini="true" name="text-message" id="text-message" value="" placeholder="Повідомлення">
+        <button class="input-message__send ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-send ui-btn-icon-notext ui-btn-a">Надіслати</button>
+      </div>
+      <div class="sent-message__wrapper"></div>
+    </script>
+
+    <script id="beacon_list_is_empty_tpl" type="text/template">
+      <h3 class="empty_beacon_list">За обраними параметрами мапи та фільтрів<br>позначки/маячки користувачів тут відсутні</h3>
     </script>
     
     <script id="sos_extention_view_tpl" type="text/template">
@@ -904,7 +921,7 @@
     <script id="change_gov_menu_item__tpl" type="text/template">
       <input type="hidden" class="change_gov_menu__layer" name="layer_type" value="<%- layer_type %>">
       <div class="change_gov_menu__input_wrapper ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
-        <input class="change_gov_menu__input" type="text" data-enhanced="true" data-clear-btn="false" name="text-enhanced" id="text-enhanced" value="<%- name %>">
+        <input class="change_gov_menu__input" type="text" data-enhanced="true" data-clear-btn="false" name="text-enhanced" id="text-enhanced" value="<%- name %>" placeholder="Додайте назву шару">
       </div>
       <div class="change_gov_menu__select_type"></div>
       <div class="hiddenfile">
@@ -993,6 +1010,31 @@
       <div class="unselected_layers"></div>
     </script>
      
+    <script id="map_search__tpl" type="text/template">
+      <input data-wrapper-class="wrapper_map_search" type="<%- inputType %>" data-type="search" name="map_search" id="map_search" placeholder="<%- placeholder %>" data-enhanced="true" value="<%- value %>" autofocus>
+      <a href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden" title="Clear text">Clear text</a>
+      <a href="#" tabindex="-2" class="ui-input-close ui-btn ui-icon-close ui-btn-icon-notext ui-corner-all" title="Close input">Close input</a>
+    </script>
+
+    <script id="profile_popup__tpl" type="text/template">
+      <div data-role="header" class="header">
+        <h1>Ваш профіль</h1>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+      </div>
+      <div data-role="main" class="listview_wrapper">
+        <div class="profile_info clearfix">
+          <img class="avatar" src="<%- avatarSrc %>" alt="Photo">
+          <p class="name"><strong>Ім'я:</strong> <%- name %> </p>
+          <p class="name"><strong>login:</strong> <%- login %> </p>
+          <p class="name"><strong>id:</strong> <%- id %> </p>
+        </div>
+        <p class="name"><strong>email:</strong> <%- email %> </p>
+        <div class="address">
+          <p class="address_title">Адреси для доступу до місцевих голосувань:</p>
+          <ul class="address_list"></ul>
+        </div>
+      </div>
+    </script>
 
 
 
@@ -1041,7 +1083,8 @@
     <script src="./static/js/authentification_manager.js"></script>
     <script src="./static/js/fourthFilter.js"></script>
     <script src="./static/js/shareInSocialNet.js"></script>
-    <script src="./static/js/googleMapSearch.js"></script>
+    <script src="./static/js/mapSearch.js"></script>
+    <script src="./static/js/profilePopup.js"></script>
 
   </body>
 </html>

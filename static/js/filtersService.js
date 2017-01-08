@@ -224,8 +224,24 @@ function reverseDateFormat(dateStr) {
   return dateStr.split('-').reverse().join('.')
 }
 $(window).load(function(){
-  window.$filter_mapSearch = $('#map_search')
-  window.$filter_mapSearch.on('change keydown keyup paste', _.debounce(mapSeachEventHandler, 1000))
+  $('.searsh-buttons-wrapper .hash-search').on(
+    'click',
+    _.debounce(showSearch_Hash, 100)
+  )
+  $('.searsh-buttons-wrapper .id-search').on(
+    'click',
+    _.debounce(showSearch_ID, 100)
+  )
+  $('.searsh-buttons-wrapper .google-search').on(
+    'click',
+    _.debounce(showSearch_Google, 100)
+  )
+
+  // window.$filter_mapSearch = $('#map_search')
+  // window.$filter_mapSearch.on(
+  //   'change keydown keyup paste',
+  //   _.debounce(mapSeachEventHandler, 1000)
+  // )
   $(document).on('click', 'input', function(e){
     e.stopPropagation()
   })
@@ -238,19 +254,19 @@ $(window).load(function(){
   $filter_all.change(setAllActions)
 })
 
-function mapSeachEventHandler(){
-  var res = window.$filter_mapSearch.val()
-  if (res === ""){
-    window.state.filter = ""
-    window.state.sendGET(window.state.urlMarkers)
-  } else {
-    res = _.filter(res, function(item){
-      return item !== "#"
-    }).join('')
-    window.state.filter = encodeURIComponent(res)
-    window.state.sendGET(window.state.urlMarkers)
-  }
-}
+// function mapSeachEventHandler(){
+//   var res = window.$filter_mapSearch.val()
+//   if (res === ""){
+//     window.state.filter = ""
+//     window.state.sendGET(window.state.urlMarkers)
+//   } else {
+//     res = _.filter(res, function(item){
+//       return item !== "#"
+//     }).join('')
+//     window.state.filter = encodeURIComponent(res)
+//     window.state.sendGET(window.state.urlMarkers)
+//   }
+// }
 
 function getListOrgs() {
   if ( window.state.listOrgs ){
@@ -280,11 +296,11 @@ function getListOrgs() {
 }
 
 function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft, ocp, oc, op, lcp, lc, lp) {
+  console.log('filterViewUpdateFromDataURL')
   $('#beacon_status').off()
   $('#user_rating').off()
   $('#actions input').off()
   $filter_date_picker.off()
-  window.$filter_mapSearch.off('change keydown keyup paste')
 
   var arr = al.split(',')
   if(_.indexOf(arr, '0' ) === -1 ) $filter_e_mail.prop('checked', false).flipswitch( "refresh" )
@@ -310,7 +326,14 @@ function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft, ocp, oc, op, lcp, 
   if(_.indexOf(arr, '777') === -1 ) $filter_info.prop('checked', false).flipswitch( "refresh" )
   if(_.indexOf(arr, '911') === -1 ) $filter_sos.prop('checked', false).flipswitch( "refresh" )
   // if(_.indexOf(arr, '1000') === -1 ) $filter_organizations.prop('checked', false).flipswitch( "refresh" )
-  if(qw !== '-') window.$filter_mapSearch.val( decodeURIComponent(qw) )
+  if(qw !== '-'){
+    qw = decodeURIComponent(qw)
+    if(isNaN(qw[0])){
+      window.showSearch_Hash({value: qw})
+    } else {
+      window.showSearch_ID({value: qw})
+    }
+  }
   if(st!=='-' && ft!=='-') {
     var $customRangeRadioBtn = $('#custom_range'),
         $timeTabBtn = $(".time_range")
@@ -334,6 +357,4 @@ function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft, ocp, oc, op, lcp, 
   $('#actions input').change(_.debounce(actionsRead, 1000))
   $filter_all.change(setAllActions)
   $filter_date_picker.change(datePickerChanged)
-  window.$filter_mapSearch.on('change keydown keyup paste', _.debounce(mapSeachEventHandler, 1000))
-
 }

@@ -300,12 +300,13 @@ function showUserInfo(){
     $('#left-panel.auth-panel .menu li.login').hide()
     $('#left-panel.auth-panel .menu li.logout').show()
     $('.menu .activities').removeClass('ui-state-disabled')
-    $('.menu .profile').removeClass('ui-state-disabled')
+    $('.menu .profile').removeClass('ui-state-disabled').click(showProfile)
+
     } else {
     $('#left-panel.auth-panel .menu li.login').show()
     $('#left-panel.auth-panel .menu li.logout').hide()
     $('.menu .activities').addClass('ui-state-disabled')
-    $('.menu .profile').addClass('ui-state-disabled')
+    $('.menu .profile').addClass('ui-state-disabled').off()
   }
 }
 

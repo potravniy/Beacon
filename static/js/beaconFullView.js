@@ -1,5 +1,20 @@
 "use strict"
 var MsgCollectionView = Backbone.Marionette.CollectionView.extend({
+  // template: '#chat_tpl',
+  // className: 'chat',
+  // attributes: {
+  //   'data-role': "chat"
+  // },
+  // ui: {
+  //   msgInput: '#text-message',
+  //   btnSend: '.input-message__send'
+  // },
+  // events: {
+  //   'click @ui.btnSend': 'msgSend'
+  // },
+  // msgSend: function(){
+  //   console.log('btnSend clicked')
+  // },
   collection: MsgGroup,
   childView: MsgView,
   childViewContainer: '.sent-message__wrapper',
@@ -82,7 +97,7 @@ var VotingModel = Backbone.Model.extend({
         } else {
           this.set({'v_status': 'Триває збір голосів підтримки до '+ reverseDateFormat(this.get('sprtf')) +'.'})
           if(this.get('canUserVote')) {
-            this.set({'usr_status': (this.get('sprt_my') == '1' ? 'Ви підтримали це голосування.' : 'Ви не підтримали це голосування.' )})
+            this.set({'usr_status': (this.get('sprt_my') == '1' ? 'Ви підтримали це голосування.' : 'Ви ще не підтримували проведення цього голосування.' )})
             this.set({'btn_support': (this.get('sprt_my') == '1' ? 'Скасувати' : 'Підтримати' ) })
           }
         }
@@ -415,14 +430,14 @@ var VotingView = Backbone.Marionette.LayoutView.extend({
     'voting:btn_yes_click': 'onYesBtnClick'
   },
   onSupportBtnClick: function(){
-    data = {
+    var data = {
       id: this.model.get('id'),
       vote: '4'
     }
     this.sendVote(data)
   },
   onYesBtnClick: function(childView, priv){
-    data = {
+    var data = {
       id: this.model.get('id'),
       open: ''+ +!priv, 
       vote: this.model.get('user_vote') == '1' ? "0" : "1"
@@ -430,7 +445,7 @@ var VotingView = Backbone.Marionette.LayoutView.extend({
     this.sendVote(data)
   },
   onNoBtnClick: function(childView, priv){
-    data = {
+    var data = {
       id: this.model.get('id'),
       open: +!priv, 
       vote: this.model.get('user_vote') == '2' ? "0" : "2"
@@ -438,7 +453,7 @@ var VotingView = Backbone.Marionette.LayoutView.extend({
     this.sendVote(data)
   },
   onAbstBtnClick: function(childView, priv){
-    data = {
+    var data = {
       id: this.model.get('id'),
       open: +!priv, 
       vote: this.model.get('user_vote') == '3' ? "0" : "3"

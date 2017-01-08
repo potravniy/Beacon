@@ -974,9 +974,24 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         return
       }
       window.state.singleBeacon = true
+      var res = _.map(response, function(i){
+        for (key in i){
+          if(i[key]==='') {
+            delete i[key]
+          } else if( key==='details' || key==='title' ){
+            i[key] = window.lib.htmlEntityDecode( i[key] ) 
+          } else if( key==='tags' ){
+            i[key] = _.map(i[key], function(item){
+              item.tag = window.lib.htmlEntityDecode( item.tag )
+              return item
+            })
+          }
+        }
+        return i
+      })
       if(that.latLng.currentView){
         markers[markers.length-1].setDraggable(false)
-        showBeaconFullView(response)                      //  Add alert on error!
+        showBeaconFullView(res)                      //  Add alert on error!
         // beaconsList.set(response, {reset: true})
         // showBeaconsListView()
       } else {

@@ -103,11 +103,10 @@ img[src=""] {
 }
 
 #beacons-map__the-map {
-  background-color: #fffaaa;
+  background-color: #eee;
   position: relative;
 }
 #beacons-map__the-beacons {
-  /*display: none;*/
   background-color: #ccc;
   overflow-y: auto;
 }
@@ -125,11 +124,50 @@ img[src=""] {
 .buttons-wrapper {
   position: absolute;
 }
+
+.ui-input-search.searsh-buttons-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: none;
+  border-radius: 2px;
+  background-color: #fff;
+  padding: 0 6px 0 32px;
+  margin-right: 0.5em;
+}
+.ui-input-search.searsh-buttons-wrapper:after {
+  width: 22px;
+  height: 22px;
+  margin-top: -10px;
+  opacity: 1;
+}
+.ui-input-search.searsh-buttons-wrapper .searsh-buttons {
+  position: relative;
+  margin: 3px -3px;
+  width: 2em;
+  height: 2em;
+  padding: 5px 0 0 0;
+}
+#map_search_container {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
 .wrapper_map_search.ui-input-search {
   position: relative;
   top: -100%;
-  margin-left: 0.5em;
-  margin-right: 0.5em
+  height: 38px;
+  margin-left: 0.4em;
+  margin-right: 0.4em;
+  padding-right: 4em;
+}
+.wrapper_map_search.ui-input-search.ui-input-has-clear .ui-btn.ui-input-clear {
+  right: 30px;
+}
+.wrapper_map_search.ui-input-search.ui-input-has-clear .ui-btn.ui-input-close {
+  position: absolute;
+  top: -4px;
+  right: 4px;
 }
 .ui-page-theme-a .buttons-wrapper .ui-btn {
   margin: 0.24em 0.625em;
@@ -266,6 +304,10 @@ img[src=""] {
 }
 .my-responsive > .ui-block-b {
     padding-left: 0.25em;
+}
+.my-responsive .empty_beacon_list {
+  padding: 2em;
+  text-align: center; 
 }
 .beacon-content {
     background-color: #f9f9f9;
@@ -1128,6 +1170,21 @@ img.photo {
     display: list-item; }
 /*   Left panel section   */
 
+.profile.ui-popup {
+  min-width: 300px;
+  margin: 2px;
+}
+.profile .avatar {
+  float: left;
+  max-width: 100px;
+  max-height: 75px;
+}
+.profile .name {
+  margin: 2px;
+}
+
+
+
 
 
 #registration_dialog {
@@ -1382,7 +1439,7 @@ hr {
   padding: 0 1em;
   border-radius: 1em;
   line-height: 3em;
-  width: 400px;
+  width: 200px;
   max-width: 85%;
   font-size: 0.8em;
   border: 5px dashed;
@@ -1494,6 +1551,9 @@ p.usr_category {
 .bars {
   position: relative;
   border-bottom: 1px solid #ddd;
+}
+.bars p {
+  height: 1em; 
 }
 .votes {
   position: absolute;
@@ -1610,6 +1670,8 @@ p.usr_category {
 }
 #age .age_range {
   height: 100%;
+  width: 50px;
+  text-align: center;
 }
 /*p.project {
   margin-top: 0.5em;
@@ -1675,6 +1737,13 @@ img.ui-btn-icon-notext.ui-btn-inline {
   color: #888;
 }
 
+.blur {
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -o-filter: blur(2px);
+  -ms-filter: blur(2px);
+  filter: blur(2px);
+}
 
 
 

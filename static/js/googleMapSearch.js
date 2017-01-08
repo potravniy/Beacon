@@ -2,17 +2,17 @@ function mapGoogleSearchInit() {
   var map = window.state.map
 
   // Create the search box and link it to the UI element.
-  var input = document.getElementById('pac-input');
+  var input = document.getElementById('map_search');
   if ( !input ) return
   var searchBox = new google.maps.places.SearchBox(input);
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+  // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
   // Bias the SearchBox results towards current map's viewport.
   map.addListener('bounds_changed', function() {
     searchBox.setBounds(map.getBounds());
   });
 
-  var markers = [];
+  window.searchMarkers = [];
   // [START region_getplaces]
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
@@ -21,10 +21,7 @@ function mapGoogleSearchInit() {
     if (places.length == 0) return
 
     // Clear out the old markers.
-    markers.forEach(function(marker) {
-      marker.setMap(null);
-    });
-    markers = [];
+    clearSearchMarkers()
 
     // For each place, get the icon, name and location.
     var bounds = new google.maps.LatLngBounds();
@@ -38,7 +35,7 @@ function mapGoogleSearchInit() {
       };
 
       // Create a marker for each place.
-      markers.push(new google.maps.Marker({
+      window.searchMarkers.push(new google.maps.Marker({
         map: map,
         icon: icon,
         title: place.name,
@@ -54,4 +51,10 @@ function mapGoogleSearchInit() {
     });
     map.fitBounds(bounds);
   });
+}
+function clearSearchMarkers(){
+  window.searchMarkers.forEach(function(marker) {
+    marker.setMap(null);
+  });
+  window.searchMarkers = [];
 }

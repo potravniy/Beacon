@@ -1763,15 +1763,18 @@
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl: function(e) {
-      var current = this.getFragment();
+      // var current = this.getFragment()
+      var current = decodeURIComponent(this.getFragment());                     //  !!! decodeURIComponent wrapper added for Firefox  !!!  
 
       // If the user pressed the back button, the iframe's hash will have
       // changed and we should use that for comparison.
-      if (current === this.fragment && this.iframe) {
+      // if (current === this.fragment && this.iframe) {
+      if (current === decodeURIComponent(this.fragment) && this.iframe) {       //  !!! decodeURIComponent wrapper added for Firefox  !!!
         current = this.getHash(this.iframe.contentWindow);
       }
 
-      if (current === this.fragment) return false;
+      // if (current === this.fragment) return false;
+      if (current === decodeURIComponent(this.fragment)) return false;          //  !!! decodeURIComponent wrapper added for Firefox  !!!
       if (this.iframe) this.navigate(current);
       this.loadUrl();
     },

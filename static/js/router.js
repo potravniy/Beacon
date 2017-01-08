@@ -2,7 +2,7 @@
 
 var Manager = new Marionette.Application();
 Manager.App = {}
-var API = {
+Manager.API = {
     home: function(z, lt, ln, qw, al, bs, bt, st, ft, ocp, oc, op, lcp, lc, lp, vs, ia){
     	console.log('router.home', Manager.getCurrentRoute())
       if(z && lt && ln){
@@ -10,12 +10,12 @@ var API = {
         window.state.zoom = +z
         window.state.center.lat = +lt
         window.state.center.lng = +ln
-        window.state.filter = (qw==='-' ? '' : encodeURIComponent(qw))
+        window.state.filter = (qw==='-' ? '' : qw)
         window.state.user_auth = (al==='-' ? '' : al)
         window.state.b_status = (bs==='-' ? '' : bs)
         window.state.b_types = (bt==='-' ? '' : bt)
-        window.state.start = (st==='-' ? '' : encodeURIComponent(st))
-        window.state.finish = (ft==='-' ? '' : encodeURIComponent(ft))
+        window.state.start = (st==='-' ? '' : st)
+        window.state.finish = (ft==='-' ? '' : ft)
         window.filterViewUpdateFromDataURL(al, bs, bt, qw, st, ft, ocp, oc, op, lcp, lc, lp)
         window.state.viewState = vs
         var viewStateIdArray = (ia==='-' ? [] : _.map(ia.split(','), function(item){ return parseInt(item, 10) }))
@@ -54,7 +54,7 @@ Manager.App.Router = Marionette.AppRouter.extend({
     "pass_reset/:verif_code": 'passReset',
     "create": 'create'
   },
-  controller: window.API,
+  controller: Manager.API,
   onRoute: function(name, path, args){
     console.log("onRouteHandler\n" + name +'\n'+ path +'\n'+ args);
   }
@@ -78,7 +78,7 @@ Manager.getMapZoomAndCenter = function(){
 
 Manager.on("start", function(){
   Manager.App.router = new Manager.App.Router()
-  Backbone.history.start();
+  Backbone.history.start();           //    {pushState: true}  
   $('.history_back').click(function(){
     window.history.back()
   })
@@ -88,26 +88,26 @@ Manager.on('state_update', function(){
   Manager.navigate(serializeState())
 })
 Manager.on('home', function(){
-  API.home()
+  Manager.API.home()
   Manager.navigate(serializeState())
 })
 Manager.on('login', function(){
   Manager.navigate('login')
-  API.login()
+  Manager.API.login()
   console.log("login event handler");
 })
 Manager.on('registration', function(){
   Manager.navigate('registration')
-  API.registration()
+  Manager.API.registration()
   console.log("registration event handler");
 })
 Manager.on('pass_restore', function(){
   Manager.navigate('pass_restore')
-  API.passRestore()
+  Manager.API.passRestore()
   console.log("pass_restore event handler");
 })
 Manager.on('pass_reset', function(){
-  API.passReset()
+  Manager.API.passReset()
   Manager.navigate('pass_reset')
   console.log("pass_reset event handler");
 })

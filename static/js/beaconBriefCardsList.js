@@ -1,17 +1,17 @@
-MsgModel = Backbone.Model.extend({
+var MsgModel = Backbone.Model.extend({
   defaults: {
     avatar: "//:0",
     user_id: '',
     text: "Ваше повідомлення може бути першим."
   }
 })
-MsgGroup = Backbone.Collection.extend({
+var MsgGroup = Backbone.Collection.extend({
   model: MsgModel,
   comparator: function(model) {
     return -model.get('ts');  //  latest msg appears first
   }
 })
-BeaconModel = Backbone.Model.extend({
+var BeaconModel = Backbone.Model.extend({
   defaults: {
     id: "",
     b_type: "",
@@ -29,7 +29,7 @@ BeaconModel = Backbone.Model.extend({
     chat: []
   }
 });
-BeaconsList = Backbone.Collection.extend({
+var BeaconsList = Backbone.Collection.extend({
   model: BeaconModel,
   limit: 10,
   page:0,
@@ -104,7 +104,7 @@ BeaconsList = Backbone.Collection.extend({
     return res
   }
 })
-MsgView = Backbone.Marionette.ItemView.extend({
+var MsgView = Backbone.Marionette.ItemView.extend({
   model: MsgModel,
   template: '#chat_item_view_tpl',
   className: 'sent-message clearfix',
@@ -118,7 +118,7 @@ MsgView = Backbone.Marionette.ItemView.extend({
     alert('Скаргу на повідомлення надіслано.')
   }
 })
-BeaconView = Backbone.Marionette.CompositeView.extend({
+var BeaconView = Backbone.Marionette.CompositeView.extend({
   template: "#beacon_main_tpl",
   templateHelpers: function() {
     var bs = this.model.get('b_status')
@@ -131,7 +131,6 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
       color: bs[i]>0 ? 'green' : bs[i]<0 ? 'red' : '',
       icon_url: this.model.get('img') || window.getIconURL(this.model.attributes, true) 
     }
-    
     return $.extend({}, window.lib.tagList(this), obj )
   },
   childView: MsgView,
@@ -275,9 +274,13 @@ BeaconView = Backbone.Marionette.CompositeView.extend({
     });
   }
 });
-BeaconListView = Backbone.Marionette.CollectionView.extend({
+var BeaconEmptyListView = Backbone.Marionette.ItemView.extend({
+  template: '#beacon_list_is_empty_tpl'
+})
+var BeaconListView = Backbone.Marionette.CollectionView.extend({
   childView: BeaconView,
   className: "collection_view__wrapper ui-grid-a my-responsive ui-nodisc-icon",
+  emptyView: BeaconEmptyListView,
   events: {
     'click': 'stopSingleBeaconMode'
   },

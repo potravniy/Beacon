@@ -41,7 +41,7 @@ window.state = {
 	sendGET: function(url){
 		this.oReq.open("GET", url + this.urlRequest(), true)
 		this.oReq.send()
-		Manager.trigger('state_update')
+		Manager.navigate(serializeState())
 		if(window.beaconsListView && !window.beaconsListView.isDestroyed) {
 			beaconsList.getNewCollection()
 		}
@@ -63,7 +63,7 @@ window.state = {
 		+ (this.user_auth ? '&user_auth=' + this.user_auth : '')
 		+ (this.start ? '&start=' + this.start : '')
 		+ (this.finish ? '&finish=' + this.finish : '')
-		+ (this.filter ? '&filter=' + this.filter : '')
+		+ (this.filter ? '&filter=' + encodeURIComponent(this.filter) : '')
 		+ (this.b_link !== '0' ? '&b_link=' + this.b_link : '')
 		+ this.get4thFilter()
 		return result
@@ -125,10 +125,6 @@ function mapInit(){
 		}
 	})
 	window.requestMarkersListener = window.state.map.addListener('idle', _.debounce(requestMarkers, 500))
-	window.listenerForSearchInit = window.state.map.addListener('idle', function(){
-		mapGoogleSearchInit()
-		window.google.maps.event.removeListener(window.listenerForSearchInit)
-	})
 }
 
 function tryGeoLocation() {

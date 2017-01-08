@@ -6,6 +6,8 @@ window.rightRegion = new Backbone.Marionette.Region({el: "#beacons-map__the-beac
 window.createBeaconMenuRegion = new Backbone.Marionette.Region({el: "#create_beacon__geo_region"})
 window.rightPopupRegion = new Backbone.Marionette.Region({el: "#right_popup__region"})
 window.fourthFilterRegion = new Backbone.Marionette.Region({el: "#categories"})
+window.mapSearchRegion = new Backbone.Marionette.Region({el: "#map_search_container"})
+window.profileRegion = new Backbone.Marionette.Region({el: ".profile_page__wrapper"})
 window.showBeaconsListView()
 
 function showBeaconsListView() {
@@ -177,6 +179,34 @@ function checkLoggedInThen(func, args) {
     window.logIn()
   }
 }
+
+function showSearch_Hash(options){
+  options = options || {}
+  $.extend(options, {searchType: 'hash'})
+  window.mapSearchView = new HashAndIdMapSearchView( options )
+  showMapSearchView()
+}
+function showSearch_ID(options){
+  options = options || {}
+  $.extend(options, {searchType: 'id'})
+  window.mapSearchView = new HashAndIdMapSearchView( options )
+  showMapSearchView()
+}
+function showSearch_Google(){
+  window.mapSearchView = new GoogleMapSearchView()
+  showMapSearchView()
+}
+function showMapSearchView(){
+  window.mapSearchRegion.show(window.mapSearchView)
+  console.log('Switch to mapSearchView')
+}
+
+function showProfile(){
+  window.profileView = new ProfilePopupView()
+  window.profileRegion.show(window.profileView)
+  console.log('Switch to profileView')
+}
+
 window.onpopstate = function(){
   var path = Manager.getCurrentRoute()
   if( window.defferedAfterLogin && window.defferedAfterLogin.state()==="pending" ){

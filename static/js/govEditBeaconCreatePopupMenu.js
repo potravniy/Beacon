@@ -2,7 +2,7 @@ ChangeGovMenuItemModel = Backbone.Model.extend({
   defaults: {
     "act": '0',   //  act: '0'=nothing, '1'=add, '2'=edit, '3'=del 
     "name": "",
-    "type": "330",
+    "type": "-1",
     "b_type": "1000",
     "layer_type": "",
     "img": "/images/1000.png"
@@ -46,6 +46,9 @@ var OptionForNativeSelectComponent = Backbone.Marionette.ItemView.extend({
   initialize: function(options){
     if( options.type === this.model.get('type') ){
       this.$el.prop('selected', 'selected')
+    } else if( 'Оберіть тип' === this.model.get('name') ){
+      this.$el.prop('selected', 'selected')
+      this.$el.prop('disabled', 'disabled')
     }
   }
 })
@@ -86,9 +89,15 @@ ChangeGovMenuItemView = Backbone.Marionette.LayoutView.extend({
     selectType: '.ui-select select'
   },
   onBeforeShow: function(){
+    var placeholderOption = {
+      type: '',
+      name: 'Оберіть тип'
+    }
+    var collection = window.state.listMenu.slice()
+    collection.unshift(placeholderOption)
     var options = {
       parentModel: this.model.attributes,
-      collection: window.state.listMenu
+      collection: collection
     }
     var nativeSelectComponent = new NativeSelectComponent(options)
     this.showChildView('select', nativeSelectComponent)
