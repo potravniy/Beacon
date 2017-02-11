@@ -108,6 +108,7 @@ $.ajax({
   }
 })
 
+
 window.Lib = Marionette.Object.extend({
   tagList: function(that) {
     var list = '',
@@ -175,6 +176,15 @@ window.Lib = Marionette.Object.extend({
       }
       return undefined
     }
+  },
+  getNCObyID: function(id){
+    for(var i=0; i<window.state.listNCO.length; i++) {
+      if ( window.state.listNCO[i].id === id) return window.state.listNCO[i]
+    }
+    return undefined
+  },
+  getNameNCObyID: function(id){
+    return window.lib.getNCObyID(id).nco_name
   }
 })
 window.lib = new window.Lib()
@@ -191,7 +201,7 @@ window.state.listMenu = [
   { b_type: "911",
     layer_owner_id: "",
     layer_type: "",
-    name: "SOS",
+    name: localeMsg.SOS,
     type: "911",
     className: 'sos',
     img: "/images/911.png"
@@ -199,7 +209,7 @@ window.state.listMenu = [
   { b_type: "777",
     layer_owner_id: "",
     layer_type: "",
-    name: "Важливо",
+    name: localeMsg.IMPORTANT,
     type: "777",
     className: 'important',
     img: "/images/777.png"
@@ -207,7 +217,7 @@ window.state.listMenu = [
   { b_type: "69",
     layer_owner_id: "",
     layer_type: "",
-    name: "Тут добре",
+    name: localeMsg.EMOTICON_GOOD,
     type: "69",
     className: 'emo_good',
     img: "/images/69.png"
@@ -215,7 +225,7 @@ window.state.listMenu = [
   { b_type: "96",
     layer_owner_id: "",
     layer_type: "",
-    name: "Тут погано",
+    name: localeMsg.EMOTICON_BAD,
     type: "96",
     className: 'emo_bad',
     img: "/images/96.png"
@@ -223,7 +233,7 @@ window.state.listMenu = [
   { b_type: "1",
     layer_owner_id: "",
     layer_type: "",
-    name: "Голосування",
+    name: localeMsg.VOTING,
     type: "1",
     className: 'voting',
     img: "/images/1.png"
@@ -231,7 +241,7 @@ window.state.listMenu = [
   { b_type: "2",
     layer_owner_id: "",
     layer_type: "",
-    name: "Програма",
+    name: localeMsg.PROGRAMM,
     type: "2",
     className: 'program',
     img: "/images/2.png"
@@ -239,7 +249,7 @@ window.state.listMenu = [
   { b_type: "3",
     layer_owner_id: "",
     layer_type: "",
-    name: "Проектна пропозиція",
+    name: localeMsg.PROJECT_PROPOSAL,
     type: "3",
     className: 'project_proposal',
     img: "/images/3.png"
@@ -247,7 +257,7 @@ window.state.listMenu = [
   { b_type: "4",
     layer_owner_id: "",
     layer_type: "",
-    name: "Проект",
+    name: localeMsg.PROJECT,
     type: "4",
     className: 'project',
     img: "/images/4.png"
@@ -255,7 +265,7 @@ window.state.listMenu = [
   { b_type: "330",
     layer_owner_id: "",
     layer_type: "",
-    name: "Бюджет участі",
+    name: localeMsg.PARTICIPATIVE_BUDGET,
     type: "330",
     className: 'p_budget',
     img: "/images/330.png"
@@ -263,7 +273,7 @@ window.state.listMenu = [
   { b_type: "5",
     layer_owner_id: "",
     layer_type: "",
-    name: "Запит",
+    name: localeMsg.REQUEST,
     type: "5",
     className: 'request',
     img: "/images/5.png"
@@ -284,7 +294,7 @@ var btnsCopyDel = [
     text: 'Видалити маячок',
     className: 'delete',
     isAvailable: function(options){
-      return window.state.user.id === options.author_id && options.b_status.join() === "0,0,0,0"
+      return window.state.user.id === options.author_id && (options.b_status.join() === "0,0,0,0" || options.b_status.join() === "1,0,0,0")
     }
   }
 ]
@@ -461,7 +471,7 @@ window.state.statusList.projPropAndProjectAndRequest = [
         className: 'transfer',
         chngTo: 1,
         isAvailable: function(){
-          return +window.state.user.id === 4618
+          return +window.state.user.id == 4618
         }
       }
     ]
@@ -535,7 +545,10 @@ function getListMenuOrg() {
       }
       window.state.listMenuOrg = response
     },
-    error: function(){
+    error: function(response){
+      // if(response.readyState === 4 && response.statusText === "OK" && response.status === 200){
+      //   window.state.listMenuOrg = JSON.parse(response.responseText)
+      // }
       console.log('listMenuOrg request error')
     }
   })

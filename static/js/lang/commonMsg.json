@@ -1,0 +1,675 @@
+{
+  "file1": "authentification_manager.js",
+
+  "PROFILE_CREATED_SUCCESSFULLY": {
+    "where": "emailAccountActivation promise.done alert line 39",
+    "msg": "Ваш профіль створено!\nУвійти можна через ліве меню -> 'Увійти'"
+  },
+  "PROFILE_IS_NOT_CREATED": {
+    "where": "emailAccountActivation promise.fail alert line 43",
+    "msg": "Ваш профіль не створено!"
+  },
+  "LOGIN_DATA_ARE_NOT_VALID": {
+    "where": "loginDialogInit promise.done & promise.fail alert line 68, 72",
+    "msg": "Введені облікові дані не дійсні.\nВведіть правильні Ім'я та Пароль."
+  },
+  "GUEST": {
+    "where": "loggingRequest promise.done alert line 87; checkLoggedIn window.state.user line 267",
+    "msg": "Гість"
+  },
+  "LOGIN_TIP": {
+    "where": "registerDialogInit #login line 101",
+    "msg": "Латиницею літери та цифри, 2-64 символи."
+  },
+  "EMAIL_TIP": {
+    "where": "registerDialogInit #email line 102",
+    "msg": "Потрібен для завершення реєстрації."
+  },
+  "PASSWORD_TIP": {
+    "where": "registerDialogInit #password, #password-repeat line 10, 104",
+    "msg": "Не менше 6 символів."
+  },
+  "FILL_CAPTCHA_ALERT": {
+    "where": "registerDialogInit submit alert line 109",
+    "msg": "Заповніть поле 'Я не робот'."
+  },
+  "PASSWORDS_DO_NOT_MATCH": {
+    "where": "resetPass alert line 183",
+    "msg": "Паролі не співпадають."
+  },
+  "PASSWORD_MUST_BE_6_LETTERS_OR_MORE": {
+    "where": "resetPass alert line 186",
+    "msg": "Пароль не може мати менше 6 символів."
+  },
+  "LOGIN_CREATED": {
+    "where": "confirmVerification promise.done alert line 235",
+    "msg": "Ваш обліковий запис створено успішно. Ласкаво просимо до спільноти."
+  },
+  "ACCOUNT_ACTIVATION_FAILED": {
+    "where": "confirmVerification promise.done alert line 237",
+    "msg": "Активація облікового запису не відбулася.\nБудьласка, спробуйте відновити пароль."
+  },
+  "FAIL": {
+    "where": "confirmVerification promise.done alert line 240, 245; beaconChangeStatusMenu.js LiItemView setChange success alert line 242; beaconFullView VotingView sendVote promise.fail line 514",
+    "msg": "Упс... щось пішло не так.\nПовторіть спробу через деякий час.\nБудь-ласка, повідомте адміністрацію сайту про цю помилку."
+  },
+
+
+  "file2": "beaconBriefCardsList.js",
+  
+  "ABUSE_ON_MESSAGE_SENT": {
+    "where": "MsgView onClickBtn promise.done alert line 138",
+    "msg": "Скаргу на повідомлення надіслано."
+  },
+  "ABUSE_ON_INFORMATIION_SENT": {
+    "where": "BeaconView onClickAbuse alert line 240",
+    "msg": "Скаргу на повідомлення надіслано."
+  },
+  "ABUSE_ON_IMAGE_SENT": {
+    "where": "BeaconView onClickImg alert line 296",
+    "msg": "Скаргу на зображення надіслано."
+  },
+
+
+  "file3": "beaconChangeStatusMenu.js",
+  
+  "NO_STATUSES": {
+    "where": "LiItemView setCollection collection.push line 127",
+    "msg": "Cтатуси відсутні"
+  },
+  "ENTER_YOUR_PHONE_NUMBER_380XXXXXXXXX": {
+    "where": "LiItemView onClickBtn prompt line 158",
+    "msg": "Введіть номер телефону у форматі 380XXXXXXXXX:"
+  },
+  "REMOVE_BEACON": {
+    "where": "LiItemView onClickBtn confirm line 180; init.js btnsCopyDel text line 294",
+    "msg": "Видалити маячок"
+  },
+  "BEACON_REMOVED": {
+    "where": "LiItemView onClickBtn success alert line 194",
+    "msg": "Маячок видалено"
+  },
+  "BEACON_REMOVE_ERROR": {
+    "where": "LiItemView onClickBtn success/error alert line 197, 202",
+    "msg": "Помилка при видаленні маячка"
+  },
+  "WRONG_PHONE_NUMBER_FORMAT": {
+    "where": "LiItemView setChange success alert line 232",
+    "msg": "Невірний формат номеру телефону"
+  },
+
+
+  "file4": "beaconCreateView.js",
+  
+  "RUSSIA_OCCUPIED_TERRITORY": {
+    "where": "LatLngView addressLookUp infowindow.setContent line 35",
+    "msg": "Територія, окупована Росією."
+  },
+  "USER_STATUSES_ALLOWED_TO_VOTE": {
+    "where": "UsrCountblView initialize title line 381",
+    "msg": "Вкажіть статуси користувачів, чиї голоси будуть зараховуватися в голосуванні"
+  },
+  "WHO_WILL_VOTE": {
+    "where": "UsrCountblView initialize label line 383",
+    "msg": "Хто буде голосувати?"
+  },
+  "CHOOSE_VOTING_END_DATE": {
+    "where": "ObjectCreateView onBeforeShow EndDateView line 604",
+    "msg": "Оберіть дату закінчення голосування"
+  },
+  "CHOOSE_VOTING_START_DATE": {
+    "where": "ObjectCreateView onBeforeShow StartDateView line 604",
+    "msg": "Оберіть дату початку голосування"
+  },
+  "PROJECT_COST": {
+    "where": "ObjectCreateView onBeforeShow MoneyView line 609",
+    "msg": "Орієнтовна вартість проекту"
+  },
+  "AUTOCOMPLETE_DOES_NOT_WORK_FOR_THIS_BEACON_TYPE": {
+    "where": "ObjectCreateView fillFormWithTargetData default alert line 689",
+    "msg": "Для маячків цього типу автозаповнення поки що не працює.\nКоординати нового маячка співпадають з оригіналом."
+  },
+  "TAG_REQUIRED": {
+    "where": "ObjectCreateView verifyInputs alert line 761",
+    "msg": "Поле 'Додати тег' є обов'язковим."
+  },
+  "PROGRAM_ID_REQUIRED": {
+    "where": "ObjectCreateView verifyInputs alert line 778",
+    "msg": "Поле 'Виберіть ID програми' є обов'язковим."
+  },
+  "CATEGORY_REQUIRED": {
+    "where": "ObjectCreateView verifyInputs alert line 813",
+    "msg": "Поле 'Категорія повідомлення' є обов'язковим."
+  },
+  "GROUP_CHOISE_REQUIRED": {
+    "where": "ObjectCreateView verifyInputs alert line 825",
+    "msg": "Поле 'Оберіть групу' є обов'язковим."
+  },
+  "PHONE_NUMBER_REQUIRED": {
+    "where": "ObjectCreateView verifyInputs alert line 837",
+    "msg": "Номер телефону є обов'язковим."
+  },
+  "CORRECT_PHONE_NUMBER": {
+    "where": "ObjectCreateView verifyInputs alert line 841",
+    "msg": "Виправте номер телефону."
+  },
+  "CONNECTION_ERROR": {
+    "where": "ObjectCreateView sendForm promise.fail alert line 923; donate.js alert line 277; govEditBeaconCreatePopupMenu.js sendIconToServer promise.fail alert line 29; ChangeGovMenuView send promise.fail line 256; showMap.js window.state.oReq.addEventListener error line 89, renderMarkers alert line 173",
+    "msg": "Немає зв'язку з сервером."
+  },
+
+
+  "file5": "beaconFullView.js ! NOT COMPLETED ! FROM LINE 879",
+  
+  "REGISTRATION_REQUIRED": {
+    "where": "MsgCollectionView msgSend alert line 17",
+    "msg": "Зареєструйтесь, будь-ласка!"
+  },
+  "YOUR_AUTHORIZATION_MUST_BE_HIGHER": {
+    "where": "MsgCollectionView msgSend alert line 20, 46",
+    "msg": "Для відправки повідомлень, будь-ласка, підвищіть рівень Вашої авторизації."
+  },
+  "THIS_MESSAGE_YOU_HAVE_SENT": {
+    "where": "MsgCollectionView msgSend promise.done alert line 44",
+    "msg": "Це повідомлення Ви вже відправляли."
+  },
+  "YOU_CANNOT_VOTE": {
+    "where": "VotingModel defaults usr_status line 126",
+    "msg": "Ви не можете проголосувати."
+  },
+  "VOTING_SUPPORT_COMPLETED": {
+    "where": "VotingModel extendModel v_status line 136",
+    "msg": "Збір голосів підтримки закінчився"
+  },
+  "VOTING_SUPPORT_CONTINUE": {
+    "where": "VotingModel extendModel v_status line 138",
+    "msg": "Триває збір голосів підтримки до"
+  },
+  "YOU_SUPPORTED_THE_VOTING": {
+    "where": "VotingModel extendModel usr_status line 140, 154, 167, 174",
+    "msg": "Ви підтримали це голосування."
+  },
+  "YOU_DID_NOT_SUPPORT_THE_VOTING": {
+    "where": "VotingModel extendModel usr_status line 140, 154, 167, 174",
+    "msg": "Ви ще не підтримували проведення цього голосування."
+  },
+  "WITHDRAW": {
+    "where": "VotingModel extendModel btn_support line 141",
+    "msg": "Скасувати"
+  },
+  "SUPPORT": {
+    "where": "VotingModel extendModel btn_support line 141",
+    "msg": "Підтримати"
+  },
+  "VOTING_STARTED_AND_RUNS_TO": {
+    "where": "VotingModel extendModel v_status line 147",
+    "msg": "Голосування розпочато і триває до"
+  },
+  "VOTING_WILL_START": {
+    "where": "VotingModel extendModel v_status line 152",
+    "msg": "Голосування розпочнеться"
+  },
+  "VOTING_IS_OVER": {
+    "where": "VotingModel extendModel v_status line 159",
+    "msg": "Голосування закінчилось"
+  },
+  "VOTING_IS_NOT_SUPPORTED": {
+    "where": "VotingModel extendModel v_status line 165",
+    "msg": "Голосування не набрало необхідну кількість голосів підтримки і є скасованим."
+  },
+  "VOTING_IS_SUPPORTED": {
+    "where": "VotingModel extendModel v_status line 171/2",
+    "msg": "Голосування набрало необхідну кількість голосів підтримки і розпочнеться"
+  },
+  "YOU_VOTED_FOR": {
+    "where": "VotingModel extendModel v_status line 179",
+    "msg": "Ви голосували 'за'"
+  },
+  "YOU_VOTED_AGAINST": {
+    "where": "VotingModel extendModel v_status line 180",
+    "msg": "Ви голосували 'проти'"
+  },
+  "YOU_ABSTAINED": {
+    "where": "VotingModel extendModel v_status line 181",
+    "msg": "Ви 'утримались'"
+  },
+  "YOU_DID_NOT_VOTE": {
+    "where": "VotingModel extendModel v_status line 182",
+    "msg": "Ви не голосували"
+  },
+  "YOU_DID_VOTE_OPEN": {
+    "where": "VotingModel extendModel v_status line 179, 180, 180",
+    "msg": "відкрито."
+  },
+  "YOU_DID_VOTE_SECRET": {
+    "where": "VotingModel extendModel v_status line 179, 180, 180",
+    "msg": "таємно."
+  },
+  "REGISTER_FOR_VOTE": {
+    "where": "VotingModel canUser usr_status line 191",
+    "msg": "Для участі в голосуваннях, будь-ласка, зареєструйтесь."
+  },
+  "FILL_AGE_FOR_VOTE": {
+    "where": "VotingModel canUser usr_status line 193",
+    "msg": "Для участі в голосуваннях, будь-ласка, заповніть поле 'Дата народження' в своїх особистих даних."
+  },
+  "YOU_CANNOT_VOTE_BECAUSE_OF_AGE": {
+    "where": "VotingModel canUser usr_status line 195",
+    "msg": "Ви не можете приймати участь в цьому голосуванні, оскільки автор встановив вікові обмеження від {ageFrom} до {ageTo} років."
+  },
+  "YOU_CANNOT_VOTE_BECAUSE_OF_AUTHENTIFICATION_LEVEL": {
+    "where": "VotingModel canUser usr_status line 198",
+    "msg": "Ви не можете приймати участь в цьому голосуванні, оскільки рівень Вашої авторизації на цьому сервісі не відповідає вимогам автора голосування. Для участі в цьому голосуванні Вам слід мати рівень авторизації не нижче ніж: {authLevel, plural, =1 {Авторизація через соціальну мережу.} =2 {Співвласники.} =3 {Члени громадських об'єднань.} =4 {Авторизація по платежу.} =5 {Авторизація по банківській карті.}}"
+  },
+  "YOU_CANNOT_VOTE_BECAUSE_OF_SPHERE": {
+    "where": "VotingModel canUser usr_status line 207",
+    "msg": "Ви не можете приймати участь в цьому голосуванні, оскільки предмет голосування є поза Вашими сферами."
+  },
+  "VOTING_RESULTS": {
+    "where": "ResultsView templateHelpers title line 324",
+    "msg": "Результати голосування"
+  },
+  "INDICATIVE_VOTING_RESULTS": {
+    "where": "ResultsView templateHelpers title line 327",
+    "msg": "Результати індикативного голосування"
+  },
+  "YOU_ARE_NOT_LOGGED_IN": {
+    "where": "VotingView templateHelpers votingStatus line 354",
+    "msg": "Ви не зареєструвались"
+  },
+  "ALL_USER_CATHEGORIES": {
+    "where": "VotingView getCollectionsOfVotingResults title line 428",
+    "msg": "Всі категорії користувачів"
+  },
+  "TAKE_ADMINISTRATION": {
+    "where": "AdministrationNCOView templateHelpers res.txt line 586",
+    "msg": "Прийняти адміністрування"
+  },
+  "WITHDRAW_PROPOSAL": {
+    "where": "AdministrationNCOView templateHelpers res.txt line 590",
+    "msg": "Відкликати пропозицію"
+  },
+  "PROPOSE_OUR_NCO": {
+    "where": "AdministrationNCOView templateHelpers res.txt line 594",
+    "msg": "Запропонувати свою НКО"
+  },
+  "THIS_FUNCTION_IS_NOT_AVAILABLE_YET": {
+    "where": "Objects2_5View showListPP alert line 657, 711",
+    "msg": "Ця функція поки що недоступна."
+  },
+  "FUNDS_COLLECTED": {
+    "where": "Objects2_5View onBeforeShow label line 664, 716",
+    "msg": "Для {obj_} зібрано коштів"
+  },
+  "YOUR_DONATION": {
+    "where": "Objects2_5View onBeforeShow label line 676, 729",
+    "msg": "Ваш внесок"
+  },
+  "UNKNOWN": {
+    "where": "Objects2_5View onBeforeShow label line 677, 730",
+    "msg": "невідомий"
+  },
+  "FOR_ORGANIZATIONS_ONLY": {
+    "where": "SOS_Info_Emo_View templateHelpers phone line 762",
+    "msg": "Перегляд доступний лише юридичним особам."
+  },
+
+
+  "file6": "beaconFullView.js",
+  
+  "YOU_DO_NOT_HAVE_APPROPRIATE_LAYER": {
+    "where": "BeaconCreatePopup onShow alert line 101",
+    "msg": "Ви не маєте шару з типом {type}"
+  },
+
+
+  "file7": "controller.js",
+  
+  "CREATE_VOTING": {
+    "where": "showObjectCreateView titler line 29",
+    "msg": "Створення голосування"
+  },
+  "CREATE_PROGRAM": {
+    "where": "showObjectCreateView titler line 32",
+    "msg": "Створення програми"
+  },
+  "CREATE_PROJECT_PROPOSAL": {
+    "where": "showObjectCreateView titler line 35",
+    "msg": "Створення проектної пропозиції"
+  },
+  "CREATE_PROJECT": {
+    "where": "showObjectCreateView titler line 38",
+    "msg": "Створення проекту"
+  },
+  "CREATE_REQUEST": {
+    "where": "showObjectCreateView titler line 41",
+    "msg": "Створення запиту"
+  },
+  "CREATE_EMOTICON_GOOD": {
+    "where": "showObjectCreateView titler line 44",
+    "msg": "Створення маячка 'Тут добре'"
+  },
+  "CREATE_EMOTICON_BAD": {
+    "where": "showObjectCreateView titler line 47",
+    "msg": "Створення маячка 'Тут погано'"
+  },
+  "CREATE_PARTICIPATION_BUDGET_PROJECT": {
+    "where": "showObjectCreateView titler line 50",
+    "msg": "Створення проекту по бюджету участі"
+  },
+  "CREATE_IMPORTANT": {
+    "where": "showObjectCreateView titler line 53",
+    "msg": "Створення маячка 'Важливо'"
+  },
+  "CREATE_SOS": {
+    "where": "showObjectCreateView titler line 53",
+    "msg": "Створення маячка 'СОС'"
+  },
+
+
+  "file8": "donate.js",
+  
+  "CHOOSE_FUND": {
+    "where": "UserFundslView initialize title line 85",
+    "msg": "Виберіть один із своїх фондів"
+  },
+  "FUNDS": {
+    "where": "UserFundslView initialize label line 87",
+    "msg": "Фонди"
+  },
+  "BANK_CARD": {
+    "where": "UserFundslView initialize optext line 121",
+    "msg": "Платіжна карта"
+  },
+  "ON_PROGRAMM": {
+    "where": "DonateView templateHelpers line 145",
+    "msg": "на програму"
+  },
+  "ON_PROJECT_PROPOSAL": {
+    "where": "DonateView templateHelpers line 147",
+    "msg": "на проектну пропозицію"
+  },
+  "ON_PROJECT": {
+    "where": "DonateView templateHelpers line 149",
+    "msg": "на проект"
+  },
+  "ON_REQUEST": {
+    "where": "DonateView templateHelpers line 151",
+    "msg": "на запит"
+  },
+  "DONATION": {
+    "where": "DonateView initialize line 190, 271",
+    "msg": "Пожертвування"
+  },
+  "ANONIMOUS_DONATION": {
+    "where": "DonateView initialize line 192",
+    "msg": "Анонімне пожертвування"
+  },
+  "DONATION_AMOUNT": {
+    "where": "DonateView onBeforeShow model label line 200",
+    "msg": "Сума пожертвування"
+  },
+  "DONATE_ANONIMOUSLY": {
+    "where": "DonateView onBeforeShow model label line 209",
+    "msg": "Пожертвувати анонімно"
+  },
+  "THANKS_FOR_DONATE": {
+    "where": "DonateView send alert line 267",
+    "msg": "Дякуємо за Ваш внесок!"
+  },
+  "DONATION_IS_BIGGER_THAN_FUND_AMOUNT": {
+    "where": "DonateView verifyInputs alert line 289",
+    "msg": "У цьому фонді менше коштів, ніж Ви хочете пожертвувати.\nВи можете:\n - скористатись банківською карткою,\n - поповнити свій фонд,\n - зменшити суму пожертви."
+  },
+  "YOU_HAVE_NOT_FUND_CHOOSEN": {
+    "where": "DonateView verifyInputs alert line 297",
+    "msg": "Ви не вибрали фонд"
+  },
+  "YOU_HAVE_OMITTED_AMOUNT": {
+    "where": "DonateView verifyInputs alert line 297",
+    "msg": "Ви не вказали суму"
+  },
+
+
+  "file9": "filtersService.js",
+  
+  "USE_FOLLOWING_SEPARATORS": {
+    "where": "normalizeInput alert line 185",
+    "msg": "Будь-ласка, у полі 'Дата' між днями, місяцем та роком використовуте такі розділювачі, як: '.' або '-' або '/'."
+  },
+
+
+  "file10": "fourthFilter.js",
+  
+  "EDRPOU": {
+    "where": "OrgView templateHelpers text line 50",
+    "msg": "ЄДРПОУ"
+  },
+
+
+  "file11": "googleMapSearch.js",
+
+  "file12": "govEditBeaconCreatePopupMenu.js",
+  
+  "CHOOSE_TYPE": {
+    "where": "OptionForNativeSelectComponent initialize line 49; ChangeGovMenuItemView onBeforeShow name line 94",
+    "msg": "Оберіть тип"
+  },
+  "FOLLOWING_NOT_EMPTY_LAYERS_WERE_NOT_ERASED": {
+    "where": "ChangeGovMenuView send notErased.length line 246",
+    "msg": "Наступні шари меню:\n{notErasedTxt}\nне були видалені,оскільки в них є діючі маячки."
+  },
+
+
+  "file13": "init.js",
+  
+  "VOTING": {
+    "where": "window.Lib bType line 159; window.state.listMenu name line 236",
+    "msg": "Голосування"
+  },
+  "PROGRAMM": {
+    "where": "window.Lib bType line 160; window.state.listMenu name line 244",
+    "msg": "Програма"
+  },
+  "PROJECT_PROPOSAL": {
+    "where": "window.Lib bType line 161; window.state.listMenu name line 252",
+    "msg": "Проектна пропозиція"
+  },
+  "PROJECT": {
+    "where": "window.Lib bType line 162; window.state.listMenu name line 260",
+    "msg": "Проект"
+  },
+  "REQUEST": {
+    "where": "window.Lib bType line 163; window.state.listMenu name line 276",
+    "msg": "Запит"
+  },
+  "EMOTICON_GOOD": {
+    "where": "window.Lib bType line 164; window.state.listMenu name line 212",
+    "msg": "Тут добре"
+  },
+  "EMOTICON_BAD": {
+    "where": "window.Lib bType line 165; window.state.listMenu name line 228",
+    "msg": "Тут погано"
+  },
+  "PARTICIPATIVE_BUDGET": {
+    "where": "window.Lib bType line 166; window.state.listMenu name line 268",
+    "msg": "Проект по бюджету участі"
+  },
+  "IMPORTANT": {
+    "where": "window.Lib bType line 167; window.state.listMenu name line 212",
+    "msg": "Важливо"
+  },
+  "SOS": {
+    "where": "window.Lib bType line 168; window.state.listMenu name line 204",
+    "msg": "СОС"
+  },
+  "AUTH_WITH_EMAIL": {
+    "where": "window.state.usrAuthLvl line 193",
+    "msg": "Авторизовані через електронну пошту"
+  },
+  "AUTH_WITH_SOCIAL_NET": {
+    "where": "window.state.usrAuthLvl line 194",
+    "msg": "Авторизовані через соціальні мережі"
+  },
+  "CIVIL_ORGS_MEMBERS": {
+    "where": "window.state.usrAuthLvl line 195",
+    "msg": "Члени громадських об'єднань"
+  },
+  "COOWNERS": {
+    "where": "window.state.usrAuthLvl line 196",
+    "msg": "Співвласники"
+  },
+  "AUTH_WITH_PAYMENT": {
+    "where": "window.state.usrAuthLvl line 197",
+    "msg": "Авторизовані через платіж"
+  },
+  "AUTH_WITH_BANK_ID": {
+    "where": "window.state.usrAuthLvl line 198",
+    "msg": "Авторизовані через банківську ідентифікацію"
+  },
+  "COPY_TO_ME": {
+    "where": "btnsCopyDel text line 285",
+    "msg": "Скопіювати до себе"
+  },
+  "VERIFICATION_EXPECTED": {
+    "where": "window.state.statusList.SOS line 309",
+    "msg": "Очікує на перевірку"
+  },
+  "VERIFICATION_TAKEN": {
+    "where": "window.state.statusList.SOS line 310",
+    "msg": "Прийнято до перевірки"
+  },
+  "TAKE_VERIFICATION": {
+    "where": "window.state.statusList.SOS line 314",
+    "msg": "Прийняти до перевірки"
+  },
+  "DISPROVEN": {
+    "where": "window.state.statusList.SOS line 327",
+    "msg": "Спростовано"
+  },
+  "CONFIRMATION_EXPECTED": {
+    "where": "window.state.statusList.SOS line 328",
+    "msg": "Очікує на підтверження"
+  },
+  "CONFIRMED": {
+    "where": "window.state.statusList.SOS line 329",
+    "msg": "Підтверджено"
+  },
+  "CONFIRM": {
+    "where": "window.state.statusList.SOS line 333",
+    "msg": "Підтвердити"
+  },
+  "DISPROVE": {
+    "where": "window.state.statusList.SOS line 341",
+    "msg": "Спростувати"
+  },
+  "WAITS_FOR_HELP": {
+    "where": "window.state.statusList.SOS line 355",
+    "msg": "Очікує на допомогу"
+  },
+  "HELP_PROPOSED": {
+    "where": "window.state.statusList.SOS line 356",
+    "msg": "Допомогу запропоновано"
+  },
+  "PROPOSE_MY_HELP": {
+    "where": "window.state.statusList.SOS line 360",
+    "msg": "Запропонувати свою допомогу"
+  },
+  "EXPECTS_COMPLETION": {
+    "where": "window.state.statusList.SOS line 374; window.state.statusList.infoAndEvent line 418; projPropAndProjectAndRequest line 484",
+    "msg": "Очікує завершення"
+  },
+  "COMPLETED": {
+    "where": "window.state.statusList.SOS line 375; window.state.statusList.infoAndEvent line 419; projPropAndProjectAndRequest line 485",
+    "msg": "Завершено"
+  },
+  "COMPLETE": {
+    "where": "window.state.statusList.SOS line 379; window.state.statusList.infoAndEvent line 423; projPropAndProjectAndRequest line 489",
+    "msg": "Завершити"
+  },
+  "EXPECTS_START": {
+    "where": "window.state.statusList.infoAndEvent line 399",
+    "msg": "Очікує на початок"
+  },
+  "STARTED": {
+    "where": "window.state.statusList.infoAndEvent line 400",
+    "msg": "Розпочато"
+  },
+  "START": {
+    "where": "window.state.statusList.infoAndEvent line 404",
+    "msg": "Розпочати"
+  },
+  "AMOUNT_NOT_COLLECTED": {
+    "where": "projPropAndProjectAndRequest line 446",
+    "msg": "Кошти не зібрано"
+  },
+  "AMOUNT_COLLECTION": {
+    "where": "projPropAndProjectAndRequest line 447",
+    "msg": "Збір коштів"
+  },
+  "AMOUNT_COLLECTED": {
+    "where": "projPropAndProjectAndRequest line 447",
+    "msg": "Кошти зібрано"
+  },
+  "DETERMINING_NCO_FOR_ADMINISTRATION": {
+    "where": "projPropAndProjectAndRequest line 456",
+    "msg": "Визначення НКО для адміністрування"
+  },
+  "NCO_FOR_ADMINISTRATION_DETERMINED": {
+    "where": "projPropAndProjectAndRequest line 457",
+    "msg": "НКО для адміністрування визначено"
+  },
+  "FUNDS_TRANFERRING_TO_NCO": {
+    "where": "projPropAndProjectAndRequest line 465",
+    "msg": "Переведення коштів на НКО"
+  },
+  "FUNDS_TRANFERRED_TO_NCO": {
+    "where": "projPropAndProjectAndRequest line 466",
+    "msg": "Кошти на Нко переведено"
+  },
+  "TRANFER_FUNDS_TO_NCO": {
+    "where": "projPropAndProjectAndRequest line 470",
+    "msg": "Перевести кошти НКО"
+  },
+
+
+  "file14": "jQM_tweaks.js",
+  
+  "file15": "mapSearch.js",
+  
+  "HASH_TAG": {
+    "where": "HashAndIdMapSearchView placeholder line 30",
+    "msg": "#хеш-тег"
+  },
+  "BEACON_ID": {
+    "where": "HashAndIdMapSearchView placeholder line 36",
+    "msg": "id маячка ( cardID )"
+  },
+  "ADDRESS_OR_PLACE_ON_MAP": {
+    "where": "GoogleMapSearchView placeholder line 76",
+    "msg": "адреса чи місце на карті"
+  },
+
+
+  "file16": "payByCardPopup.js",
+  
+  "PRESSING_BUTTON_PAY_YOU_WILL_BE_REDIRECTED_TO_PAYING_SYSTEM_LIQPAY": {
+    "where": "PayByCardView onBeforeShow html line 19",
+    "msg": "Натиснувши на зелену кнопку 'PAY', Ви перейдете на сайт www.liqpay.com для пожертвування коштів. Будьте готові ввести дані банківської картки."
+  },
+
+
+  "file17": "profilePopup.js",
+  
+  "file18": "router.js",
+  
+  "file19": "shareInSocialNet.js",
+  
+  "SHARE_BEACON_WITH": {
+    "where": "PopupShareModel header line 4",
+    "msg": "Поширити маячок в"
+  },
+  
+  "file20": "showMap.js"
+
+}

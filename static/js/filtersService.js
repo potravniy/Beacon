@@ -22,6 +22,7 @@ function beaconStatusRead(event){
   window.state.sendGET(window.state.urlMarkers)
 }
 
+var $filter_all = $('#all')
 var $filter_e_mail = $('#e-mail')
 var $filter_social_net = $('#social_net')
 var $filter_co_owners = $('#co-owners')
@@ -55,10 +56,17 @@ function userRatingRead(event){
   window.state.user_auth = result
   window.state.sendGET(window.state.urlMarkers)
 }
+function setAllActions(e){
+  var isChecked = $filter_all.prop("checked")
+  $filter_e_mail.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_social_net.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_co_owners.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_organisations.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_payments.prop('checked', isChecked).flipswitch( "refresh" )
+  $filter_bank_id.prop('checked', isChecked).flipswitch( "refresh" )
+}
 
-//  this section processes TWO last tabs in right panel navbar --- START
 
-var $filter_all = $('#all')
 var $filter_votings = $('#votings')
 var $filter_programms = $('#programms')
 var $filter_project_proposals = $('#project_proposals')
@@ -69,7 +77,7 @@ var $filter_negative = $('#negative')
 var $filter_budget = $('#budget')
 var $filter_info = $('#info')
 var $filter_sos = $('#sos')
-// var $filter_organizations = $('#organizations')
+
 function actionsRead(event){
   if(event.target.nodeName === 'INPUT'){
     var result = '',
@@ -107,30 +115,10 @@ function actionsRead(event){
     if($filter_sos.prop("checked")){
       push(911)
     }
-    // if($filter_organizations.prop("checked")){
-    //   if(result) result += ",1000"
-    //   else result += "1000"
-    // }
     window.state.b_types = result
     window.state.sendGET(window.state.urlMarkers)
   }
 }
-function setAllActions(e){
-  var isChecked = $filter_all.prop("checked")
-  $filter_votings.prop('checked', isChecked).flipswitch( "refresh" )
-  $filter_programms.prop('checked', isChecked).flipswitch( "refresh" )
-  $filter_project_proposals.prop('checked', isChecked).flipswitch( "refresh" )
-  $filter_projects.prop('checked', isChecked).flipswitch( "refresh" )
-  $filter_requests.prop('checked', isChecked).flipswitch( "refresh" )
-  $filter_positive.prop('checked', isChecked).flipswitch( "refresh" )
-  $filter_negative.prop('checked', isChecked).flipswitch( "refresh" )
-  $filter_budget.prop('checked', isChecked).flipswitch( "refresh" )
-  $filter_info.prop('checked', isChecked).flipswitch( "refresh" )
-  $filter_sos.prop('checked', isChecked).flipswitch( "refresh" )
-  // $filter_organizations.prop('checked', isChecked).flipswitch( "refresh" )
-}
-
-//  this section processes TWO last tabs in right panel navbar --- END
 
 var $filter_date_picker = $('#time_range .date_picker'),
     $timeFilterWrapper = $('#time_range')[0]
@@ -236,12 +224,6 @@ $(window).load(function(){
     'click',
     _.debounce(showSearch_Google, 100)
   )
-
-  // window.$filter_mapSearch = $('#map_search')
-  // window.$filter_mapSearch.on(
-  //   'change keydown keyup paste',
-  //   _.debounce(mapSeachEventHandler, 1000)
-  // )
   $(document).on('click', 'input', function(e){
     e.stopPropagation()
   })
@@ -253,20 +235,6 @@ $(window).load(function(){
   $('#actions input').change(_.debounce(actionsRead, 1000))
   $filter_all.change(setAllActions)
 })
-
-// function mapSeachEventHandler(){
-//   var res = window.$filter_mapSearch.val()
-//   if (res === ""){
-//     window.state.filter = ""
-//     window.state.sendGET(window.state.urlMarkers)
-//   } else {
-//     res = _.filter(res, function(item){
-//       return item !== "#"
-//     }).join('')
-//     window.state.filter = encodeURIComponent(res)
-//     window.state.sendGET(window.state.urlMarkers)
-//   }
-// }
 
 function getListOrgs() {
   if ( window.state.listOrgs ){

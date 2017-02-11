@@ -1,4 +1,4 @@
-ChangeGovMenuItemModel = Backbone.Model.extend({
+var ChangeGovMenuItemModel = Backbone.Model.extend({
   defaults: {
     "act": '0',   //  act: '0'=nothing, '1'=add, '2'=edit, '3'=del 
     "name": "",
@@ -26,7 +26,7 @@ ChangeGovMenuItemModel = Backbone.Model.extend({
         that.unset('file')
       })
       promise.fail(function(){
-        alert("Немає зв'язку з сервером.")
+        alert( localeMsg.CONNECTION_ERROR )
       })
       return promise
     } else {
@@ -205,6 +205,16 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
     this.ui.listView.animate({ scrollTop: this.ui.listView.height() }, 500)
   },
   save: function(){
+    isVerificationFailed = _.some(this.collection.models, function(model){
+      if(model.get('name') === ''){
+        alert('Заповніть поле "Додайте назву шару"')
+        return true
+      } else if(model.get('type') < 0){
+        alert('Не обрано тип шару')
+        return true
+      } else return false
+    })
+    if(isVerificationFailed) return
     var promises = _.map(this.collection.models, function(model){
       return model.sendIconToServer()
     })
@@ -220,7 +230,6 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
     var that = this
     var promise = this.collection.sync("create", this.collection)
     promise.done(function(response){
-      console.log(response)
       var collectionRemoved = [];
       _.each(changeGovMenuView.collection.models, function(item){
         var model=item.attributes
@@ -253,7 +262,7 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
       $beaconCreatePopup.popup( "close" )
     })
     promise.fail(function(){
-      alert("Немає зв'язку з сервером.")
+      alert( localeMsg.CONNECTION_ERROR )
     })
   },
   deleteChild: function(childView){

@@ -84,7 +84,7 @@ function logOut(){
   promise.done(function ( response ) {
     if(response[0] && response[0].id && response[0].id === '-10'){
       window.state.user = {
-        user_first: 'Гість',
+        user_first: window.localeMsg.GUEST,
         login: 'Guest',
         avatar: '/images/avatar-bg.png'
       }
@@ -117,8 +117,11 @@ function registerDialogInit(){
       } else if(response[0] && response[0].error) {
         alert("Error: " + response[0].error)
       } else {
-        window.resp = response
-        console.log("window.resp: ", window.resp)
+        if(Array.isArray(response)){
+          alert(response.map(function(item){ return JSON.stringify(item) }).join())
+        } else {
+          alert( JSON.stringify(response) )
+        }
       }
     });
     promise.fail(function(response){
@@ -261,7 +264,7 @@ function checkLoggedIn(){
         }
       } else {
         window.state.user = {
-          user_first: 'Гість',
+          user_first: window.localeMsg.GUEST,
           login: 'Guest',
           avatar: '/images/avatar-bg.png'
         }

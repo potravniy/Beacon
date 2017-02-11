@@ -199,7 +199,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
               }
             },
             error: function(){
-              console.log('Beacon delete error')
+              alert('Помилка при видаленні маячка')
             }
           })
         }
@@ -239,7 +239,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         theModel.set('b_status', response.status)
       },
       error: function(){
-        console.log('Status change error')
+        alert ( localeMsg.FAIL )
       }
     })
   },

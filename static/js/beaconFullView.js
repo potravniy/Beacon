@@ -1,20 +1,60 @@
 "use strict"
-var MsgCollectionView = Backbone.Marionette.CollectionView.extend({
-  // template: '#chat_tpl',
-  // className: 'chat',
-  // attributes: {
-  //   'data-role': "chat"
-  // },
-  // ui: {
-  //   msgInput: '#text-message',
-  //   btnSend: '.input-message__send'
-  // },
-  // events: {
-  //   'click @ui.btnSend': 'msgSend'
-  // },
-  // msgSend: function(){
-  //   console.log('btnSend clicked')
-  // },
+var MsgCollectionView = Backbone.Marionette.CompositeView.extend({
+  template: '#chat_tpl',
+  className: 'chat',
+  attributes: {
+    'data-role': "chat"
+  },
+  ui: {
+    msgInput: '#text-message',
+    btnSend: '.input-message__send'
+  },
+  events: {
+    'click @ui.btnSend': 'msgSend'
+  },
+  msgSend: function(){
+    if( window.state.user.login === 'Guest' ) {
+      alert('Зареєструйтесь, будь-ласка!')
+      return
+    } else if( window.state.user.voting_status === '0' ) {
+      alert('Для відправки повідомлень, будь-ласка, підвищіть рівень Вашої авторизації.')
+      return
+    }
+    $.mobile.loading('show')
+    var that = this
+    var data = {
+      data: JSON.stringify({
+        beacon_id: this.options.beacon_id,
+        msg: this.ui.msgInput.val()
+      })
+    }
+    this.ui.msgInput.val("")
+    var promise = $.ajax({
+      type: "POST",
+      url: "https://gurtom.mobi/chat_add.php",
+      dataType: "json",
+      crossDomain: true,
+      data: data
+    })
+    promise.done(function(response){
+      console.log("success: ", response)
+      if(response.error === 0){
+        that.collection.add(response.msg)
+      } else if(response.error === 4){
+        alert("Це повідомлення Ви вже відправляли.")
+      } else if(response.error === 100){
+        alert("Для відправки повідомлень, будь-ласка, підвищіть рівень Вашої авторизації.")
+      }
+    });
+    promise.fail(function(response){
+      console.log("error")
+      alert("Error: "+ response[0].error_uk)
+    });
+    promise.always(function(response){
+      $.mobile.loading('hide')
+    })
+    
+  },
   collection: MsgGroup,
   childView: MsgView,
   childViewContainer: '.sent-message__wrapper',
@@ -93,9 +133,9 @@ var VotingModel = Backbone.Model.extend({
     switch (+this.get('offer_status')) {
       case 0:
         if( new Date(this.get('sprtf')) < getTodayWithZeroTime()) {
-          this.set({'v_status': 'Збір голосів підтримки закінчився '+ reverseDateFormat(this.get('sprtf')) +'.'})
+          this.set({'v_status': 'Збір голосів підтримки закінчився'+' '+ reverseDateFormat(this.get('sprtf')) +'.'})
         } else {
-          this.set({'v_status': 'Триває збір голосів підтримки до '+ reverseDateFormat(this.get('sprtf')) +'.'})
+          this.set({'v_status': 'Триває збір голосів підтримки до'+' '+ reverseDateFormat(this.get('sprtf')) +'.'})
           if(this.get('canUserVote')) {
             this.set({'usr_status': (this.get('sprt_my') == '1' ? 'Ви підтримали це голосування.' : 'Ви ще не підтримували проведення цього голосування.' )})
             this.set({'btn_support': (this.get('sprt_my') == '1' ? 'Скасувати' : 'Підтримати' ) })
@@ -104,19 +144,19 @@ var VotingModel = Backbone.Model.extend({
         break;
       case 1:
         if(new Date(this.get('offer_start_time')) <= getTodayWithZeroTime()){
-          this.set({'v_status': 'Голосування розпочато і триває до '+ reverseDateFormat(this.get('offer_finish_time')) +'.'})
+          this.set({'v_status': 'Голосування розпочато і триває до'+' '+ reverseDateFormat(this.get('offer_finish_time')) +'.'})
           if(this.get('canUserVote')) {
             this.set({'usr_status': haveUserVoted(this)})
           }
         } else {
-          this.set({'v_status': 'Голосування розпочнеться '+ reverseDateFormat(this.get('offer_start_time')) +'.'})
+          this.set({'v_status': 'Голосування розпочнеться'+' '+ reverseDateFormat(this.get('offer_start_time')) +'.'})
           if(this.get('canUserVote')) {
             this.set({'usr_status': (this.get('sprt_my') == '1' ? 'Ви підтримали це голосування.' : 'Ви не підтримали це голосування.' )})
           }
         }
         break;
       case 2:
-        this.set({'v_status': 'Голосування закінчилось '+ reverseDateFormat(this.get('offer_finish_time')) +'.'})
+        this.set({'v_status': 'Голосування закінчилось'+' '+ reverseDateFormat(this.get('offer_finish_time')) +'.'})
         if(this.get('canUserVote')) {
           this.set({'usr_status': haveUserVoted(this)})
         }
@@ -129,16 +169,16 @@ var VotingModel = Backbone.Model.extend({
         break;
       case 4:
         this.set({'v_status': 'Голосування набрало необхідну кількість голосів підтримки.'
-          + 'Голосування розпочнеться '+ reverseDateFormat(this.get('offer_finish_time')) +'.' }) 
+          + 'Голосування розпочнеться'+' '+ reverseDateFormat(this.get('offer_finish_time')) +'.' }) 
         if(this.get('canUserVote')) {
           this.set({'usr_status': (this.get('sprt_my') == '1' ? 'Ви підтримали це голосування.' : 'Ви не підтримали це голосування.' )})
         }
         break;
     }
     function haveUserVoted(that){
-      var vote = (that.get('user_vote') == '1' ? 'Ви голосували "за" '+ (that.get('user_vote_open') == '1' ? 'відкрито.' : 'таємно.')
-            : that.get('user_vote') == '2' ? 'Ви голосували "проти" '+ (that.get('user_vote_open') == '1' ? 'відкрито.' : 'таємно.') 
-            : that.get('user_vote') == '3' ? 'Ви "утримались" '+ (that.get('user_vote_open') == '1' ? 'відкрито.' : 'таємно.')
+      var vote = (that.get('user_vote') == '1' ? 'Ви голосували "за"'+' '+ (that.get('user_vote_open') == '1' ? 'відкрито.' : 'таємно.')
+            : that.get('user_vote') == '2' ? 'Ви голосували "проти"'+' '+ (that.get('user_vote_open') == '1' ? 'відкрито.' : 'таємно.') 
+            : that.get('user_vote') == '3' ? 'Ви "утримались"'+' '+ (that.get('user_vote_open') == '1' ? 'відкрито.' : 'таємно.')
             : 'Ви не голосували.' )
       return vote
     }
@@ -152,16 +192,16 @@ var VotingModel = Backbone.Model.extend({
     } else if(this.get('can_user') == '-2'){
       this.set({'usr_status': "Для участі в голосуваннях, будь-ласка, заповніть поле 'Дата народження' в своїх особистих даних."})
     } else if(this.get('can_user') == '-3') {
-      this.set({'usr_status': "Ви не можете приймати участь в цьому голосуванні, оскільки автор встановив вікові обмеження від "
+      this.set({'usr_status': "Ви не можете приймати участь в цьому голосуванні, оскільки автор встановив вікові обмеження від"+' '
       + this.get('age_from') +" до "+ this.get('age_to') + " років."})
     } else if( !isAuthLevelOk(this) ) {
       this.set({'usr_status': "Ви не можете приймати участь в цьому голосуванні, оскільки рівень Вашої авторизації на цьому сервісі не відповідає вимогам автора голосування. "
       + "Для участі в цьому голосуванні Вам слід мати рівень авторизації не нижче ніж: "
-      + (this.get('v1')=='1' ? 'Авторизація через соціальну мережу'
-       : this.get('v2')=='1' ? "Співвласники"
-       : this.get('v3')=='1' ? "Члени громадських об'єднань" 
-       : this.get('v4')=='1' ? "Авторизація по платежу" 
-       : this.get('v5')=='1' ? "Авторизація по банківській карті"
+      + (this.get('v1')=='1' ? 'Авторизація через соціальну мережу'   // 1
+       : this.get('v2')=='1' ? "Співвласники"                         // 2
+       : this.get('v3')=='1' ? "Члени громадських об'єднань"          // 3
+       : this.get('v4')=='1' ? "Авторизація по платежу"               // 4
+       : this.get('v5')=='1' ? "Авторизація по банківській карті"     // 5
        : '' ) + '.' })
     } else if( this.get('can_user') == '0' ) {
       this.set({ 'usr_status': "Ви не можете приймати участь в цьому голосуванні, оскільки предмет голосування є поза Вашими сферами." })
@@ -479,7 +519,7 @@ var VotingView = Backbone.Marionette.LayoutView.extend({
       }
     })
     promise.fail(function(){
-      alert("Щось пішло не так...\nСпробуйте згодом ще раз.")
+      alert( localeMsg.FAIL )
     })
     promise.always(function(){
       $.mobile.loading('hide')
@@ -520,6 +560,67 @@ var FundsListView = Backbone.Marionette.CompositeView.extend({
     this.collection = new Backbone.Collection(this.model.get('collection'))
   }
 })
+var oneNCOwantsAdmin = Backbone.Marionette.ItemView.extend({
+  template: '.nco_wants_admin',
+  initialize: function(){
+    this.triggers = {
+      'click .accept': 'accept:' + this.model.get('item').id
+    }
+  }
+})
+var AdministrationNCOView = Backbone.Marionette.CompositeView.extend({
+  template: '#admin_nco_view',
+  templateHelpers: function(){
+    var res = {
+        ncoName: window.lib.getNameNCObyID( this.model.get('nco_id') ),
+        showNcoBtn: false,
+        txt: ''
+      }
+    if( window.state.user.nco !== '0' && this.model.get('nco_acceptance') === "0" ){
+      var doesNcoBid = this.model.get('nco_bids').indexOf(window.state.user.id) > -1,
+          doesNcoMeetAuthorChoise = this.model.get('nco_id') === window.state.user.id
+
+      if( doesNcoMeetAuthorChoise ){
+        res.showNcoBtn = true
+        this.ncoAction = 'takeIt'
+        res.txt = 'Прийняти адміністрування'
+      } else if( doesNcoBid ){
+        res.showNcoBtn = true
+        this.ncoAction = 'withdraw'
+        res.txt = 'Відкликати пропозицію'
+      } else {
+        res.showNcoBtn = true
+        this.ncoAction = 'propose'
+        res.txt = 'Запропонувати свою НКО'
+      }
+    }
+    return res
+  },
+  className: 'admin_nco',
+  childView: oneNCOwantsAdmin,
+  childViewContainer: '.nco_list',
+  events: {
+    'click .nco_decision': 'sendNCOdecision'
+  },
+  initialize: function(){
+    if(this.model.get('nco_acceptance') === "0") {
+      var btn = window.state.user.id === this.model.get('author_id') ? true : false
+      this.model.set({ nco_bids: this.model.get('nco_bids') || [] })
+      var list = this.model.get('nco_bids').map(function(item){
+        return {
+          item: window.lib.getNCObyID( item ),
+          button: btn
+        }
+      })
+      this.collection = new Backbone.Collection( list )
+    } else {
+      this.collection = new Backbone.Collection( [] )
+    }
+  },
+  sendNCOdecision: function(){
+    console.log("NCO descision is: ", this.ncoAction)
+  }
+})
 var ProgramModel = Backbone.Model.extend({
   defaults: {
     id: 0,
@@ -531,6 +632,68 @@ var ProgramModel = Backbone.Model.extend({
     amount: ''
   }
 })
+var Objects2_5View = Backbone.Marionette.LayoutView.extend({
+  template: "#objects2-5_full_view",
+  templateHelpers: function (){
+    return {
+      dt_expired: this.model.get('dt_expired') || false,
+      ts_closed: this.model.get('ts_closed') || false,
+      currency: window.lib.currency.getName(this.model.get('currency_asking'))
+    }
+  },
+  regions: {
+    funds: '.funds',
+    contribution: '.contribution',
+    nco: '.nco'
+  },
+  events: {
+    'click .withdraw': 'withdraw',
+    'click .pp_list': 'showListPP'
+  },
+  withdraw: function(){
+    console.log('Кнопка "Відкликати" натиснута.')
+  },
+  showListPP: function(){
+    alert("Ця функція поки що недоступна.")
+  },
+  triggers: {
+    'click .donate': 'pay:donate'
+  },
+  onBeforeShow: function(){
+    var options = {
+      label: 'Для '+ this.model.get('obj_') +' зібрано коштів',
+      collection: _.map(this.model.get('funds'), function(item){
+        return $.extend({}, item, { 'withdrawable': false })
+      })
+    }
+    var model = new FundsLabelModel(options)
+    var View = FundsListView.extend({
+      model: model
+    })
+    this.showChildView('funds', new View())
+
+    options = {
+      label: 'Ваш внесок',
+      amount: ( window.state.user.id ? '' : 'невідомий'+'.' ),
+      collection: _.map(this.model.get('my_donations'), function(item){
+        return $.extend({}, item, { 'withdrawable': true })
+      })
+    }
+    model = new FundsLabelModel(options)
+    View = FundsListView.extend({
+      model: model
+    })
+    this.showChildView('contribution', new View())
+
+    if(this.model.get('type') !== '2'){
+      View = AdministrationNCOView.extend({
+        model: this.model
+      })
+      this.showChildView('nco', new View())
+    }
+  }
+})
+
 var ProgramView = Backbone.Marionette.LayoutView.extend({
   template: "#program_full_view",
   regions: {
@@ -578,17 +741,17 @@ var ProgramView = Backbone.Marionette.LayoutView.extend({
     this.showChildView('contribution', contributionListView)
   }
 })
-var ProjProposModel = Backbone.Model.extend({
-  defaults: {
-    id: 0,
-    my_donations: [],
-    description: "",
-    funds: [],
-    discussion_link: undefined,
-    pp: undefined,
-    amount: ''
-  }
-})
+// var ProjProposModel = Backbone.Model.extend({
+//   defaults: {
+//     id: 0,
+//     my_donations: [],
+//     description: "",
+//     funds: [],
+//     discussion_link: undefined,
+//     pp: undefined,
+//     amount: ''
+//   }
+// })
 var SOS_Info_Emo_View = Backbone.Marionette.ItemView.extend({
   template: '#sos_extention_view_tpl',
   templateHelpers: function(){
@@ -642,7 +805,7 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
   },
   regions: {
     extention: '.expanding_view',
-    chat: '.sent-message__wrapper'
+    chat: '#chat_region'
   },
   modelEvents: {
     "change": 'onModelChange'
@@ -662,8 +825,6 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     'click @ui.error':  'onClickError',
     'click @ui.star':   'onClickStar',
     'click @ui.add':    'onClickAdd',
-    'click .header': 'onLayoutViewClick',
-    'click .beacon-content': 'onLayoutViewClick',
     'click .ui-icon-close': 'exit',
     'click @ui.beaconStatusBtn': 'onClickStatusBtn',
     'click @ui.img': 'onClickImg'
@@ -716,32 +877,79 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     checkLoggedInThen(showBeaconCreateMenu, options)
   },
   onBeforeShow: function(){
+    console.log("OnBeforeShow FullView")
+    var type = +this.model.get('b_type') === 1000 ? this.model.get('type') : this.model.get('b_type')
+    var addOptions = {}
+    addOptions.author_id = this.model.get('author_id')
+    addOptions.type = type
     var Model,
         View
-    if(this.model.get('b_type') == 330 || this.model.get('type') == 330){
-      Model = ParticipBudgetModel
-      View = ParticipBudgetView
-    } else if(this.model.get('b_type') == 1 || this.model.get('type') == 1){
-      Model = VotingModel
-      View = VotingView
-    } else if(this.model.get('b_type') == 2 || this.model.get('type') == 2){
-      Model = ProgramModel
-      View = ProgramView
-    } else if(this.model.get('b_type') == 911 || this.model.get('type') == 911
-           || this.model.get('b_type') == 777 || this.model.get('type') == 777
-           || this.model.get('b_type') == 96  || this.model.get('type') == 96
-           || this.model.get('b_type') == 69  || this.model.get('type') == 69){
-      Model = Backbone.Model
-      View = SOS_Info_Emo_View
+    switch (type) {
+      case '1':
+        Model = VotingModel
+        View = VotingView
+        break
+      case '2':
+        Model = ProgramModel
+        View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : ProgramView
+        addOptions.obj = 'програма'
+        addOptions.obj_ = 'програми'
+        addOptions.obj__ = 'цю програму'
+        addOptions.closed = ''
+        break
+      case '3':
+        Model = ProgramModel
+        View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : null
+        addOptions.obj = 'проектна пропозиція'
+        addOptions.obj_ = 'проектної пропозиції'
+        addOptions.obj__ = 'цю проектну пропозицію'
+        addOptions.closed = 'Пропозиція закрита'
+        addOptions.program_link = "https://gurtom.mobi/beacon.php#main/6/48.47700521/31.57012122/"+ this.model.get('program_beacon_id') +"/0,1,7,8,9,10/0/2/-/-/-/-/-/-/-/-/mm/-"
+        break
+      case '4':
+        Model = ProgramModel
+        View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : null
+        addOptions.obj = 'проект'
+        addOptions.obj_ = 'проекту'
+        addOptions.obj__ = 'цей проект'
+        addOptions.closed = 'Проект закрито'
+        break
+      case '5':
+        Model = ProgramModel
+        View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : null
+        addOptions.obj = 'запит'
+        addOptions.obj_ = 'запиту'
+        addOptions.obj__ = 'цей запит'
+        addOptions.closed = 'Запит закрито'
+        break
+      case '69':
+      case '96':
+        Model = Backbone.Model
+        View = SOS_Info_Emo_View
+        break
+      case '330':
+        Model = ParticipBudgetModel
+        View = ParticipBudgetView
+        break
+      case '555':
+      case '777':
+      case '911':
+        Model = Backbone.Model
+        View = SOS_Info_Emo_View
+        break
     }
     if ( Model && View ) {
       var extModel = this.model.get('full')[0]
+      $.extend(extModel, addOptions)
       View = View.extend({model: new Model(extModel)}) 
       this.showChildView('extention', new View())
     }
     var chat = this.model.get('chat')
     var chatCollection = new MsgGroup(chat)
-    this.showChildView('chat', new MsgCollectionView({collection: chatCollection}))
+    this.showChildView('chat', new MsgCollectionView({
+      collection: chatCollection,
+      beacon_id: this.model.get('id')
+    }))
     if( window.state.b_link === this.model.get('id') ){
       this.ui.link.addClass('ui-btn-active')
     } else {

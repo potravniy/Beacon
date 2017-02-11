@@ -8,7 +8,7 @@ var MsgModel = Backbone.Model.extend({
 var MsgGroup = Backbone.Collection.extend({
   model: MsgModel,
   comparator: function(model) {
-    return -model.get('ts');  //  latest msg appears first
+    return +model.get('ts');  //  latest msg appears first
   }
 })
 var BeaconModel = Backbone.Model.extend({
@@ -107,18 +107,47 @@ var BeaconsList = Backbone.Collection.extend({
 var MsgView = Backbone.Marionette.ItemView.extend({
   model: MsgModel,
   template: '#chat_item_view_tpl',
+  templateHelpers: function(){
+    return {
+      text: window.lib.htmlEntityDecode( this.model.get('text') ),
+      user_name: window.lib.htmlEntityDecode( this.model.get('user_name') )
+    }
+  },
   className: 'sent-message clearfix',
   events: {
     'click .abuse-spam': 'onClickBtn'
   },
   onClickBtn: function(){
-    console.log('chat abuse btn clicked for beacon_id:' + this.model.get('beacon')
-    + ', user_id: ' + this.model.get('user_id')
-    + ', text: ' + this.model.get('text') )
-    alert('Скаргу на повідомлення надіслано.')
+    $.mobile.loading('show')
+    var that = this
+    var data = {
+      data: JSON.stringify({
+        chat_id: this.model.get('chat_id')
+      })
+    }
+    var promise = $.ajax({
+      type: "POST",
+      url: "https://gurtom.mobi/chat_spam.php",
+      dataType: "json",
+      crossDomain: true,
+      data: data
+    })
+    promise.done(function(response){
+      console.log("success: ", response)
+      if(response.error === 0){
+        alert('Скаргу на повідомлення надіслано.')
+      }
+    });
+    promise.fail(function(response){
+      console.log("error")
+      alert("Error: "+ response.error)
+    });
+    promise.always(function(response){
+      $.mobile.loading('hide')
+    })
   }
 })
-var BeaconView = Backbone.Marionette.CompositeView.extend({
+var BeaconView = Backbone.Marionette.ItemView.extend({
   template: "#beacon_main_tpl",
   templateHelpers: function() {
     var bs = this.model.get('b_status')
@@ -133,8 +162,8 @@ var BeaconView = Backbone.Marionette.CompositeView.extend({
     }
     return $.extend({}, window.lib.tagList(this), obj )
   },
-  childView: MsgView,
-  childViewContainer: '.sent-message__wrapper',
+  // childView: MsgView,
+  // childViewContainer: '.sent-message__wrapper',
   className: function(){
     var index = _.indexOf(this.model.collection.models, this.model)
     return "ui-content ui-block-" + ((index % 2) ? "b" : "a")
@@ -142,9 +171,9 @@ var BeaconView = Backbone.Marionette.CompositeView.extend({
   attributes: {
     "data-role": "content"
   },
-  initialize: function(){
-    this.collection = new MsgGroup( this.model.get('chat') );
-  },
+  // initialize: function(){
+  //   this.collection = new MsgGroup( this.model.get('chat') );
+  // },
   ui: {
     expandBtn: '.expanding_view .btn_wrapper',
     beaconStatusBtn: '.beacon_status',

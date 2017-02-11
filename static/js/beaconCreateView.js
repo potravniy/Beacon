@@ -132,20 +132,6 @@ var BeneficiarView = Backbone.Marionette.ItemView.extend({
     'input': '#beneficiar_name'
   },
 })
-// var ProgramIdView = Backbone.Marionette.ItemView.extend({   //  It should be a CollectionView with set of programID models
-//   template: '#programID__tpl',
-//   templateHelpers: function(){
-//     if(this.model.get('program_id')) return { program_id: +this.model.get('program_id') }
-//     else return { program_id: '' }
-//   },
-//   id: 'programID',
-//   ui: {
-//     'input': '#programID__input'
-//   },
-//   getProgramID: function(){
-//     return this.ui.input.val()
-//   }
-// })
 var NCOView = Backbone.Marionette.ItemView.extend({   //  It should be a CollectionView with set of NCO models
   template: '#nco__tpl',
   id: 'nco__wrapper',
@@ -297,70 +283,6 @@ var TagsView = Backbone.Marionette.ItemView.extend({
     }
   }
 })
-// var LayerTypeView = Backbone.Marionette.ItemView.extend({
-//   template: '#layer_type_tpl',
-//   id: 'layer_type__view',
-//   ui: {
-//     layerTypeInput: '#layer_type__input',
-//     layerTypeUl: '#layer_type__ul',
-//   },
-//   events: {
-//     'click @ui.layerTypeInput': 'input_click',
-//     'filterablebeforefilter @ui.layerTypeUl': _.debounce(function(e, data){
-//         this.layerTypeAutocomplete(e, data)
-//       }, 700),
-//     'click @ui.layerTypeUl': 'layerTypeAutocompleteClick',
-//     'click #layer_type__view .ui-input-search .ui-input-clear': 'layerTypeBtnClearClick'
-//   },
-//   input_click: function(e){
-//     $(e.target).attr('data-id', '').val('')
-//   },
-//   layerTypeAutocomplete: function(e, data){
-//     var $ul = $( '#layer_type__ul' ),
-//       $input = $( data.input ),
-//       value = $input.val(),
-//       html = "";
-//     $ul.html( "" );
-//     if ( value && value.length > 0 ) {
-//       $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
-//       $ul.listview( "refresh" );
-//       $.ajax({
-//         type: "POST",
-//         url: "https://gurtom.mobi/beacon_list.php", //  !!!
-//         dataType: "json",
-//         xhrFields: { withCredentials: true },
-//         crossDomain: true,
-//         data: {
-//           b_type: this.model.get('b_type'),
-//           type: $input.val()
-//         },
-//         success: function ( response ) {
-//           $.each( response, function ( i, val ) {
-//             html += '<li data-id="'+ val.id +'">' + val.type + '</li>';
-//           });
-//           $ul.html( html );
-//           $ul.listview( "refresh" );
-//           $ul.trigger( "updatelayout");
-//         } 
-//       })
-//     }
-//   },
-//   layerTypeAutocompleteClick: function(e){
-//     var $input = $('#layer_type__input') 
-//     $input.attr('data-id', $(e.target).attr('data-id'))
-//     $input.val(e.target.innerText)
-//     var $ul = $( '#layer_type__ul' )
-//     $ul.html( '' );
-//     $ul.listview( "refresh" );
-//     $ul.trigger( "updatelayout");
-//   },
-//   layerTypeBtnClearClick: function(){
-//     $('#layer_type__input').attr('data-id', '')
-//   },
-//   getLayerType: function(){
-//     var str = this.ui.layerTypeInput.val()
-//   }
-// })
 var PhotoView = Backbone.Marionette.ItemView.extend({
   template: '#photo_tpl',
   id: 'photo',
@@ -787,10 +709,6 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   },
   sendPhoto: function(e){
     e.preventDefault()
-    // if(!this.ui.form.get(0).checkValidity()){
-    //   alert("Будь ласка, заповніть обов'язкові поля.")
-    //   return
-    // } else 
     if(!this.verifyInputs(this)) return
     var file = this.photo.currentView.ui.photo[0].files[0]
     if (file){
@@ -968,6 +886,10 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       data: that.ui.form.serialize()
     })
     promise.done(function( response ){
+      if( response.length === 0 ){
+        alert( localeMsg.FAIL )
+        return
+      }
       if( response[0] && response[0].error ){
         if( response[0].error_uk ) alert( response[0].error_uk )
         else alert( response[0].error )

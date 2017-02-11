@@ -82,7 +82,7 @@ var UserFundslView = Backbone.Marionette.CompositeView.extend({
   },
   initialize: function(){
     this.model = new Backbone.Model({
-      title: 'Виберіть один із своїх фондів:',
+      title: 'Виберіть один із своїх фондів' + ':',
       required: 'required',
       label: 'Фонди',
       inputName: 'fund_id',
@@ -142,13 +142,13 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
   templateHelpers: function(){
     switch (+this.model.get('type')) {
       case 2:
-        return {subtitle: "на програму "}
+        return {subtitle: "на програму"+' '}
       case 3:
-        return {subtitle: "на проектну пропозицію "}
+        return {subtitle: "на проектну пропозицію"+' '}
       case 4:
-        return {subtitle: "на проект "}
+        return {subtitle: "на проект"+' '}
       case 5:
-        return {subtitle: "на запит "}
+        return {subtitle: "на запит"+' '}
     }
   },
   id: 'donate__wrapper',
@@ -197,7 +197,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
         view = null
     model = {
       'required': 'required',
-      'label': 'Сума пожертвування:',
+      'label': 'Сума пожертвування'+':',
       'realCurrencyOnly': !window.state.user.id
     }
     view = new MoneyView({ model: new Backbone.Model(model) })
@@ -206,7 +206,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
     if (window.state.user.id) {
       model = {
         checkBoxName: 'open',
-        label: 'Пожертвувати анонімно.'
+        label: 'Пожертвувати анонімно'+'.'
       }
       this.showChildView('checkbox', new CheckboxView(model))
       this.showChildView('fund', new UserFundslView())
@@ -274,7 +274,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
       }
     })
     promise.fail(function(response){
-      alert("Немає зв'язку з сервером.")
+      alert( localeMsg.CONNECTION_ERROR )
     })
     promise.always(function(){
       $.mobile.loading('hide')
@@ -294,11 +294,11 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
         return false
       }
     } else if ( window.state.user.id && formData.fund_id === '' ) {
-      alert('Ви не вибрали фонд.')
+      alert('Ви не вибрали фонд'+'.')
       return false
     }
     if( +formData.amount === 0 ) {
-      alert('Ви не вказали суму.')
+      alert('Ви не вказали суму'+'.')
       return false
     }
     return true

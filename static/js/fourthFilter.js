@@ -1,104 +1,5 @@
 "use strict"
 
-// window.state.listOrgs = [
-// 	{
-// 		"layer_owner_id": 14361,
-// 		"layer_owner_code": "testGOV",
-// 		"layer_owner_name": "testGOV",
-// 		"pined": 0,
-// 		"chkd": 0,
-// 		"layers": [
-// 			{
-// 				"uniq_id": 30,
-// 				"layer_name": "Авжеж",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 38,
-// 				"layer_name": "Дідька лисого",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 29,
-// 				"layer_name": "Дзуськи",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 39,
-// 				"layer_name": "Дуля з маком",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 41,
-// 				"layer_name": "Зрада",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 5,
-// 				"layer_name": "Личаківський район",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 1,
-// 				"layer_name": "Місто Львів",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 27,
-// 				"layer_name": "Нівроку",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 33,
-// 				"layer_name": "Незабаром",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 4,
-// 				"layer_name": "Сихівський район",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 3,
-// 				"layer_name": "Франківський район",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			},
-// 			{
-// 				"uniq_id": 2,
-// 				"layer_name": "Шевченківський район",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			}
-// 		]
-// 	},
-// 	{
-// 		"layer_owner_id": 14321,
-// 		"layer_owner_code": "26274568",
-// 		"layer_owner_name": "Громадська організація «Молодіжна корпорація»",
-// 		"pined": 0,
-// 		"chkd": 0,
-// 		"layers": [
-// 			{
-// 				"uniq_id": 40,
-// 				"layer_name": "ОСББ Одеси",
-// 				"pined": 0,
-// 				"chkd": 0
-// 			}
-// 		]
-// 	}
-// ]
-
 var OrgLayerView = Backbone.Marionette.ItemView.extend({
   template: '#org_layer__tpl',
   templateHelpers: function(){
@@ -376,16 +277,16 @@ function makeListOrgs(){
       unit.layer_owner_code = item.layer_owner_code
       unit.layer_owner_name = item.layer_owner_name
       filt.layer_owner_id = unit.layer_owner_id = +item.layer_owner_id
-      filt.chkd = unit.chkd = 1
-      filt.pined = unit.pined = 0
+      filt.chkd = unit.chkd = item.chkd
+      filt.pined = unit.pined = item.pined
       filter4.push( filt )
       unit.layers = _.map(item.layers, function(layer){
         var res = {},
             flt = {}
         res.layer_name = layer.layer_name
         flt.uniq_id = res.uniq_id = +layer.uniq_id
-        flt.chkd = res.chkd = 1
-        flt.pined = res.pined = 0
+        flt.chkd = res.chkd = layer.chkd
+        flt.pined = res.pined = layer.pined
         filter4.push( flt )
         return res
       })

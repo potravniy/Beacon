@@ -516,7 +516,7 @@ img.photo {
 .panel .ui-listview > .ui-li-static {
     padding: 0.075em;
 }
-#right-panel #actions .ui-listview > li.ui-first-child{
+#right-panel #user_rating .ui-listview > li.ui-first-child{
   padding-bottom: 1em;
   padding-left: 2em;
 }
