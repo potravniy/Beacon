@@ -159,7 +159,7 @@
   },
 
 
-  "file5": "beaconFullView.js ! NOT COMPLETED ! FROM LINE 879",
+  "file5": "beaconFullView.js",
   
   "REGISTRATION_REQUIRED": {
     "where": "MsgCollectionView msgSend alert line 17",
@@ -179,11 +179,11 @@
   },
   "VOTING_SUPPORT_COMPLETED": {
     "where": "VotingModel extendModel v_status line 136",
-    "msg": "Збір голосів підтримки закінчився"
+    "msg": "Збір голосів підтримки закінчився {when}."
   },
   "VOTING_SUPPORT_CONTINUE": {
     "where": "VotingModel extendModel v_status line 138",
-    "msg": "Триває збір голосів підтримки до"
+    "msg": "Триває збір голосів підтримки до {when}"
   },
   "YOU_SUPPORTED_THE_VOTING": {
     "where": "VotingModel extendModel usr_status line 140, 154, 167, 174",
@@ -203,15 +203,15 @@
   },
   "VOTING_STARTED_AND_RUNS_TO": {
     "where": "VotingModel extendModel v_status line 147",
-    "msg": "Голосування розпочато і триває до"
+    "msg": "Голосування розпочато і триває до {when}."
   },
   "VOTING_WILL_START": {
     "where": "VotingModel extendModel v_status line 152",
-    "msg": "Голосування розпочнеться"
+    "msg": "Голосування розпочнеться {when}."
   },
   "VOTING_IS_OVER": {
     "where": "VotingModel extendModel v_status line 159",
-    "msg": "Голосування закінчилось"
+    "msg": "Голосування закінчилось {when}."
   },
   "VOTING_IS_NOT_SUPPORTED": {
     "where": "VotingModel extendModel v_status line 165",
@@ -219,31 +219,31 @@
   },
   "VOTING_IS_SUPPORTED": {
     "where": "VotingModel extendModel v_status line 171/2",
-    "msg": "Голосування набрало необхідну кількість голосів підтримки і розпочнеться"
+    "msg": "Голосування набрало необхідну кількість голосів підтримки і розпочнеться {when}."
   },
   "YOU_VOTED_FOR": {
     "where": "VotingModel extendModel v_status line 179",
-    "msg": "Ви голосували 'за'"
+    "msg": "Ви голосували 'за' {how}."
   },
   "YOU_VOTED_AGAINST": {
     "where": "VotingModel extendModel v_status line 180",
-    "msg": "Ви голосували 'проти'"
+    "msg": "Ви голосували 'проти' {how}."
   },
   "YOU_ABSTAINED": {
     "where": "VotingModel extendModel v_status line 181",
-    "msg": "Ви 'утримались'"
+    "msg": "Ви 'утримались' {how}."
   },
   "YOU_DID_NOT_VOTE": {
     "where": "VotingModel extendModel v_status line 182",
-    "msg": "Ви не голосували"
+    "msg": "Ви не голосували."
   },
   "YOU_DID_VOTE_OPEN": {
     "where": "VotingModel extendModel v_status line 179, 180, 180",
-    "msg": "відкрито."
+    "msg": "відкрито"
   },
   "YOU_DID_VOTE_SECRET": {
     "where": "VotingModel extendModel v_status line 179, 180, 180",
-    "msg": "таємно."
+    "msg": "таємно"
   },
   "REGISTER_FOR_VOTE": {
     "where": "VotingModel canUser usr_status line 191",
@@ -297,29 +297,124 @@
     "where": "Objects2_5View showListPP alert line 657, 711",
     "msg": "Ця функція поки що недоступна."
   },
-  "FUNDS_COLLECTED": {
-    "where": "Objects2_5View onBeforeShow label line 664, 716",
-    "msg": "Для {obj_} зібрано коштів"
+  "FOR_THIS_SUBJECT_AMOUNT_COLLECTED": {
+    "where": "Objects2_5View onBeforeShow line 664",
+    "msg": [
+      "unused",
+      "unused",
+      "Для програми зібрано коштів",
+      "Для проектної пропозиції зібрано коштів",
+      "Для проекту зібрано коштів",
+      "Для запиту зібрано коштів"
+    ]
+  },
+  "SUBJECT_ID": {
+    "where": "html #objects2-5_full_view line 852",
+    "msg": [
+      "unused",
+      "unused",
+      "ID програми",
+      "ID проектної пропозиції",
+      "ID проекту",
+      "ID запиту"
+    ]
+  },
+  "SUBJECT_EXPIRATION": {
+    "where": "html #objects2-5_full_view line 865",
+    "msg": [
+      "unused",
+      "unused",
+      "Дата завершення програми",
+      "Дата завершення проектної пропозиції",
+      "Дата завершення проекту",
+      "Дата завершення запиту"
+    ]
+  },
+  "SUBJECT_DISCUSSION": {
+    "where": "html #objects2-5_full_view line 872",
+    "msg": [
+      "unused",
+      "unused",
+      "Обговорення програми",
+      "Обговорення проектної пропозиції",
+      "Обговорення проекту",
+      "Обговорення запиту"
+    ]
+  },
+  "SUBJECT_CLOSED": {
+    "where": "html #objects2-5_full_view line 869",
+    "msg": [
+      "unused",
+      "unused",
+      "Програму закрито",
+      "Проектну пропозицію закрито.",
+      "Проект закрито.",
+      "Запит закритою"
+    ]
+  },
+  "SUBJECT_ADMINISTRATION": {
+    "where": "html #admin_nco_view line 886",
+    "msg": [
+      "unused",
+      "unused",
+      "Адміністрування програми",
+      "Адміністрування проектної пропозиції",
+      "Адміністрування проекту",
+      "Адміністрування запиту"
+    ]
+  },
+  "ANY_NCO_DO_NOT_ASKED_TO_ADMINISTER_THE_SUBJECT": {
+    "where": "html #admin_nco_view line 896",
+    "msg": [
+      "unused",
+      "unused",
+      "Жодна НКО не виявила бажання адмініструвати цю програму.",
+      "Жодна НКО не виявила бажання адмініструвати цю проектну пропозицію.",
+      "Жодна НКО не виявила бажання адмініструвати цей проект.",
+      "Жодна НКО не виявила бажання адмініструвати цей запит."
+    ]
+  },
+  "NCO_IS_DEFINED": {
+    "where": "html #admin_nco_view line 900",
+    "msg": [
+      "unused",
+      "unused",
+      "За двосторонньою згодою, цю програму адмініструє НКО",
+      "За двосторонньою згодою, цю проектну пропозицію адмініструє НКО",
+      "За двосторонньою згодою, цей проект адмініструє НКО",
+      "За двосторонньою згодою, цей запит адмініструє НКО"
+    ]
+  },
+  "LIST_NCO": {
+    "where": "html #admin_nco_view line 903",
+    "msg": [
+      "unused",
+      "unused",
+      "Перелік НКО, що хотіли б адмініструвати цю програму",
+      "Перелік НКО, що хотіли б адмініструвати цю проектну пропозицію",
+      "Перелік НКО, що хотіли б адмініструвати цей проект",
+      "Перелік НКО, що хотіли б адмініструвати цей запит"
+    ]
   },
   "YOUR_DONATION": {
-    "where": "Objects2_5View onBeforeShow label line 676, 729",
+    "where": "Objects2_5View onBeforeShow label line 678, 732",
     "msg": "Ваш внесок"
   },
   "UNKNOWN": {
-    "where": "Objects2_5View onBeforeShow label line 677, 730",
+    "where": "Objects2_5View onBeforeShow label line 679, 733",
     "msg": "невідомий"
   },
   "FOR_ORGANIZATIONS_ONLY": {
-    "where": "SOS_Info_Emo_View templateHelpers phone line 762",
+    "where": "SOS_Info_Emo_View templateHelpers phone line 765",
     "msg": "Перегляд доступний лише юридичним особам."
   },
 
 
-  "file6": "beaconFullView.js",
+  "file6": "beaconsCreatePopupMenu.js",
   
   "YOU_DO_NOT_HAVE_APPROPRIATE_LAYER": {
     "where": "BeaconCreatePopup onShow alert line 101",
-    "msg": "Ви не маєте шару з типом {type}"
+    "msg": "Ви не маєте шару з типом {type}."
   },
 
 
@@ -371,7 +466,7 @@
   
   "CHOOSE_FUND": {
     "where": "UserFundslView initialize title line 85",
-    "msg": "Виберіть один із своїх фондів"
+    "msg": "Виберіть один із своїх фондів:"
   },
   "FUNDS": {
     "where": "UserFundslView initialize label line 87",
@@ -407,7 +502,7 @@
   },
   "DONATION_AMOUNT": {
     "where": "DonateView onBeforeShow model label line 200",
-    "msg": "Сума пожертвування"
+    "msg": "Сума пожертвування:"
   },
   "DONATE_ANONIMOUSLY": {
     "where": "DonateView onBeforeShow model label line 209",

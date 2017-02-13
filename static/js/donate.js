@@ -197,7 +197,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
         view = null
     model = {
       'required': 'required',
-      'label': 'Сума пожертвування'+':',
+      'label': 'Сума пожертвування:',
       'realCurrencyOnly': !window.state.user.id
     }
     view = new MoneyView({ model: new Backbone.Model(model) })
@@ -206,7 +206,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
     if (window.state.user.id) {
       model = {
         checkBoxName: 'open',
-        label: 'Пожертвувати анонімно'+'.'
+        label: 'Пожертвувати анонімно'
       }
       this.showChildView('checkbox', new CheckboxView(model))
       this.showChildView('fund', new UserFundslView())
@@ -274,7 +274,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
       }
     })
     promise.fail(function(response){
-      alert( localeMsg.CONNECTION_ERROR )
+      alert( window.localeMsg[window.localeLang].CONNECTION_ERROR )
     })
     promise.always(function(){
       $.mobile.loading('hide')

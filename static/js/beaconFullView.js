@@ -519,7 +519,7 @@ var VotingView = Backbone.Marionette.LayoutView.extend({
       }
     })
     promise.fail(function(){
-      alert( localeMsg.FAIL )
+      alert( window.localeMsg[window.localeLang].FAIL )
     })
     promise.always(function(){
       $.mobile.loading('hide')
@@ -563,6 +563,7 @@ var FundsListView = Backbone.Marionette.CompositeView.extend({
 var oneNCOwantsAdmin = Backbone.Marionette.ItemView.extend({
   template: '.nco_wants_admin',
   initialize: function(){
+    console.log('nco_wants_admin: ', this.model.attributes)
     this.triggers = {
       'click .accept': 'accept:' + this.model.get('item').id
     }
@@ -572,10 +573,14 @@ var AdministrationNCOView = Backbone.Marionette.CompositeView.extend({
   template: '#admin_nco_view',
   templateHelpers: function(){
     var res = {
-        ncoName: window.lib.getNameNCObyID( this.model.get('nco_id') ),
-        showNcoBtn: false,
-        txt: ''
-      }
+      subject_administration: window.localeMsg[window.localeLang].SUBJECT_ADMINISTRATION[+this.model.get('type')],
+      no_nco: window.localeMsg[window.localeLang].ANY_NCO_DO_NOT_ASKED_TO_ADMINISTER_THE_SUBJECT[+this.model.get('type')],
+      nco_defined: window.localeMsg[window.localeLang].NCO_IS_DEFINED[+this.model.get('type')],
+      nco_list: window.localeMsg[window.localeLang].LIST_NCO[+this.model.get('type')],
+      ncoName: window.lib.getNameNCObyID( this.model.get('nco_id') ),
+      showNcoBtn: false,
+      txt: ''
+    }
     if( window.state.user.nco !== '0' && this.model.get('nco_acceptance') === "0" ){
       var doesNcoBid = this.model.get('nco_bids').indexOf(window.state.user.id) > -1,
           doesNcoMeetAuthorChoise = this.model.get('nco_id') === window.state.user.id
@@ -623,19 +628,34 @@ var AdministrationNCOView = Backbone.Marionette.CompositeView.extend({
 })
 var ProgramModel = Backbone.Model.extend({
   defaults: {
-    id: 0,
+    id: 'undefined',
     my_donations: [],
     description: "",
     funds: [],
     discussion_link: undefined,
     pp: undefined,
+    program_id: 'undefined',
+    program_title: 'undefined',
+    amount_asking: 'undefined',
+    nco_acceptance: '0',
+    nco_bids: [],
+    nco_id: '0',
     amount: ''
   }
 })
 var Objects2_5View = Backbone.Marionette.LayoutView.extend({
   template: "#objects2-5_full_view",
   templateHelpers: function (){
+    // var subject_id = new IntlMessageFormat(window.localeMsg[window.localeLang].SUBJECT_ID[type], window.localeLang)
+    // subject_id = subject_id.format()
+    var subject_id = window.localeMsg[window.localeLang].SUBJECT_ID[+this.model.get('type')]
+    var subject_expiration = window.localeMsg[window.localeLang].SUBJECT_EXPIRATION[+this.model.get('type')]
+    var subject_discussion = window.localeMsg[window.localeLang].SUBJECT_DISCUSSION[+this.model.get('type')]
     return {
+      subject_id: subject_id,
+      subject_expiration: subject_expiration,
+      subject_discussion: subject_discussion,
+      closed: window.localeMsg[window.localeLang].SUBJECT_CLOSED[+this.model.get('type')],
       dt_expired: this.model.get('dt_expired') || false,
       ts_closed: this.model.get('ts_closed') || false,
       currency: window.lib.currency.getName(this.model.get('currency_asking'))
@@ -660,8 +680,10 @@ var Objects2_5View = Backbone.Marionette.LayoutView.extend({
     'click .donate': 'pay:donate'
   },
   onBeforeShow: function(){
+    var type = +this.model.get('b_type') === 1000 || !this.model.get('b_type') ? this.model.get('type') : this.model.get('b_type')
     var options = {
-      label: 'Для '+ this.model.get('obj_') +' зібрано коштів',
+      label: window.localeMsg[window.localeLang].FOR_THIS_SUBJECT_AMOUNT_COLLECTED[type],
+      // label: 'Для '+ this.model.get('obj_') +' зібрано коштів',
       collection: _.map(this.model.get('funds'), function(item){
         return $.extend({}, item, { 'withdrawable': false })
       })
@@ -715,7 +737,8 @@ var ProgramView = Backbone.Marionette.LayoutView.extend({
   },
   onBeforeShow: function(){
     var options = {
-      label: 'Для програми зібрано коштів',
+      label: window.localeMsg[window.localeLang].FOR_THIS_SUBJECT_AMOUNT_COLLECTED[2],
+      // label: 'Для програми зібрано коштів',
       collection: _.map(this.model.get('funds'), function(item){
         return $.extend({}, item, { 'withdrawable': false })
       })
@@ -892,35 +915,19 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
       case '2':
         Model = ProgramModel
         View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : ProgramView
-        addOptions.obj = 'програма'
-        addOptions.obj_ = 'програми'
-        addOptions.obj__ = 'цю програму'
-        addOptions.closed = ''
         break
       case '3':
         Model = ProgramModel
         View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : null
-        addOptions.obj = 'проектна пропозиція'
-        addOptions.obj_ = 'проектної пропозиції'
-        addOptions.obj__ = 'цю проектну пропозицію'
-        addOptions.closed = 'Пропозиція закрита'
         addOptions.program_link = "https://gurtom.mobi/beacon.php#main/6/48.47700521/31.57012122/"+ this.model.get('program_beacon_id') +"/0,1,7,8,9,10/0/2/-/-/-/-/-/-/-/-/mm/-"
         break
       case '4':
         Model = ProgramModel
         View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : null
-        addOptions.obj = 'проект'
-        addOptions.obj_ = 'проекту'
-        addOptions.obj__ = 'цей проект'
-        addOptions.closed = 'Проект закрито'
         break
       case '5':
         Model = ProgramModel
         View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : null
-        addOptions.obj = 'запит'
-        addOptions.obj_ = 'запиту'
-        addOptions.obj__ = 'цей запит'
-        addOptions.closed = 'Запит закрито'
         break
       case '69':
       case '96':
@@ -939,7 +946,7 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
         break
     }
     if ( Model && View ) {
-      var extModel = this.model.get('full')[0]
+      var extModel = this.model.get('full')[0] || {}
       $.extend(extModel, addOptions)
       View = View.extend({model: new Model(extModel)}) 
       this.showChildView('extention', new View())

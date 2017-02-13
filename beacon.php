@@ -1,13 +1,26 @@
+<?php
+
+if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+  {
+    $l_lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+  }else{
+    $l_lang = 'en';
+  }
+
+require_once('./lang_'.$l_lang.'.php');
+
+?>
+
 <!doctype html>
-<html lang="en">
+<html lang="<?php echo $l_lang; ?>">
   <head>
     <!--<base href="https://gurtom.mobi/">-->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Beacon page of gurtom.mobi mobile web apps">
+    <meta name="description" content="<?php echo META_DESCRIPTION ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <title>Маячок</title>
+    <title><?php echo BEACON ?></title>
 
     <!-- Add to homescreen for Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -16,7 +29,7 @@
     <!-- Add to homescreen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Beacon">
+    <meta name="apple-mobile-web-app-title" content="<?php echo BEACON ?>">
     <link rel="apple-touch-icon-precomposed" href="./static/img/android-desktop.png">
 
     <!-- Tile icon for Win8 (144x144 + tile color) -->
@@ -34,12 +47,6 @@
     <script src="./static/js/vendor/locale-data/ru.js"></script>
     <script>
       (function(){
-        // var oReq = new XMLHttpRequest();
-        // oReq.addEventListener("load", function() {
-        //   window.commonMsg = JSON.parse( this.responseText )
-        // });
-        // oReq.open("GET", "./static/js/lang/commonMsg.json");
-        // oReq.send();
         var source = null
         if( Array.isArray(navigator.languages) && navigator.languages.length > 0 ) source = navigator.languages
         else if( navigator.language ) source = navigator.language
@@ -81,12 +88,12 @@
 
   </head>
   <body>
-    <div id="beacons-map" data-role="page" data-fullscreen="true" class="ui-overlay-shadow ui-responsive-panel" data-theme="a" data-title="Маячок">
+    <div id="beacons-map" data-role="page" data-fullscreen="true" class="ui-overlay-shadow ui-responsive-panel" data-theme="a" data-title="<?php echo BEACONS ?>">
 
       <div id="header" data-role="header" data-position="fixed" data-tap-toggle="false" data-update-page-padding="false" data-fullscreen="true">
-        <a class="ui-btn ui-btn-left ui-btn-inline ui-icon-menu ui-btn-icon-notext ui-nodisc-icon" href="#left-panel">Menu</a>
-        <h1>Гість</h1>
-        <a class="ui-btn ui-btn-right ui-btn-inline ui-icon-more_vert ui-btn-icon-notext ui-nodisc-icon" href="#right-panel">Options</a>
+        <a class="ui-btn ui-btn-left ui-btn-inline ui-icon-menu ui-btn-icon-notext ui-nodisc-icon" href="#left-panel"><?php echo MAIN_MENU ?></a>
+        <h1><?php echo GUEST ?></h1>
+        <a class="ui-btn ui-btn-right ui-btn-inline ui-icon-more_vert ui-btn-icon-notext ui-nodisc-icon" href="#right-panel"><?php echo OPTIONS ?></a>
       </div>
       <div id="container" data-role="main" class="ui-panel-wrapper">
         <div id="beacons-map__the-map">
@@ -95,18 +102,18 @@
           <div class="ui-input-search searsh-buttons-wrapper ">
             <a href="#" class="searsh-buttons hash-search ui-btn ui-btn-inline">#</a>
             <a href="#" class="searsh-buttons id-search ui-btn ui-btn-inline">id</a>
-            <a href="#" class="searsh-buttons google-search ui-btn ui-btn-inline ui-icon-flag ui-btn-icon-notext">address</a>
+            <a href="#" class="searsh-buttons google-search ui-btn ui-btn-inline ui-icon-flag ui-btn-icon-notext"><?php echo ADDRESS ?></a>
           </div>
           <div id="map_search_container"></div>
 
           <div class="ui-nodisc-icon buttons-wrapper upper-right unused">
-            <a href="#" class="ui-btn ui-corner-all ui-icon-nearby ui-btn-icon-notext ui-btn-inline">nearby</a><br>
-            <a href="#" class="ui-btn ui-corner-all ui-icon-my_location ui-btn-icon-notext ui-btn-inline">location</a><br>
-            <a href="#favorite__list" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-map" class="ui-btn ui-corner-all ui-icon-star-empty ui-btn-icon-notext ui-btn-inline favorite-button">favorite</a>
+            <a href="#" class="ui-btn ui-corner-all ui-icon-nearby ui-btn-icon-notext ui-btn-inline"><?php echo NEARBY ?></a><br>
+            <a href="#" class="ui-btn ui-corner-all ui-icon-my_location ui-btn-icon-notext ui-btn-inline"><?php echo LOCATION ?></a><br>
+            <a href="#favorite__list" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-map" class="ui-btn ui-corner-all ui-icon-star-empty ui-btn-icon-notext ui-btn-inline favorite-button"><?php echo FAVORITE ?></a>
           </div>
           <div class="ui-nodisc-icon buttons-wrapper lower-left">
-            <a id="create_btn" href="#" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline">add</a><br>
-            <a href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline">share</a>
+            <a id="create_btn" href="#" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline"><?php echo ADD ?></a><br>
+            <a href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline"><?php echo SHARE ?></a>
           </div>
         </div> <!-- /beacons-map__the-map -->
         
@@ -117,8 +124,8 @@
         
         <div data-role="popup" id="favorite__list" data-theme="a" data-overlay-theme="b">
           <div data-role="header" data-position="fixed" data-update-page-padding="false" data-fullscreen="true"> <!-- data-fullscreen="true" prevents padding-top incorrect change in row 12588 of jQM -->
-            <h1>Обрані маячки</h1>
-            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+            <h1><?php echo FAVORITE_BEACONS ?></h1>
+            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
           </div>
           <div data-role="main">
             <ul data-role="listview" class="listview">
@@ -154,9 +161,9 @@
           </div>
         </div>
         <div data-role="popup" id="popupPhoto" class="photopopup" data-overlay-theme="b" data-corners="false" data-tolerance="30,15">
-          <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right">Close</a>
+          <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right"><?php echo CLOSE ?></a>
           <img class="photopopup__img" src="" alt="Photo">
-          <a href="#" class="abuse ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-info_outline ui-btn-icon-notext ui-btn-right">Abuse</a>
+          <a href="#" class="abuse ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-info_outline ui-btn-icon-notext ui-btn-right"><?php echo ABUSE ?></a>
         </div>
         <div id="right_popup__region"></div>
         <div data-role="popup" id="create_beacon__geo_region"></div>
@@ -166,8 +173,8 @@
       <div id="footer" data-role="footer" data-position="fixed" data-update-page-padding="false" data-fullscreen="true" data-tap-toggle="false"> 
         <div data-role="navbar">
           <ul>
-            <li><a href="#" id="btn__the-map" class="ui-btn-active">Карта</a></li>
-            <li><a href="#" id="btn__the-beacons" class="">Маячки</a></li>
+            <li><a href="#" id="btn__the-map" class="ui-btn-active"><?php echo MAP ?></a></li>
+            <li><a href="#" id="btn__the-beacons" class=""><?php echo BEACONS ?></a></li>
           </ul>
         </div>
       </div>    <!-- /footer -->
@@ -176,34 +183,34 @@
         <div class="panel-head">
           <div class="user-info">
             <div id = "menu_avatar" class="avatar"></div>
-            <div class="username">Guest</div>
+            <div class="username"><?php echo GUEST ?></div>
             <div class="email"></div>
           </div>
         </div>
         <ul class="menu">
           <li>
-            <a class="main-menu ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#menu-page">Main Menu</a>
+            <a class="main-menu ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#menu-page"><?php echo MAIN_MENU ?></a>
           </li>
           <li>
-            <a class="activities menu-icon-activities ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#my-activities-page">My Activities</a>
+            <a class="activities menu-icon-activities ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#my-activities-page"><?php echo MY_ACTIVITIES ?></a>
           </li>
           <li>
-            <a class="menu-icon-tasks ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#my-tasks-page">My Tasks</a>
+            <a class="menu-icon-tasks ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#my-tasks-page"><?php echo MY_TASKS ?></a>
           </li>
           <li>
-            <a class="profile menu-icon-profile" data-ajax="false" href="#">My Profile</a>
+            <a class="profile menu-icon-profile" data-ajax="false" href="#"><?php echo MY_PROFILE ?></a>
           </li>
           <li class="sep">
             &nbsp;
           </li>
           <li>
-            <a class="menu-icon-help ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#help">Help</a>
+            <a class="menu-icon-help ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#help"><?php echo HELP ?></a>
           </li>
           <li class="login">
-            <a class="menu-icon-login ui-link" data-ajax="false" data-link = "menu-page" href="#">Login</a>
+            <a class="menu-icon-login ui-link" data-ajax="false" data-link = "menu-page" href="#"><?php echo LOGIN ?></a>
           </li>
           <li id='logout' class="logout">
-            <a class="menu-icon-logout ui-link" data-ajax="false" data-link = "menu-page" data-prefetch="true" href="#">Logout</a>
+            <a class="menu-icon-logout ui-link" data-ajax="false" data-link = "menu-page" data-prefetch="true" href="#"><?php echo LOGOUT ?></a>
           </li>
         </ul>
       </div>   <!-- /left-panel -->
@@ -212,141 +219,141 @@
         <div data-role="tabs">
           <div data-role="navbar" class="navbar">
             <ul>
-              <li><a href="#user_rating" data-ajax="false" data-icon="person" class="user_rating ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn-active ui-state-persist">User rating</a></li>
-              <li><a href="#categories" data-ajax="false" data-icon="filter" class="categories ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Categories</a></li>
-              <li><a href="#time_range" data-ajax="false" data-icon="schedule" class="time_range ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Time range</a></li>
-              <li><a href="#beacon_status" data-ajax="false" data-icon="progress_two" class="beacon_status ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Beacon status</a></li>
-              <li><a href="#actions" data-ajax="false" data-icon="assignment_turned_in" class="actions ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Actions</a></li>
+              <li><a href="#user_rating" data-ajax="false" data-icon="person" class="user_rating ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn-active ui-state-persist"><?php echo USER_RATING ?></a></li>
+              <li><a href="#categories" data-ajax="false" data-icon="filter" class="categories ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo CATEGORIES ?></a></li>
+              <li><a href="#time_range" data-ajax="false" data-icon="schedule" class="time_range ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo TIME_RANGE ?></a></li>
+              <li><a href="#beacon_status" data-ajax="false" data-icon="progress_two" class="beacon_status ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo BEACON_STATUS ?></a></li>
+              <li><a href="#actions" data-ajax="false" data-icon="assignment_turned_in" class="actions ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo ACTIONS ?></a></li>
             </ul>
           </div>
           <div id="user_rating" class="scrollable_content">
-            <h4 class="filter_title">Показати маячки від громадян, авторизованих:</h4>
+            <h4 class="filter_title"><?php echo AUTH_TITLE ?>:</h4>
             <ul data-role="listview" class="listview">
               <li>
                 <input type="checkbox" data-role="flipswitch" name="all" id="all" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="all">Всі</label>
+                <label for="all"><?php echo ALL ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="e-mail" id="e-mail" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="e-mail">за електронною поштою</label>
+                <label for="e-mail"><?php echo AUTH_EMAIL ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="payments" id="payments" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="payments">за платежем</label>
+                <label for="payments"><?php echo AUTH_PAYMENT ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="bank-id" id="bank-id" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="bank-id">за Bank ID</label>
+                <label for="bank-id"><?php echo AUTH_BANKID ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="social_net" id="social_net" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="social_net">за соціальною мережею</label>
+                <label for="social_net"><?php echo AUTH_SOCIAL ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="organisations" id="organisations" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="organisations">організацією</label>
+                <label for="organisations"><?php echo AUTH_ORG ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="co-owners" id="co-owners" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
-                <label for="co-owners">як співвласники</label>
+                <label for="co-owners"><?php echo AUTH_COOWNERS ?></label>
               </li>
             </ul>
           </div>
           <div id="categories" class="scrollable_content"></div>
           <div id="time_range" class="scrollable_content">
-            <h4 class="filter_title">Показати маячки:</h4>
+            <h4 class="filter_title"><?php echo BEACONS_SHOW ?>:</h4>
             <fieldset data-role="controlgroup">
               <input type="radio" name="radio-time" id="any" value="any">
-              <label for="any">За весь час</label>
+              <label for="any"><?php echo LAST_ANY ?></label>
               <input type="radio" name="radio-time" id="last_hour" value="hour">
-              <label for="last_hour">За останню годину</label>
+              <label for="last_hour"><?php echo LAST_HOUR ?></label>
               <input type="radio" name="radio-time" id="last_day" value="day" checked="checked">
-              <label for="last_day">За останній день</label>
+              <label for="last_day"><?php echo LAST_DAY ?></label>
               <input type="radio" name="radio-time" id="last_week" value="week">
-              <label for="last_week">За останній тиждень</label>
+              <label for="last_week"><?php echo LAST_WEEK ?></label>
               <input type="radio" name="radio-time" id="last_month" value="month">
-              <label for="last_month">За останні 30 днів</label>
+              <label for="last_month"><?php echo LAST_MONTH ?></label>
               <input type="radio" name="radio-time" id="last_hundred" value="hundred">
-              <label for="last_hundred">За останні 100 днів</label>
+              <label for="last_hundred"><?php echo LAST_HUNDRED ?></label>
               <input type="radio" name="radio-time" id="last_year" value="year">
-              <label for="last_year">За останній рік</label>
+              <label for="last_year"><?php echo LAST_YEAR ?></label>
               <input type="radio" name="radio-time" id="custom_range" value="custom">
-              <label for="custom_range">Встановити межі</label>
+              <label for="custom_range"><?php echo CUSTOM_RANGE ?></label>
               <div class="date_picker">
                 <div class="ui-field-contain">
-                  <label for="low_limit">з</label>
-                  <input type="date" data-clear-btn="false" data-mini="true" name="low_limit" id="low_limit" value="" placeholder="дд.мм.рррр">
+                  <label for="low_limit"><?php echo FROM ?></label>
+                  <input type="date" data-clear-btn="false" data-mini="true" name="low_limit" id="low_limit" value="" placeholder="<?php echo DATE_PLACEHOLDER ?>">
                 </div>
                 <div class="ui-field-contain">
-                  <label for="hight_limit">по</label>
-                  <input type="date" data-clear-btn="false" data-mini="true" name="hight_limit" id="hight_limit" value="" placeholder="дд.мм.рррр">
+                  <label for="hight_limit"><?php echo TO ?></label>
+                  <input type="date" data-clear-btn="false" data-mini="true" name="hight_limit" id="hight_limit" value="" placeholder="<?php echo DATE_PLACEHOLDER ?>">
                 </div>
               </div>
             </fieldset>
           </div>
           <div id="beacon_status" class="scrollable_content">
-            <h4 class="filter_title">Показати маячки тільки:</h4>
+            <h4 class="filter_title"><?php echo BEACONS_SHOW_ONLY ?>:</h4>
             <ul data-role="listview" class="listview">
               <li>
                 <input type="checkbox" data-role="flipswitch" name="new_beacons" id="new_beacons" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="new_beacons">Нові</label>
+                <label for="new_beacons"><?php echo BEACONS_NEW ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="confirmed_beacons" id="confirmed_beacons" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="confirmed_beacons">Підтверджені</label>
+                <label for="confirmed_beacons"><?php echo BEACONS_CONFIRMED ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="processing_beacons" id="processing_beacons" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="processing_beacons">В стані обробки</label>
+                <label for="processing_beacons"><?php echo BEACONS_PROCESSING ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="closed_beacons" id="closed_beacons" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="closed_beacons">Закриті</label>
+                <label for="closed_beacons"><?php echo BEACONS_CLOSED ?></label>
               </li>
             </ul>
           </div>
           <div id="actions" class="scrollable_content">
-            <h4 class="filter_title">Показати маячки громадян<br>тільки:</h4>
+            <h4 class="filter_title"><?php echo BEACONS_SHOW_ONLY_USERS ?>:</h4>
             <ul data-role="listview" class="listview">
               <li>
                 <input type="checkbox" data-role="flipswitch" name="votings" id="votings" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="votings">Голосування</label>
+                <label for="votings"><?php echo VOTINGS ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="programms" id="programms" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="programms">Програми</label>
+                <label for="programms"><?php echo PROGRAMMS ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="project_proposals" id="project_proposals" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="project_proposals">Проектні пропозиції</label>
+                <label for="project_proposals"><?php echo PROJECT_PROPOSALS ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="projects" id="projects" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="projects">Проекти</label>
+                <label for="projects"><?php echo PROJECTS ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="requests" id="requests" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="requests">Запити</label>
+                <label for="requests"><?php echo REQUESTS ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="requests" id="budget" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="budget">Бюджет участі</label>
+                <label for="budget"><?php echo BUDGET ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="requests" id="positive" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="positive">Тут добре</label>
+                <label for="positive"><?php echo POSITIVE ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="requests" id="negative" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="negative">Тут погано</label>
+                <label for="negative"><?php echo NEGATIVE ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="requests" id="info" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="info">Важливо</label>
+                <label for="info"><?php echo IMPORTANT ?></label>
               </li>
               <li>
                 <input type="checkbox" data-role="flipswitch" name="requests" id="sos" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch">
-                <label for="sos">СОС</label>
+                <label for="sos"><?php echo SOS ?></label>
               </li>
             </ul>
           </div>
@@ -357,96 +364,96 @@
     </div>    <!-- /beacons-map page -->
 
 
-    <div data-role="page" data-dialog="true" id="login_dialog" data-close-btn="none" data-title="Вхід" class="page">
+    <div data-role="page" data-dialog="true" id="login_dialog" data-close-btn="none" data-title="<?php echo ENTER ?>" class="page">
       <form id="login" action="https://gurtom.mobi/l/index.php?m=0" method="post">
         <div data-role="header">
-          <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
-          <h1>Увійти</h1>
+          <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left"><?php echo CLOSE ?></a>
+          <h1><?php echo ENTER ?></h1>
         </div>
         <div data-role="main" class="ui-content ui-grid-a">
           <div class="ui-block-a form">
             <input type="hidden" name="login" value="1">
-            <label for="email_login">Електронна пошта</label>
+            <label for="email_login"><?php echo EMAIL ?></label>
             <input id="email_login" type="email" name="user_name" placeholder="my-email@example.com" required>  <!--pattern="[a-zA-Zа-яіїєА-ЯІЇЄ0-9]{2,64}"-->
-            <label for="user_password">Пароль</label>
+            <label for="user_password"><?php echo PASSWORD ?></label>
             <input id="user_password" type="password" name="user_password" pattern=".{6,}" required>
-            <input class="submit" type="submit" value="Увійти">
+            <input class="submit" type="submit" value="<?php echo ENTER ?>">
           </div>
           <div class="ui-block-b">
             <div class="custom-border-radius">
-              <h5>Приєднатися через мережу</h5>
+              <h5><?php echo ENTER_SOCIAL ?></h5>
               <a href="./sn/gp.php" data-ajax="false" class="gp ui-btn ui-icon-google_plus ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Google+</a>
               <a href="./sn/fb.php" data-ajax="false" class="ui-btn ui-icon-facebook ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Facebook</a>
               <a href="./sn/li.php" data-ajax="false" class="ui-btn ui-icon-linkedin ui-btn-icon-notext ui-nodisc-icon ui-corner-all">LinkedIn</a>
             </div>
-            <a href="#" class="registration ui-btn ui-input-btn ui-corner-all ui-shadow">Ви тут вперше?</a>
-            <a href="#" class="restore_pass ui-btn ui-input-btn ui-corner-all ui-shadow">Забули пароль?</a>
+            <a href="#" class="registration ui-btn ui-input-btn ui-corner-all ui-shadow"><?php echo QUESTION_FIRST_TIME ?></a>
+            <a href="#" class="restore_pass ui-btn ui-input-btn ui-corner-all ui-shadow"><?php echo QUESTION_RESTORE_PASSWORD ?></a>
           </div>
-          <a href="https://goo.gl/bZZkoL" target="_blank" class="org ui-btn ui-corner-all">Реєстрація юридичної особи</a>
+          <a href="https://goo.gl/bZZkoL" target="_blank" class="org ui-btn ui-corner-all"><?php echo REGISTER_CORPORATE ?></a>
         </div>
       </form>
     </div>
 
-    <div data-role="page" data-dialog="true" id="registration_dialog" data-close-btn="none" data-title="Реєстрація" class="page">
+    <div data-role="page" data-dialog="true" id="registration_dialog" data-close-btn="none" data-title="<?php echo REGISTER ?>" class="page">
       <div data-role="header" data-position="fixed">
-        <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
-        <h1>Реєстрація</h1>
+        <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left"><?php echo CLOSE ?></a>
+        <h1><?php echo REGISTER ?></h1>
       </div>
       <form action="https://gurtom.mobi/l/index.php?m=4" id="registration" method="POST">
         <div data-role="main" class="form">
           <div class="ui-content ui-grid-a">
             <div class="ui-block-a">
-              <label for="login">Нік</label>
-                <input id="login" type="text" name="user_name" placeholder="Nickname" pattern="[a-zA-Z0-9]{2,64}" required>
-              <label for="email">Дійсний email</label>
+              <label for="login"><?php echo NICKNAME ?></label>
+                <input id="login" type="text" name="user_name" placeholder="<?php echo NICKNAME ?>" pattern="[a-zA-Z0-9]{2,64}" required>
+              <label for="email"><?php echo EMAIL ?></label>
                 <input id="email" type="email" name="user_email" placeholder="email@example.com" required>
             </div>
             <div class="ui-block-b">
-              <label for="password">Пароль</label>
+              <label for="password"><?php echo PASSWORD ?></label>
                 <input id="password" type="password" name="user_password_new" pattern=".{6,}" required>
-              <label for="password-repeat">Повторіть пароль</label>
+              <label for="password-repeat"><?php echo PASSWORD_REPEAT ?></label>
                 <input id="password-repeat" type="password" name="user_password_repeat" pattern=".{6,}" required>
             </div>
             <hr>
             <input type="hidden" name="register" value="Register">
             <div class="g-recaptcha" data-size="compact" data-sitekey="6Le4yCITAAAAAPRq84f8ZkuWD5oSdmAvGlfPCx6P"></div>
           </div>
-          <input class="submit" type="submit" name="login" value="Зареєструватись"  data-wrapper-class="submit__wrapper">
+          <input class="submit" type="submit" name="login" value="<?php echo REGISTER_NOW ?>"  data-wrapper-class="submit__wrapper">
         </div>
       </form>
     </div>
 
-    <div data-role="page" data-dialog="true" id="restore_pass_dialog" data-close-btn="none" data-title="Відновлення паролю" class="page">
+    <div data-role="page" data-dialog="true" id="restore_pass_dialog" data-close-btn="none" data-title="<?php echo RESTORE ?>" class="page">
       <div data-role="header">
-        <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
-        <h1>Відновлення паролю</h1>
+        <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left"><?php echo CLOSE ?></a>
+        <h1><?php echo RESTORE_PASSWORD ?></h1>
       </div>
       <div data-role="main" class="ui-content">
         <div class="form">
-          <label for="email-rest">Ваш email</label>
+          <label for="email-rest"><?php echo EMAIL ?></label>
           <input id="email-rest" type="email" name="email-rest">
-          <input class="submit" type="submit" name="login" value="Відновити">
+          <input class="submit" type="submit" name="login" value="<?php echo RESTORE ?>">
         </div>
       </div>
     </div>
 
-    <div data-role="page" data-dialog="true" id="reset_pass_dialog" data-close-btn="none" data-title="Відновлення паролю" class="page">
+    <div data-role="page" data-dialog="true" id="reset_pass_dialog" data-close-btn="none" data-title="<?php echo PASSWORD_RESET ?>" class="page">
       <div data-role="header">
-        <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left">Close</a>
-        <h1>Відновлення паролю</h1>
+        <a href="#" data-icon="close" class="history_back ui-btn ui-corner-all ui-icon-close ui-btn-icon-notext ui-btn-left"><?php echo CLOSE ?></a>
+        <h1><?php echo PASSWORD_RESET ?></h1>
       </div>
       <div data-role="main" class="ui-content">
         <div class="form">
-          <label for="password_reset">Пароль</label>
+          <label for="password_reset"><?php echo PASSWORD ?></label>
           <input id="password_reset" type="password" name="password_reset" pattern=".{6,}">
-          <label for="password_reset-repeat">Повторіть пароль</label>
+          <label for="password_reset-repeat"><?php echo PASSWORD_REPEAT ?></label>
           <input id="password_reset-repeat" type="password" name="password_reset-repeat" pattern=".{6,}">
-          <input class="submit" type="submit" name="login" value="Відновити">
+          <input class="submit" type="submit" name="login" value="<?php echo PASSWORD_RESET_NOW ?>">
         </div>
       </div>
     </div>
 
-    <span class='warning'><h2>Прототип</h2></span>
+    <span class='warning'><h2><?php echo PROTOTYPE ?></h2></span>
 
     <div class="profile_page__wrapper"></div>
 
@@ -455,12 +462,12 @@
         <div data-role="header" class="header">
           <h4><%-titler%></h4>
           <% if(parent_id !== '') { %>
-            <h4 class="follower">пов'язаного з маячком id=<%- parent_id %></h4>
+            <h4 class="follower"><?php echo BEACON_RELATED ?></h4>
           <% } %>
           <% if(targetId !== '') { %>
-            <h4 class="follower">як копії маячка id=<%- targetId %></h4>
+            <h4 class="follower"><?php echo AS_COPY_OF_BEACON ?></h4>
           <% } %>
-          <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+          <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
         </div>
         <div data-role="main" class="main ui-content">
           <form action="" id="object_create">
@@ -494,8 +501,8 @@
             <input id="parent_type" type="hidden" name="parent_type" value="<%- parent_type %>">
             <input id="chat" type="hidden" name="chat" value="<%- chat %>">
             <div id="submit" class="submit">
-              <label for="submit_btn" class="ui-hidden-accessible">Submit</label>
-              <button id="submit_btn" type="submit">Створити</button>
+              <label for="submit_btn" class="ui-hidden-accessible"><?php echo CREATE ?></label>
+              <button id="submit_btn" type="submit"><?php echo CREATE ?></button>
               <div class="progress_bar__wrapper">
                 <div class="mask"></div>
                 <div class="progressbar"></div>
@@ -510,7 +517,7 @@
           <div class="wrapper__layer_type"></div>
           <div class="wrapper__private"></div>
           <br>
-          <h6>* - Обов'язкові поля.</h6>
+          <h6><?php echo REQUIRED_FIELDS ?></h6>
         </div>
     </script>
     <!-- /object_create_tpl -->
@@ -520,19 +527,19 @@
         <input id="b_type" type="hidden" name="b_type" value="<%- b_type %>">
         <p class='lat_lng'>
           <img class="marker_img" src="<%- icon_url %>" alt="marker">
-          Координати <%- (''+lat).replace('.', ',') %>&deg ш.; <%- (''+lng).replace('.', ',') %>&deg д. Можете перетягнути його в іншу точку на карті.
-          <% if(+window.state.user.gov > 0){ %> Шар: <%- name %>.<% } %>
+          <?php echo COORDINATES ?> <%- (''+lat).replace('.', ',') %>&deg <?php echo LAT ?>; <%- (''+lng).replace('.', ',') %>&deg <?php echo LNG ?> <?php echo MESSAGE_CAN_MOVE_BEACON ?>
+          <% if(+window.state.user.gov > 0){ %> <?php echo LAYER ?>: <%- name %>.<% } %>
         </p>
     </script>
     <script id="title__tpl" type="text/template">
-      <label for="title"><strong>Назва&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+      <label for="title"><strong><?php echo TITLE ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
       <input id="title" type="text" name="title" <%-required%>>
     </script>
     <script id="money__tpl" type="text/template">
       <fieldset id="money" class="ui-field-contain" data-role="controlgroup" data-type="horizontal">
-        <legend><strong><%- ( label ? label : 'Необхідна сума' ) %>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></legend>
+        <legend><strong><%- ( label ? label : '<?php echo REQUIRED_AMOUNT ?>' ) %>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></legend>
         <input id="amount" type="number" name="amount" pattern=".{12,}" value="<%-parent_amount%>" <%-required%>>
-        <label for="currency">у валюті</label>
+        <label for="currency"><?php echo IN_CURRENCY ?></label>
         <select id="currency" name="curr" data-inline="true" data-mini="true" data-iconpos="noicon" data-native-menu="false">
           <option value="980">UAH</option>
           <option value="840">USD</option>
@@ -546,7 +553,7 @@
       </fieldset>
     </script>
     <script id="currency_only__tpl" type="text/template">
-        <label for="currency_only__select"><strong>Виберіть валюту</strong></label>
+        <label for="currency_only__select"><strong><?php echo CHOOSE_CURRENCY ?></strong></label>
         <select name="curr" id="currency_only__select" data-iconpos="noicon" data-native-menu="false">
           <option value="980" selected>UAH</option>
           <option value="1980">vUAH</option>
@@ -556,86 +563,85 @@
         </select>
     </script>
     <script id="start_date__tpl" type="text/template">
-      <label for="start_date__input"><strong><%- ( label ? label : 'Термін збору коштів для початку проекту' ) %>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
-      <input id="start_date__input" type="date" data-clear-btn="false" name="dtst" value="" placeholder="дд.мм.рррр" <%-required%>>
+      <label for="start_date__input"><strong><%- ( label ? label : '<?php echo FUNDING_PERIOD ?>' ) %>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+      <input id="start_date__input" type="date" data-clear-btn="false" name="dtst" value="" placeholder="<?php echo DATE_PLACEHOLDER ?>" <%-required%>>
     </script>
     <script id="end_date__tpl" type="text/template">
-        <label for="end_date__input"><strong><%- ( label ? label : 'Термін завершення' ) %>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
-        <input id="end_date__input" type="date" data-clear-btn="false" name="dtex" value="" placeholder="дд.мм.рррр" <%-required%>>
+        <label for="end_date__input"><strong><%- ( label ? label : '<?php echo FUNDING_FINISH ?>' ) %>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+        <input id="end_date__input" type="date" data-clear-btn="false" name="dtex" value="" placeholder="<?php echo DATE_PLACEHOLDER ?>" <%-required%>>
     </script>
     <script id="beneficiar__tpl" type="text/template">
-        <label for="beneficiar_name"><strong>Визначте вигодонабувача&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+        <label for="beneficiar_name"><strong><?php echo SELECT_BENEFICIARY ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
         <input id="beneficiar_name" type="text" name="ben" pattern=".{100,}" <%-required%>>
     </script>
     <script id="nco__tpl" type="text/template">
       <div id="nco__wrapper">
-        <p><strong>Запропонуйте неприбуткову організацію для адміністрування проекту&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></p>
-        <h6>Автодоповнення починається з першої літери.</h6>
+        <p><strong><?php echo NCO_BID ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></p>
+        <h6><?php echo MESSAGE_AUTOCOMPLITE ?></h6>
         <form class="ui-filterable" autocomplete="off">
-          <input id="nco__autocomplete-input" data-type="search" placeholder="Оберіть організацію..." data-wrapper-class="input" autocomplete="off">
+          <input id="nco__autocomplete-input" data-type="search" placeholder="<?php echo CHOOSE_NCO ?>" data-wrapper-class="input" autocomplete="off">
         </form>
         <ul id="nco__ul" data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#nco__autocomplete-input"></ul>
       </div>
     </script>
     <script id="description_tpl" type="text/template">
-      <label for="description"><strong>Детальний опис&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
-      <textarea id="description" name="descr" placeholder="Розмістіть детальний опис тут." cols="40" rows="2" maxlength="10000" <%-required%>><%-parent_descr%></textarea>
+      <label for="description"><strong><?php echo DESCRIPTION_FULL ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+      <textarea id="description" name="descr" placeholder="<?php echo DESCRIPTION_PLACEHOLDER ?>" cols="40" rows="2" maxlength="10000" <%-required%>><%-parent_descr%></textarea>
     </script>
 
     <script id="response_tpl" type="text/template">
-      <p><strong>Очікувана відповідь</strong></p>
-      <input type="text" data-clear-btn="true" name="response" id="response__input" value="" placeholder="Тип відповіді">
+      <p><strong><?php echo RESPONSE_EXPECTED ?></strong></p>
+      <input type="text" data-clear-btn="true" name="response" id="response__input" value="" placeholder="<?php echo RESPONSE_TYPE ?>">
     </script>
     <script id="details_tpl" type="text/template">
-      <label for="details"><strong>Повідомлення&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
-      <textarea id="details" name="details" placeholder="Довжина повідомлення - до 240 символів." cols="40" rows="2" maxlength="240" data-wrapper-class="textarea" <%-required%>></textarea>
+      <label for="details"><strong><?php echo DETAILS ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+      <textarea id="details" name="details" placeholder="<?php echo DETAILS_PLACEHOLDER ?>" cols="40" rows="2" maxlength="240" data-wrapper-class="textarea" <%-required%>></textarea>
     </script>
     <script id="private_tpl" type="text/template">
         <div class="public_private_switch ui-content" data-role="content">
-          <label for="public_private_switch__input" class=" ui-hidden-accessible">Flip toggle switch checkbox:</label>
-          <input type="checkbox" data-role="flipswitch" name="public_private_switch__input" id="public_private_switch__input" data-on-text="Для групи" data-off-text="Публічний" data-wrapper-class="public_private_switch__flipswitch">
+          <label for="public_private_switch__input" class=" ui-hidden-accessible"><?php echo FLIP_TOGGLE_SWITCH_CHECKBOX ?></label>
+          <input type="checkbox" data-role="flipswitch" name="public_private_switch__input" id="public_private_switch__input" data-on-text="<?php echo FOR_GROUP ?>" data-off-text="<?php echo MESSAGE_PUBLIC ?>" data-wrapper-class="public_private_switch__flipswitch">
         </div>
         <div id="select_group">
-          <p><strong>Оберіть групу</strong></p>
-          <h6>Автодоповнення починається <strong>з третьої літери</strong>.</h6>
+          <p><strong><?php echo SELECT_GROUP ?></strong></p>
+          <h6><?php echo MESSAGE_AUTOCOMPLITE ?></h6>
           <form class="ui-filterable" autocomplete="off">
-            <input id="select_group__autocomplete-input" data-type="search" placeholder="Назва групи" data-wrapper-class="input">
+            <input id="select_group__autocomplete-input" data-type="search" placeholder="<?php echo GROUP_NAME_PLACEHOLDER ?>" data-wrapper-class="input">
           </form>
           <ul id="select_group__autocomplete" data-role="listview" data-inset="true" data-filter="true" data-input="#select_group__autocomplete-input"></ul>
         </div>
     </script>
 
-
     <script id="tag_tpl" type="text/template">
-      <p><strong>Додати тег&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></p>
+      <p><strong><?php echo TAG_ADD ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></p>
       <p id="tag_storage"></p>
-      <h6>Автодоповнення починається з першої літери. Для завершення натисніть Enter.</h6>
+      <h6><?php echo MESSAGE_AUTOCOMPLITE ?> <?php echo PRESS_ENTER ?></h6>
       <form action="">
-        <input id="add_tag__input" data-type="search" placeholder="# лише букви та цифри" data-wrapper-class="input" title="Вводьте лише букви та цифри." autocomplete="off">
+        <input id="add_tag__input" data-type="search" placeholder="<?php echo ADD_TAG_PLACEHOLDER ?>" data-wrapper-class="input" title="<?php echo MESSAGE_ONLY_LETTERS_DIGITS ?>" autocomplete="off">
       </form>
       <ul id="add_tag__ul" data-role="listview" data-inset="true" data-filter="true" data-input="#add_tag__input"></ul>
     </script>
 
     <script id="photo_tpl" type="text/template">
       <div class="hiddenfile">
-        <label for="photo__input">Завантажити фото:</label>
+        <label for="photo__input"><?php echo PHOTO_UPLOAD ?></label>
         <input id="photo__input" type="file" data-clear-btn="true" name="photo__input" accept="image/*">
       </div>
       <div class="preview_wrapper clearfix">
         <div id="photo__preview"></div>
         <button id="photo__remove" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all"></button>
       </div>
-      <button id="photo__choose_file">Оберіть фото&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></button>
+      <button id="photo__choose_file"><?php echo PHOTO_CHOOSE_FILE ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></button>
     </script>
     <script id="phone_tpl" type="text/template">
-      <label for="phone_num__input"><strong>Номер телефону&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+      <label for="phone_num__input"><strong><?php echo PHONE_NUMBER ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
       <input type="tel" data-clear-btn="true" name="phone" id="phone_num__input" value="" placeholder="380ХХХХХХХХХХ" data-wrapper-class="input" <%-required%>>
     </script>
     <script id="admin_level__tpl" type="text/template">
-      <label for="admin_level__select"><strong>Виберіть адміністративний рівень проекту&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+      <label for="admin_level__select"><strong><?php echo ADMIN_LEVEL_SELECT ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
       <select name="admin_level" id="admin_level__select" data-iconpos="noicon">
-        <option value="3" selected>Місто</option>
-        <option value="4">Район міста</option>
+        <option value="3" selected><?php echo ADMIN_LEVEL_CITY ?></option>
+        <option value="4"><?php echo ADMIN_LEVEL_CITY_DISTRICT ?></option>
       </select>
     </script>
 
@@ -653,22 +659,22 @@
     
     <script id="age__tpl" type="text/template">
       <div data-role="rangeslider">
-        <label for="age_from"><strong>Вікові межі голосуючих</strong></label>
+        <label for="age_from"><strong><?php echo AGE_RANGE ?></strong></label>
         <input class="age_range" type="range" name="age_from" id="age_from" min="12" max="99" value="21">
         <label for="age_to"></label>
         <input class="age_range" type="range" name="age_to" id="age_to" min="13" max="100" value="60">
       </div>
     </script>
     <script id="support__tpl" type="text/template">
-      <label for="support__input"><strong>Мінімальна кількість голосів для початку голосування&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+      <label for="support__input"><strong><?php echo MIN_SUPPORT_VOTES ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
       <input id="support__input" type="number" data-clear-btn="false" name="sprt" value="" placeholder="100" <%-required%>>
     </script>
     <script id="support_finish_date__tpl" type="text/template">
-        <label for="support_finish_date__input"><strong>Дата завершення збору голосів підтримки&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
-        <input id="support_finish_date__input" type="date" data-clear-btn="false" name="sprtf" value="" placeholder="дд.мм.рррр" <%-required%>>
+        <label for="support_finish_date__input"><strong><?php echo SUPPORT_FINISH_DATE ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+        <input id="support_finish_date__input" type="date" data-clear-btn="false" name="sprtf" value="" placeholder="<?php echo DATE_PLACEHOLDER ?>" <%-required%>>
     </script>
     <script id="sphere_title__tpl" type="text/template">
-      <h3>Виберіть сферу голосування</h3>
+      <h3><?php echo CHOOSE_SPHERE ?></h3>
       <div class="composite" data-role="collapsible-set" data-theme="a"></div>
     </script>
     <script id="sphere__tpl" type="text/template">
@@ -688,37 +694,37 @@
       <div data-role="beacon" class="beacon ui-corner-all">
         <div data-role="header" class="header">
           <% if(full){ %>
-            <div class="ui-btn-left ui-icon-<% if(full){ %>close<% } else { %><%-source%><% } %> ui-btn-icon-notext ui-btn-inline">Left Icon</div>
+            <div class="ui-btn-left ui-icon-<% if(full){ %>close<% } else { %><%-source%><% } %> ui-btn-icon-notext ui-btn-inline"><?php echo LEFT_ICON ?></div>
           <% } else { %>
             <img src="<%- icon_url %>" alt="icon" class="ui-btn-left ui-btn-icon-notext ui-btn-inline">
           <% } %>
           
           <div class="beacon-header">
-            <h6>від: <span><%- author_name %></span>, ID <%- author_id %></h6>                                                                     
+            <h6><?php echo FROM ?>: <span><%- author_name %></span>, ID <%- author_id %></h6>                                                                     
             <div class="content-with-icon">
-              <span class="icon ui-btn-left ui-icon-schedule ui-btn-icon-notext ui-btn-inline ui-nodisc-icon">Icon</span>
+              <span class="icon ui-btn-left ui-icon-schedule ui-btn-icon-notext ui-btn-inline ui-nodisc-icon"><?php echo ICON ?></span>
               <p><%- ts %>; cardID <%- id %></p>                                                
             </div>
           </div>
-          <a href="#" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-beacons" class="beacon_status <%- color %> ui-btn ui-corner-all ui-btn-right ui-btn-inline ui-icon-progress_<% if(b_status===0){ %>empty<% } else if(b_status===1){ %>one<% } else if(b_status===2){ %>two<% } else if(b_status===3){ %>full<% } %> ui-btn-icon-notext">Status</a>
+          <a href="#" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-beacons" class="beacon_status <%- color %> ui-btn ui-corner-all ui-btn-right ui-btn-inline ui-icon-progress_<% if(b_status===0){ %>empty<% } else if(b_status===1){ %>one<% } else if(b_status===2){ %>two<% } else if(b_status===3){ %>full<% } %> ui-btn-icon-notext"><?php echo STATUS ?></a>
         </div>
         <div data-role="content" class="beacon-content clearfix">
           <h3><%- title %></h3>
-          <p><img class="photo" src="<%-b_img%>" alt="Photo"><strong><%- details %></strong></p>
+          <p><img class="photo" src="<%-b_img%>" alt="<?php echo PHOTO ?>"><strong><%- details %></strong></p>
           <p class="tags"><%- tagList %></p>
           <div class="expanding_view click_transparent">
             <div class="btn_wrapper ui-input-btn ui-btn ui-icon-more_horiz ui-btn-icon-notext ui-btn-right">
-              <input class="expanding_btn ui-btn" type="button" data-enhanced="true" value="Enhanced - Icon only">
+              <input class="expanding_btn ui-btn" type="button" data-enhanced="true" value="<?php echo ENHANCED_ICON_ONLY ?>">
             </div>
           </div>
         </div>
         <div data-role="navbar" class="navbar">
           <ul >
-            <li><button data-icon="share" class="share ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Share</button></li>
-            <li><button data-icon="link" class="link ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Link</button></li>
-            <li><button data-icon="error_outline" class="error ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Disprove</button></li>
-            <li><button data-icon="star-<% if (+favorite) { %>full<% } else { %>empty<% } %>" class="star ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Add to Favorite</button></li>
-            <li><button data-icon="add" class="add_linked ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a">Add New</button></li>
+            <li><button data-icon="share" class="share ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo SHARE ?></button></li>
+            <li><button data-icon="link" class="link ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo LINK ?></button></li>
+            <li><button data-icon="error_outline" class="error ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo DISPROVE ?></button></li>
+            <li><button data-icon="star-<% if (+favorite) { %>full<% } else { %>empty<% } %>" class="star ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo ADD_TO_FAVORITE ?></button></li>
+            <li><button data-icon="add" class="add_linked ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo ADD_NEW ?></button></li>
           </ul>
         </div>
         <div id="chat_region"></div>
@@ -727,42 +733,42 @@
 
     <script id="chat_tpl" type="text/template">
       <div class="input-message ui-field-contain">
-        <label for="text-message" class="ui-hidden-accessible">Відправити</label>
-        <input type="text" data-clear-btn="true" data-mini="true" name="text-message" id="text-message" value="" placeholder="Повідомлення">
-        <button class="input-message__send ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-send ui-btn-icon-notext ui-btn-a">Надіслати</button>
+        <label for="text-message" class="ui-hidden-accessible"><?php echo SEND ?></label>
+        <input type="text" data-clear-btn="true" data-mini="true" name="text-message" id="text-message" value="" placeholder="<?php echo MESSAGE_PLACEHOLDSER ?>">
+        <button class="input-message__send ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-send ui-btn-icon-notext ui-btn-a"><?php echo POST ?></button>
       </div>
       <div class="sent-message__wrapper"></div>
     </script>
 
     <script id="beacon_list_is_empty_tpl" type="text/template">
-      <h3 class="empty_beacon_list">За обраними параметрами мапи та фільтрів<br>позначки/маячки користувачів тут відсутні</h3>
+      <h3 class="empty_beacon_list"><?php echo EMPTY_BEACON_LIST ?></h3>
     </script>
     
     <script id="sos_extention_view_tpl" type="text/template">
-      <p class="phone_view">   <span >Тел. </span>   <%- phone %>   </p>
+      <p class="phone_view"><span ><?php echo PHONE ?></span>   <%- phone %>   </p>
     </script>
 
     <script id="chat_item_view_tpl" type="text/template">
       <p><img src="<%-avatar%>" alt="avatar">(<%- user_id %>) <span class="nickname"><%- user_name %>: </span><%- text %></p>
-      <p class="date"><%- ts %><button class="abuse-spam ui-shadow ui-btn ui-corner-all ui-btn-inline ui-btn-right ui-icon-error_outline ui-btn-icon-notext ui-btn-a">Поскажитись</button></p>
+      <p class="date"><%- ts %><button class="abuse-spam ui-shadow ui-btn ui-corner-all ui-btn-inline ui-btn-right ui-icon-error_outline ui-btn-icon-notext ui-btn-a"><?php echo ABUSE_SPAM ?></button></p>
     </script>
 
     <script id="expand_to_p-budget__tpl" type="text/template">
-      <p class="money">Орієнтовна вартість проекту: <strong><%- amount %> <%- lib.currency.getName(curr) %></strong></p>
-      <p class="descript">Детальний опис проекту: <strong><%- descr %></strong></p>
+      <p class="money"><?php echo PROJECT_COST ?>: <strong><%- amount %> <%- lib.currency.getName(curr) %></strong></p>
+      <p class="descript"><?php echo DESCRIPTION_FULL_PROJECT ?>: <strong><%- descr %></strong></p>
     </script>
     <script id="expand_to_voting__tpl" type="text/template">
-      <p class="voting">Зібрано <strong><%- sprtd %></strong> голосів підтримки з <strong><%- sprt %></strong> необхідних.</p>
-      <p class="voting">Дата завершення збору підтримки: <strong><%- sprtF %></strong>.</p>
-      <p class="voting">Дата початку голосування: <strong><%- offerStartTime %></strong>.</p>
-      <p class="voting">Дата завершення голосування: <strong><%- offerFinishTime %></strong>.</p>
-      <p class="voting">Сфера голосування: <strong><%- sphereStr %></strong>.</p>
-      <p class="voting">Статус голосування: <strong><%- v_status %></strong></p>
-      <p class="voting">Детальний опис: <br><strong><%- descr %></strong></p>
-      <a href="<%- discussion_link %>" class="ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left ui-mini" target="_blank">Обговорення голосування</a>
+      <p class="voting"><?php echo SUPPORTED_VOTES ?></p>
+      <p class="voting"><?php echo SUPPORT_LAST_DATE?>: <strong><%- sprtF %></strong>.</p>
+      <p class="voting"><?php echo VOTE_START_DATE ?>: <strong><%- offerStartTime %></strong>.</p>
+      <p class="voting"><?php echo VOTE_FINISH_DATE ?>: <strong><%- offerFinishTime %></strong>.</p>
+      <p class="voting"><?php echo VOTE_SPHERE ?>: <strong><%- sphereStr %></strong>.</p>
+      <p class="voting"><?php echo VOTE_STATUS ?>: <strong><%- v_status %></strong></p>
+      <p class="voting"><?php echo DESCRIPTION_FULL ?>: <br><strong><%- descr %></strong></p>
+      <a href="<%- discussion_link %>" class="ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left ui-mini" target="_blank"><?php echo VOTE_DESCUSSION ?></a>
       <hr>
-      <p class="voting">Рівень Вашої авторизації: <strong>"<%- votingStatus %>".</strong></p>
-      <p class="voting">Ваш статус: <strong><%- usr_status %></strong></p>
+      <p class="voting"><?php echo YOUR_AUTH_LEVEL ?>: <strong>"<%- votingStatus %>".</strong></p>
+      <p class="voting"><?php echo YOUR_STATUS ?>: <strong><%- usr_status %></strong></p>
       <div class="voting_btns"></div>
       <div class="voting_results__region"></div>
       <div class="indicative_voting__region"></div>
@@ -772,13 +778,13 @@
     </script>
     <script id="voting_buttons__tpl" type="text/template">
       <div class="ui-field-contain">
-        <label for="flip-vote_type">Голосувати:</label>
-        <input type="checkbox" data-role="flipswitch" name="flip-vote_type" id="flip-vote_type" data-on-text="Таємно" data-off-text="Відкрито" data-wrapper-class="voting-flipswitch">
+        <label for="flip-vote_type"><?php echo VOTE_NOW ?>:</label>
+        <input type="checkbox" data-role="flipswitch" name="flip-vote_type" id="flip-vote_type" data-on-text="<?php echo VOTE_ANONYMOUS ?>" data-off-text="<?php echo VOTE_OPEN ?>" data-wrapper-class="voting-flipswitch">
       </div>
       <ul>
-        <li><a href="#" class="voting_button voting_button__no <%- no %>">Проти</a></li>
-        <li><a href="#" class="voting_button voting_button__abstain <%- abstain %>">Утриматись</a></li>
-        <li><a href="#" class="voting_button voting_button__yes <%- yes %>">За</a></li>
+        <li><a href="#" class="voting_button voting_button__no <%- no %>"><?php echo VOTE_NO ?></a></li>
+        <li><a href="#" class="voting_button voting_button__abstain <%- abstain %>"><?php echo VOTE_ABSTAIN ?></a></li>
+        <li><a href="#" class="voting_button voting_button__yes <%- yes %>"><?php echo VOTE_YES ?></a></li>
       </ul>
       <hr>
     </script>
@@ -786,14 +792,14 @@
     <script id="voting_results__title__tpl" type="text/template">
       <h2 class="title"><%- title %></h2>
       <div class="ui-checkbox ui-state-<%-disabled%>" style="<%- hide %>">
-        <label for="percent_checkbox" class="percents ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-checkbox-off">У відсотках</label>
+        <label for="percent_checkbox" class="percents ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-checkbox-off"><?php echo IN_PERCENTS ?></label>
         <input type="checkbox" name="percent_checkbox" id="percent_checkbox" data-enhanced="true" <%- disabled %>>
       </div>
       <div class="subtitles">
-        <p class="subtitle total">Всього</p>
-        <p class="subtitle minus">Проти</p>
-        <p class="subtitle plus">За</p>
-        <p class="subtitle abst">Утримались</p>
+        <p class="subtitle total"><?php echo TOTAL ?></p>
+        <p class="subtitle minus"><?php echo VOTE_NO ?></p>
+        <p class="subtitle plus"><?php echo VOTE_YES ?></p>
+        <p class="subtitle abst"><?php echo VOTE_ABSTAIN ?></p>
       </div>
       <div class="voting_results"></div>
       <hr>
@@ -823,73 +829,72 @@
     </script>
 
     <script id="program_full_view" type="text/template">
-      <p class="project">Опис:<br><%= description %></p>
-      <p class="project">ID програми: <strong><%- id %></strong></p>
-      <a href="<%- discussion_link %>" class="ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left" target="_blank">Обговорення програми</a>
-      <p class="project">Проектних пропозицій: <strong><%- pp %>.</strong> <a href="#" class="pp_list ui-btn ui-corner-all ui-btn-inline ui-mini">Перелік</a></p>
+      <p class="project"><?php echo PROGRAM_DESCRIPTION ?>:<br><%= description %></p>
+      <p class="project"><?php echo PROGRAM_ID ?>: <strong><%- id %></strong></p>
+      <a href="<%- discussion_link %>" class="ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left" target="_blank"><?php echo PROGRAM_DISCUSSION ?></a>
+      <p class="project"><?php echo NUMBER_OF_PP ?>: <strong><%- pp %>.</strong> <a href="#" class="pp_list ui-btn ui-corner-all ui-btn-inline ui-mini"><?php echo PP_LIST ?></a></p>
       <hr>
       <div class="funds"></div>
       <hr>
       <div class="contribution"></div>
       <hr>
-      <a href="#" class="donate ui-btn ui-corner-all ui-icon-add ui-btn-icon-left">Пожертвувати</a>
+      <a href="#" class="donate ui-btn ui-corner-all ui-icon-add ui-btn-icon-left"><?php echo DONATE ?></a>
     </script>
 
     <script id="objects2-5_full_view" type="text/template">
-      <p class="project">Опис:<br><%= description %></p>
-      <p class="project">ID  <%- obj_ %>: <strong><%- id %></strong></p>
+      <p class="project"><?php echo PROJECT_DESCRIPTION ?>:<br><%= description %></p>
+      <p class="project"><%- subject_id %>: <strong><%- id %></strong></p>
       <% if( type === "3" ){ %>
         <p class="project">
-          До програми ID: <%- program_id %>
+          <?php echo TO_PROGRAM ?>: <%- program_id %>
           <a href="<%- program_link %>" target="_blank"><strong> <%- program_title %> </strong></a>
         </p>
       <% } %>
       <% if( type === "5" ){ %>
-        <p class="project">Бенефіціар: <strong> <%- beneficiary %>.</strong></p>
+        <p class="project"><?php echo BENEFICIARY ?>: <strong> <%- beneficiary %>.</strong></p>
       <% } %>
       <% if( +type >= 3 && +type <= 5 ){ %>
-        <p class="project">Сума запитувана: <strong> <%- amount_asking %> <%- currency %>.</strong></p>
+        <p class="project"><?php echo SUM_REQUESTED ?>: <strong> <%- amount_asking %> <%- currency %>.</strong></p>
       <% } %>
       <% if( dt_expired && dt_expired != '0000-00-00 00:00:00' ){ %>
-        <p class="project">Дата завершення <%- obj_ %>: <strong> <%- dt_expired %>.</strong></p>
+        <p class="project"><%- subject_expiration %>: <strong> <%- dt_expired %>.</strong></p>
       <% } %>
       <% if( ts_closed && ts_closed != '0000-00-00 00:00:00' ){ %>
         <p class="project"><%- closed %> <strong> <%- ts_closed %>.</strong></p>
       <% } %>
       <% if( discussion_link ){ %>
-        <a href="<%- discussion_link %>" class="ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left" target="_blank">Обговорення <%- obj_ %></a>
+        <a href="<%- discussion_link %>" class="ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left" target="_blank"><%- subject_discussion %></a>
       <% } %>
       <% if( type === "2" ){ %>
-        <p class="project">Проектних пропозицій: <strong><%- pp %>.</strong> <a href="#" class="pp_list ui-btn ui-corner-all ui-btn-inline ui-mini">Перелік</a></p>
+        <p class="project"><?php echo NUMBER_OF_PP ?>: <strong><%- pp %>.</strong> <a href="#" class="pp_list ui-btn ui-corner-all ui-btn-inline ui-mini"><?php echo PP_LIST ?></a></p>
       <% } %>
       <hr>
       <div class="funds"></div>
       <hr>
       <div class="contribution"></div>
-      <a href="#" class="donate ui-btn ui-corner-all ui-icon-add ui-btn-icon-left">Пожертвувати</a>
+      <a href="#" class="donate ui-btn ui-corner-all ui-icon-add ui-btn-icon-left"><?php echo DONATE ?></a>
       <div class="nco"></div>
     </script>
 
     <script id="admin_nco_view" type="text/template">
-      <h3>Адміністрування <%- obj_ %></h3>
+      <h3><%- subject_administration %></h3>
       <% if( nco_acceptance === "0" && nco_id === "0" ){ %>
-        <p class="project"> Автор не визначився з бажаною НКО.</p>
+        <p class="project"><?php echo NCO_NOT_SELECTED_BY_AUTHOR ?></p>
       <% } %>
       <% if( nco_acceptance === "0" && nco_id !== 0 ){ %>
-        <p class="project">
-          Автор хотів би співпрацювати з НКО 
-          <strong> <%- ncoName %>. </strong>
+        <p class="project"><?php echo NCO_SELECTED_BY_AUTHOR ?>
+          <strong> <%- ncoName %> </strong>
         </p>
       <% } %>
       <div class="nco_choise"></div>
       <% if( nco_acceptance === "0" && nco_bids.length === 0 ){ %>
-        <p class="project"> Жодна НКО не виявила бажання адмініструвати <%- obj__ %>.</p>
+        <p class="project"><%- no_nco %></p>
       <% } %>
       <% if( nco_acceptance !== "0" ){ %>
-        <p class="project"> За двосторонньою згодою, <%- obj__ %> адмініструє НКО <strong> <%- ncoName %> </strong></p>
+        <p class="project"><%- nco_defined %></p>
       <% } %>
       <% if( nco_acceptance === "0" && nco_bids.length !== 0 ){ %>
-        <p class="project"> Перелік НКО, що хотіли б адмініструвати <%- obj__ %>).</p>
+        <p class="project"><%- nco_list %>)</p>
       <% } %>
       <div class="nco_list"></div>
       <% if( showNcoBtn ){ %>
@@ -900,7 +905,7 @@
     <script class="nco_wants_admin" type="text/template">
       <p class="project"> <%- item.nco_name %>.</p>
       <% if( button ){ %>
-        <button class="accept"> Прийняти пропозицію.</p>
+        <button class="accept"><?php echo ACCEPT_PROPOSAL ?></p>
       <% } %>
     </script>
 
@@ -917,7 +922,7 @@
       </td>
       <td>  
         <% if( withdrawable ) { %>
-          <a href="#" class="withdraw ui-btn ui-icon-block ui-corner-all ui-btn-icon-left ui-mini ui-btn-inline" title="Відкликати">Відкликати</a>
+          <a href="#" class="withdraw ui-btn ui-icon-block ui-corner-all ui-btn-icon-left ui-mini ui-btn-inline" title="<?php echo CALL_OFF ?>"><?php echo CALL_OFF ?></a>
         <% } %>
       </td>
     </script>
@@ -925,27 +930,27 @@
     <script id="map_view" type="text/template">
       <div id="the-map"></div>
       <label for="map_search" class="ui-hidden-accessible map_search"></label>
-      <input data-wrapper-class="wrapper_map_search" type="search" name="map_search" id="map_search" placeholder="#хеш-тег чи числовий id">
+      <input data-wrapper-class="wrapper_map_search" type="search" name="map_search" id="map_search" placeholder="<?php echo MAP_SEARCH_PLACEHOLDER ?>">
       <div class="ui-nodisc-icon buttons-wrapper upper-right unused">
-        <a href="#" id="near" class="ui-btn ui-corner-all ui-icon-nearby ui-btn-icon-notext ui-btn-inline">nearby</a><br>
-        <a href="#" id="location" class="ui-btn ui-corner-all ui-icon-my_location ui-btn-icon-notext ui-btn-inline">location</a><br>
-        <a href="#favorite__list" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-map" class="ui-btn ui-corner-all ui-icon-star-empty ui-btn-icon-notext ui-btn-inline favorite-button">favorite</a>
+        <a href="#" id="near" class="ui-btn ui-corner-all ui-icon-nearby ui-btn-icon-notext ui-btn-inline"><?php echo NEARBY ?></a><br>
+        <a href="#" id="location" class="ui-btn ui-corner-all ui-icon-my_location ui-btn-icon-notext ui-btn-inline"><?php echo LOCATION ?></a><br>
+        <a href="#favorite__list" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-map" class="ui-btn ui-corner-all ui-icon-star-empty ui-btn-icon-notext ui-btn-inline favorite-button"><?php echo FAVORITE ?></a>
       </div>
       <div class="ui-nodisc-icon buttons-wrapper lower-left">
-        <a id="create_btn" href="#" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline">add</a><br>
-        <a id="share" href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline">share</a>
+        <a id="create_btn" href="#" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline"><?php echo ADD ?></a><br>
+        <a id="share" href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline"><?php echo SHARE ?></a>
       </div>
     </script>
 
     <script id="create_beacon__geo_tpl" type="text/template">
       <div data-role="header" class="header">
-        <a href="#" class="settings ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-settings ui-btn-icon-notext ui-btn-left ui-nodisc-icon">Close</a>
-        <h1>Створити маячок</h1>
-        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+        <a href="#" class="settings ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-settings ui-btn-icon-notext ui-btn-left ui-nodisc-icon"><?php echo CLOSE ?></a>
+        <h1><?php echo BEACON_CREATE ?></h1>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
       </div>
       <div data-role="main" class="listview_wrapper">
         <ul data-role="listview" class="listview"></ul>
-        <h4 class="info">Щоб створити новий шар <br> натисніть ліву кнопку</h3>
+        <h4 class="info"><?php echo BEACON_CREATE_MESSAGE ?></h3>
       </div>
     </script>
 
@@ -958,8 +963,8 @@
 
     <script id="beacon_status__tpl" type="text/template">
       <div data-role="header">
-        <h1>Статус маячка</h1>
-        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+        <h1><?php echo BEACON_STATUS ?></h1>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
       </div>
       <div data-role="main" class="status_list__wrapper">
         <ul data-role="listview" class="listview"></ul>
@@ -977,7 +982,7 @@
     <script id="right_popup__component_tpl" type="text/template">
       <div data-role="header">
         <h1><%-header%></h1>
-        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
       </div>
       <div data-role="main" class="main__right_popup__component"></div>
     </script>
@@ -999,19 +1004,19 @@
 
     <script id="change_gov_menu__tpl" type="text/template">
       <div data-role="header" class="header">
-        <h1>Змінити меню</h1>
-        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+        <h1><?php echo CHANGE_MENU ?></h1>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
       </div>
       <div data-role="main" class="listview_wrapper ui-content">
         <ul id="change_gov_menu_list" class="listview" data-role="listview"></ul>
-        <button class="add ui-btn ui-corner-all">Додати ще</button>
-        <button class="save ui-btn ui-corner-all">Зберегти</button>
+        <button class="add ui-btn ui-corner-all"><?php echo ADD_MORE ?></button>
+        <button class="save ui-btn ui-corner-all"><?php echo SAVE ?></button>
       </div>
     </script>
     <script id="change_gov_menu_item__tpl" type="text/template">
       <input type="hidden" class="change_gov_menu__layer" name="layer_type" value="<%- layer_type %>">
       <div class="change_gov_menu__input_wrapper ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
-        <input class="change_gov_menu__input" type="text" data-enhanced="true" data-clear-btn="false" name="text-enhanced" id="text-enhanced" value="<%- name %>" placeholder="Додайте назву шару">
+        <input class="change_gov_menu__input" type="text" data-enhanced="true" data-clear-btn="false" name="text-enhanced" id="text-enhanced" value="<%- name %>" placeholder="<?php echo ADD_LAYER_TITLE ?>">
       </div>
       <div class="change_gov_menu__select_type"></div>
       <div class="hiddenfile">
@@ -1031,7 +1036,7 @@
           <% if(id !== '0') { %>
             <h4 class="follower"><%-subtitle%> "<%-details%>", id:<%- id %></h4>
           <% } %>
-          <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon history_back">Close</a>
+          <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon history_back"><?php echo CLOSE ?></a>
         </div>
         <div data-role="main" class="main ui-content">
           <form action="" id="donate__form">
@@ -1043,18 +1048,18 @@
             <input type="hidden" name="id" value="<%-id%>">
           </form>
           <br>
-          <h6>* - Обов'язкові поля.</h6>
+          <h6><?php echo REQUIRED_FIELDS ?></h6>
           <div id="donate__submit" class="submit">
-            <label for="submit_btn" class="ui-hidden-accessible">Submit</label>
-            <button id="submit_btn" type="submit">Пожертвувати</button>
+            <label for="submit_btn" class="ui-hidden-accessible"><?php echo DONATE ?></label>
+            <button id="submit_btn" type="submit"><?php echo DONATE ?></button>
           </div>
         </div>
     </script>
 
     <script id="email_input__tpl" type="text/template">
       <div class="ui-field-contain">
-        <label for="email_input"><strong>Ваша електронна пошта:&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
-        <input class="email_input" type="email" name="email" id="email_input" placeholder="example@site.com" value="<%- email %>">
+        <label for="email_input"><strong><?php echo YOUR_EMAIL ?>:&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
+        <input class="email_input" type="email" name="email" id="email_input" placeholder="your@email.com" value="<%- email %>">
       </div>
     </script>
     <script id="checkbox__tpl" type="text/template">
@@ -1079,7 +1084,7 @@
       <h3 class="org_title ui-collapsible-heading ui-collapsible-heading-collapsed">
         <a href="#" class="ui-collapsible-heading-toggle ui-btn" data-iconpos="noicon">
           <%- text %>
-          <span class="ui-collapsible-heading-status"> click to expand contents</span>
+          <span class="ui-collapsible-heading-status"><?php echo CLICK_TO_EXPAND_CONTENTS ?></span>
         </a>
       </h3>
       <div class="layers_container ui-collapsible-content ui-collapsible-content-collapsed" aria-hidden="true">
@@ -1094,7 +1099,7 @@
     </script>
 
     <script id="fourth_filter__tpl" type="text/template">
-      <h4 class="filter_title">Показати маячки організацій:</h4>
+      <h4 class="filter_title"><?php echo BEACONS_OF_CORPS_SHOW ?>:</h4>
       <div class="selected_layers"></div>
       <div class="search_wrapper"></div>
       <div class="unselected_layers"></div>
@@ -1102,25 +1107,25 @@
      
     <script id="map_search__tpl" type="text/template">
       <input data-wrapper-class="wrapper_map_search" type="<%- inputType %>" data-type="search" name="map_search" id="map_search" placeholder="<%- placeholder %>" data-enhanced="true" value="<%- value %>" autofocus>
-      <a href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden" title="Clear text">Clear text</a>
-      <a href="#" tabindex="-2" class="ui-input-close ui-btn ui-icon-close ui-btn-icon-notext ui-corner-all" title="Close input">Close input</a>
+      <a href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden" title="<?php echo CLEAR_TEXT ?>"><?php echo CLEAR_TEXT ?></a>
+      <a href="#" tabindex="-2" class="ui-input-close ui-btn ui-icon-close ui-btn-icon-notext ui-corner-all" title="<?php echo CLOSE_INPUT ?>"><?php echo CLOSE_INPUT ?></a>
     </script>
 
     <script id="profile_popup__tpl" type="text/template">
       <div data-role="header" class="header">
-        <h1>Ваш профіль</h1>
-        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon">Close</a>
+        <h1><?php echo YOUR_PROFILE ?></h1>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
       </div>
       <div data-role="main" class="listview_wrapper">
         <div class="profile_info clearfix">
           <img class="avatar" src="<%- avatarSrc %>" alt="Photo">
-          <p class="name"><strong>Ім'я:</strong> <%- name %> </p>
-          <p class="name"><strong>login:</strong> <%- login %> </p>
+          <p class="name"><strong><?php echo NAME ?>:</strong> <%- name %> </p>
+          <p class="name"><strong><?php echo NICKNAME ?>:</strong> <%- login %> </p>
           <p class="name"><strong>id:</strong> <%- id %> </p>
         </div>
         <p class="name"><strong>email:</strong> <%- email %> </p>
         <div class="address">
-          <p class="address_title">Адреси для доступу до місцевих голосувань:</p>
+          <p class="address_title"><?php echo YOUR_VOTING_ADDRESSES ?>:</p>
           <ul class="address_list"></ul>
         </div>
       </div>

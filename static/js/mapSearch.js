@@ -34,7 +34,7 @@ var HashAndIdMapSearchView = MapSearchView.extend({
       case 'id':
         var model = {
           placeholder: 'id маячка ( cardID )',
-          inputType: 'number'
+          inputType: 'text'
         }
         break;
     }
@@ -44,7 +44,8 @@ var HashAndIdMapSearchView = MapSearchView.extend({
   events: {
     'click @ui.close': 'close'
   },
-  search: function(){
+  search: function(e){
+    if(e.keyCode >= 16 && e.keyCode <= 18) return
     var res = this.ui.input.val()
     if (res === ""){
       window.state.filter = ""
@@ -62,7 +63,7 @@ var HashAndIdMapSearchView = MapSearchView.extend({
     var that = this
     this.ui.input.on(
       'change keydown keyup paste',
-      _.debounce(that.search.bind(that), 700)
+      _.debounce(that.search.bind(that), 1000)
     )
   },
   onBeforeDestroy: function(){

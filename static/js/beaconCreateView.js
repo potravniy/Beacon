@@ -887,7 +887,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     })
     promise.done(function( response ){
       if( response.length === 0 ){
-        alert( localeMsg.FAIL )
+        alert( window.localeMsg[window.localeLang].FAIL )
         return
       }
       if( response[0] && response[0].error ){

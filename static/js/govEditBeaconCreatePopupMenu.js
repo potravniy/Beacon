@@ -26,7 +26,7 @@ var ChangeGovMenuItemModel = Backbone.Model.extend({
         that.unset('file')
       })
       promise.fail(function(){
-        alert( localeMsg.CONNECTION_ERROR )
+        alert( window.localeMsg[window.localeLang].CONNECTION_ERROR )
       })
       return promise
     } else {
@@ -262,7 +262,7 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
       $beaconCreatePopup.popup( "close" )
     })
     promise.fail(function(){
-      alert( localeMsg.CONNECTION_ERROR )
+      alert( window.localeMsg[window.localeLang].CONNECTION_ERROR )
     })
   },
   deleteChild: function(childView){

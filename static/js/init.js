@@ -184,7 +184,8 @@ window.Lib = Marionette.Object.extend({
     return undefined
   },
   getNameNCObyID: function(id){
-    return window.lib.getNCObyID(id).nco_name
+    if(id !== '0') return window.lib.getNCObyID(id).nco_name
+    else return 'undefined'
   }
 })
 window.lib = new window.Lib()
@@ -201,7 +202,7 @@ window.state.listMenu = [
   { b_type: "911",
     layer_owner_id: "",
     layer_type: "",
-    name: localeMsg.SOS,
+    name: window.localeMsg[window.localeLang].SOS,
     type: "911",
     className: 'sos',
     img: "/images/911.png"
@@ -209,7 +210,7 @@ window.state.listMenu = [
   { b_type: "777",
     layer_owner_id: "",
     layer_type: "",
-    name: localeMsg.IMPORTANT,
+    name: window.localeMsg[window.localeLang].IMPORTANT,
     type: "777",
     className: 'important',
     img: "/images/777.png"
@@ -217,7 +218,7 @@ window.state.listMenu = [
   { b_type: "69",
     layer_owner_id: "",
     layer_type: "",
-    name: localeMsg.EMOTICON_GOOD,
+    name: window.localeMsg[window.localeLang].EMOTICON_GOOD,
     type: "69",
     className: 'emo_good',
     img: "/images/69.png"
@@ -225,7 +226,7 @@ window.state.listMenu = [
   { b_type: "96",
     layer_owner_id: "",
     layer_type: "",
-    name: localeMsg.EMOTICON_BAD,
+    name: window.localeMsg[window.localeLang].EMOTICON_BAD,
     type: "96",
     className: 'emo_bad',
     img: "/images/96.png"
@@ -233,7 +234,7 @@ window.state.listMenu = [
   { b_type: "1",
     layer_owner_id: "",
     layer_type: "",
-    name: localeMsg.VOTING,
+    name: window.localeMsg[window.localeLang].VOTING,
     type: "1",
     className: 'voting',
     img: "/images/1.png"
@@ -241,7 +242,7 @@ window.state.listMenu = [
   { b_type: "2",
     layer_owner_id: "",
     layer_type: "",
-    name: localeMsg.PROGRAMM,
+    name: window.localeMsg[window.localeLang].PROGRAMM,
     type: "2",
     className: 'program',
     img: "/images/2.png"
@@ -249,7 +250,7 @@ window.state.listMenu = [
   { b_type: "3",
     layer_owner_id: "",
     layer_type: "",
-    name: localeMsg.PROJECT_PROPOSAL,
+    name: window.localeMsg[window.localeLang].PROJECT_PROPOSAL,
     type: "3",
     className: 'project_proposal',
     img: "/images/3.png"
@@ -257,7 +258,7 @@ window.state.listMenu = [
   { b_type: "4",
     layer_owner_id: "",
     layer_type: "",
-    name: localeMsg.PROJECT,
+    name: window.localeMsg[window.localeLang].PROJECT,
     type: "4",
     className: 'project',
     img: "/images/4.png"
@@ -265,7 +266,7 @@ window.state.listMenu = [
   { b_type: "330",
     layer_owner_id: "",
     layer_type: "",
-    name: localeMsg.PARTICIPATIVE_BUDGET,
+    name: window.localeMsg[window.localeLang].PARTICIPATIVE_BUDGET,
     type: "330",
     className: 'p_budget',
     img: "/images/330.png"
@@ -273,7 +274,7 @@ window.state.listMenu = [
   { b_type: "5",
     layer_owner_id: "",
     layer_type: "",
-    name: localeMsg.REQUEST,
+    name: window.localeMsg[window.localeLang].REQUEST,
     type: "5",
     className: 'request',
     img: "/images/5.png"
@@ -594,3 +595,56 @@ setTimeout(function(){
   $('.warning').remove()
 }, 4000)
 
+function makeLangJson(){
+  window.old_localeMsg = {}
+  var oReq = new XMLHttpRequest();
+  oReq.addEventListener("load", function() {
+    window.commonMsg = JSON.parse( this.responseText )
+    mergeCommonMsgWithLocaleMsg()
+  });
+  oReq.open("GET", "./static/js/lang/commonMsg.json");
+  oReq.send();
+  var oReq_en = new XMLHttpRequest();
+  oReq_en.addEventListener("load", function() {
+    window.old_localeMsg.en = JSON.parse( this.responseText )
+    mergeCommonMsgWithLocaleMsg()
+  });
+  oReq_en.open("GET", "./static/js/lang/local_en.json");
+  oReq_en.send();
+  var oReq_uk = new XMLHttpRequest();
+  oReq_uk.addEventListener("load", function() {
+    window.old_localeMsg.uk = JSON.parse( this.responseText )
+    mergeCommonMsgWithLocaleMsg()
+  });
+  oReq_uk.open("GET", "./static/js/lang/local_uk.json");
+  oReq_uk.send();
+  var oReq_ru = new XMLHttpRequest();
+  oReq_ru.addEventListener("load", function() {
+    window.old_localeMsg.ru = JSON.parse( this.responseText )
+    mergeCommonMsgWithLocaleMsg()
+  });
+  oReq_ru.open("GET", "./static/js/lang/local_ru.json");
+  oReq_ru.send();
+
+  function mergeCommonMsgWithLocaleMsg(){
+    if(!window.old_localeMsg.en || !window.old_localeMsg.uk || !window.old_localeMsg.ru || !window.commonMsg){
+      return
+    }
+    var step1 = _.pick(window.commonMsg, function(val, key){
+      return _.isObject(val)
+    })
+    var step2 = _.mapObject(step1, function(val, key){
+      return val.msg
+    })
+    var langs = ['en', 'uk', 'ru']
+    
+    window.new_localeMsg = _.mapObject(langs, function(lang){
+      var oldLocale =_.clone(window.old_localeMsg[lang][lang])
+      var obj = {}
+      obj[lang] = $.extend({}, step2, oldLocale)
+      console.log(obj)
+      return obj
+    })
+  }
+
+}

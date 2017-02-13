@@ -239,7 +239,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         theModel.set('b_status', response.status)
       },
       error: function(){
-        alert ( localeMsg.FAIL )
+        alert ( window.localeMsg[window.localeLang].FAIL )
       }
     })
   },

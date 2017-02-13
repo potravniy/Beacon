@@ -84,7 +84,7 @@ function logOut(){
   promise.done(function ( response ) {
     if(response[0] && response[0].id && response[0].id === '-10'){
       window.state.user = {
-        user_first: window.localeMsg.GUEST,
+        user_first: window.localeMsg[window.localeLang].GUEST,
         login: 'Guest',
         avatar: '/images/avatar-bg.png'
       }
@@ -264,7 +264,7 @@ function checkLoggedIn(){
         }
       } else {
         window.state.user = {
-          user_first: window.localeMsg.GUEST,
+          user_first: window.localeMsg[window.localeLang].GUEST,
           login: 'Guest',
           avatar: '/images/avatar-bg.png'
         }
