@@ -46,7 +46,7 @@ var OptionForNativeSelectComponent = Backbone.Marionette.ItemView.extend({
   initialize: function(options){
     if( options.type === this.model.get('type') ){
       this.$el.prop('selected', 'selected')
-    } else if( 'Оберіть тип' === this.model.get('name') ){
+    } else if( window.localeMsg[window.localeLang].CHOOSE_TYPE === this.model.get('name') ){
       this.$el.prop('selected', 'selected')
       this.$el.prop('disabled', 'disabled')
     }
@@ -91,7 +91,7 @@ ChangeGovMenuItemView = Backbone.Marionette.LayoutView.extend({
   onBeforeShow: function(){
     var placeholderOption = {
       type: '',
-      name: 'Оберіть тип'
+      name: window.localeMsg[window.localeLang].CHOOSE_TYPE
     }
     var collection = window.state.listMenu.slice()
     collection.unshift(placeholderOption)
@@ -207,10 +207,10 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
   save: function(){
     isVerificationFailed = _.some(this.collection.models, function(model){
       if(model.get('name') === ''){
-        alert('Заповніть поле "Додайте назву шару"')
+        alert(window.localeMsg[window.localeLang].FILL_FIELD_LAYER_NAME)
         return true
       } else if(model.get('type') < 0){
-        alert('Не обрано тип шару')
+        alert(window.localeMsg[window.localeLang].CHOOSE_LAYER_TYPE)
         return true
       } else return false
     })
@@ -252,7 +252,7 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
         return acc +' '+ item.name + '\n' 
       },'\n')
       if(notErased.length > 0){
-        alert('Наступні шари меню:\n'+ notErasedTxt +'\nне були видалені,оскільки в них є діючі маячки.')
+        alert((new IntlMessageFormat(window.localeMsg[window.localeLang].VOTING_SUPPORT_COMPLETED, window.localeLang).format({notErasedTxt: notErasedTxt})))
       }
       window.state.listMenuOrg = response
       var $beaconCreatePopup = $('#create_beacon__geo_region')

@@ -14,10 +14,10 @@ var MsgCollectionView = Backbone.Marionette.CompositeView.extend({
   },
   msgSend: function(){
     if( window.state.user.login === 'Guest' ) {
-      alert('Зареєструйтесь, будь-ласка!')
+      alert(window.localeMsg[window.localeLang].REGISTRATION_REQUIRED)
       return
     } else if( window.state.user.voting_status === '0' ) {
-      alert('Для відправки повідомлень, будь-ласка, підвищіть рівень Вашої авторизації.')
+      alert(window.localeMsg[window.localeLang].YOUR_AUTHORIZATION_MUST_BE_HIGHER)
       return
     }
     $.mobile.loading('show')
@@ -41,9 +41,9 @@ var MsgCollectionView = Backbone.Marionette.CompositeView.extend({
       if(response.error === 0){
         that.collection.add(response.msg)
       } else if(response.error === 4){
-        alert("Це повідомлення Ви вже відправляли.")
+        alert(window.localeMsg[window.localeLang].THIS_MESSAGE_YOU_HAVE_SENT)
       } else if(response.error === 100){
-        alert("Для відправки повідомлень, будь-ласка, підвищіть рівень Вашої авторизації.")
+        alert(window.localeMsg[window.localeLang].YOUR_AUTHORIZATION_MUST_BE_HIGHER)
       }
     });
     promise.fail(function(response){
@@ -123,7 +123,7 @@ var VotingButtonsView = Backbone.Marionette.ItemView.extend({
 var VotingModel = Backbone.Model.extend({
   defaults: {
     canUserVote: false,
-    usr_status: 'Ви не можете проголосувати.'
+    usr_status: window.localeMsg[window.localeLang].YOU_CANNOT_VOTE
   },
   initialize: function(){
     this.extendModel()
@@ -133,53 +133,53 @@ var VotingModel = Backbone.Model.extend({
     switch (+this.get('offer_status')) {
       case 0:
         if( new Date(this.get('sprtf')) < getTodayWithZeroTime()) {
-          this.set({'v_status': 'Збір голосів підтримки закінчився'+' '+ reverseDateFormat(this.get('sprtf')) +'.'})
+          this.set({'v_status': (new IntlMessageFormat(window.localeMsg[window.localeLang].VOTING_SUPPORT_COMPLETED, window.localeLang)).format({when: reverseDateFormat(this.get('sprtf'))})})
         } else {
-          this.set({'v_status': 'Триває збір голосів підтримки до'+' '+ reverseDateFormat(this.get('sprtf')) +'.'})
+          this.set({'v_status': (new IntlMessageFormat(window.localeMsg[window.localeLang].VOTING_SUPPORT_CONTINUE, window.localeLang)).format({when: reverseDateFormat(this.get('sprtf'))})})
           if(this.get('canUserVote')) {
-            this.set({'usr_status': (this.get('sprt_my') == '1' ? 'Ви підтримали це голосування.' : 'Ви ще не підтримували проведення цього голосування.' )})
-            this.set({'btn_support': (this.get('sprt_my') == '1' ? 'Скасувати' : 'Підтримати' ) })
+            this.set({'usr_status': (this.get('sprt_my') == '1' ? window.localeMsg[window.localeLang].YOU_SUPPORTED_THE_VOTING : window.localeMsg[window.localeLang].YOU_DID_NOT_SUPPORT_THE_VOTING )})
+            this.set({'btn_support': (this.get('sprt_my') == '1' ? window.localeMsg[window.localeLang].WITHDRAW : window.localeMsg[window.localeLang].SUPPORT ) })
           }
         }
         break;
       case 1:
         if(new Date(this.get('offer_start_time')) <= getTodayWithZeroTime()){
-          this.set({'v_status': 'Голосування розпочато і триває до'+' '+ reverseDateFormat(this.get('offer_finish_time')) +'.'})
+          this.set({'v_status': (new IntlMessageFormat(window.localeMsg[window.localeLang].VOTING_STARTED_AND_RUNS_TO, window.localeLang)).format({when: reverseDateFormat(this.get('offer_finish_time'))})})
           if(this.get('canUserVote')) {
             this.set({'usr_status': haveUserVoted(this)})
           }
         } else {
-          this.set({'v_status': 'Голосування розпочнеться'+' '+ reverseDateFormat(this.get('offer_start_time')) +'.'})
+          this.set({'v_status': (new IntlMessageFormat(window.localeMsg[window.localeLang].VOTING_WILL_START, window.localeLang)).format({when: reverseDateFormat(this.get('offer_start_time'))})})
           if(this.get('canUserVote')) {
-            this.set({'usr_status': (this.get('sprt_my') == '1' ? 'Ви підтримали це голосування.' : 'Ви не підтримали це голосування.' )})
+            this.set({'usr_status': (this.get('sprt_my') == '1' ? window.localeMsg[window.localeLang].YOU_SUPPORTED_THE_VOTING : window.localeMsg[window.localeLang].YOU_DID_NOT_SUPPORT_THE_VOTING )})
           }
         }
         break;
       case 2:
-        this.set({'v_status': 'Голосування закінчилось'+' '+ reverseDateFormat(this.get('offer_finish_time')) +'.'})
+        this.set({'v_status': (new IntlMessageFormat(window.localeMsg[window.localeLang].VOTING_IS_OVER, window.localeLang)).format({when: reverseDateFormat(this.get('offer_finish_time'))})})
         if(this.get('canUserVote')) {
           this.set({'usr_status': haveUserVoted(this)})
         }
         break;
       case 3:
-        this.set({'v_status': 'Голосування не набрало необхідну кількість голосів підтримки і є скасованим.'}) 
+        this.set({'v_status': window.localeMsg[window.localeLang].VOTING_IS_NOT_SUPPORTED}) 
         if(this.get('canUserVote')) {
-          this.set({'usr_status': (this.get('sprt_my') == '1' ? 'Ви підтримали це голосування.' : 'Ви не підтримали це голосування.' )})
+          this.set({'usr_status': (this.get('sprt_my') == '1' ? window.localeMsg[window.localeLang].YOU_SUPPORTED_THE_VOTING : window.localeMsg[window.localeLang].YOU_DID_NOT_SUPPORT_THE_VOTING )})
         }
         break;
+        this.set({'v_status': (new IntlMessageFormat(window.localeMsg[window.localeLang].VOTING_IS_SUPPORTED, window.localeLang)).format({when: reverseDateFormat(this.get('offer_finish_time'))})})
       case 4:
-        this.set({'v_status': 'Голосування набрало необхідну кількість голосів підтримки.'
-          + 'Голосування розпочнеться'+' '+ reverseDateFormat(this.get('offer_finish_time')) +'.' }) 
         if(this.get('canUserVote')) {
-          this.set({'usr_status': (this.get('sprt_my') == '1' ? 'Ви підтримали це голосування.' : 'Ви не підтримали це голосування.' )})
+          this.set({'usr_status': (this.get('sprt_my') == '1' ? window.localeMsg[window.localeLang].YOU_SUPPORTED_THE_VOTING : window.localeMsg[window.localeLang].YOU_DID_NOT_SUPPORT_THE_VOTING )})
         }
         break;
     }
     function haveUserVoted(that){
-      var vote = (that.get('user_vote') == '1' ? 'Ви голосували "за"'+' '+ (that.get('user_vote_open') == '1' ? 'відкрито.' : 'таємно.')
-            : that.get('user_vote') == '2' ? 'Ви голосували "проти"'+' '+ (that.get('user_vote_open') == '1' ? 'відкрито.' : 'таємно.') 
-            : that.get('user_vote') == '3' ? 'Ви "утримались"'+' '+ (that.get('user_vote_open') == '1' ? 'відкрито.' : 'таємно.')
-            : 'Ви не голосували.' )
+      var open = that.get('user_vote_open') == '1' ? window.localeMsg[window.localeLang].YOU_DID_VOTE_OPEN : window.localeMsg[window.localeLang].YOU_DID_VOTE_SECRET
+      var vote = (that.get('user_vote') == '1' ? (new IntlMessageFormat(window.localeMsg[window.localeLang].YOU_VOTED_FOR, window.localeLang)).format({how: open})
+            : that.get('user_vote') == '2' ? (new IntlMessageFormat(window.localeMsg[window.localeLang].YOU_VOTED_AGAINST, window.localeLang)).format({how: open})
+            : that.get('user_vote') == '3' ? (new IntlMessageFormat(window.localeMsg[window.localeLang].YOU_ABSTAINED, window.localeLang)).format({how: open})
+            : window.localeMsg[window.localeLang].YOU_DID_NOT_VOTE )
       return vote
     }
   },
@@ -188,23 +188,21 @@ var VotingModel = Backbone.Model.extend({
     if( isAuthLevelOk(this) && this.get('can_user') == '1' ) {
       this.set({'canUserVote': true})
     } else if(!window.state.user.id){
-      this.set({'usr_status': "Для участі в голосуваннях, будь-ласка, зареєструйтесь."})
+      this.set({'usr_status': window.localeMsg[window.localeLang].REGISTER_FOR_VOTE})
     } else if(this.get('can_user') == '-2'){
-      this.set({'usr_status': "Для участі в голосуваннях, будь-ласка, заповніть поле 'Дата народження' в своїх особистих даних."})
+      this.set({'usr_status': window.localeMsg[window.localeLang].FILL_AGE_FOR_VOTE})
     } else if(this.get('can_user') == '-3') {
-      this.set({'usr_status': "Ви не можете приймати участь в цьому голосуванні, оскільки автор встановив вікові обмеження від"+' '
-      + this.get('age_from') +" до "+ this.get('age_to') + " років."})
+      this.set({'usr_status': (new IntlMessageFormat(window.localeMsg[window.localeLang].YOU_CANNOT_VOTE_BECAUSE_OF_AGE, window.localeLang)).format({ageFrom: this.get('age_from'), ageTo: this.get('age_to')})})
     } else if( !isAuthLevelOk(this) ) {
-      this.set({'usr_status': "Ви не можете приймати участь в цьому голосуванні, оскільки рівень Вашої авторизації на цьому сервісі не відповідає вимогам автора голосування. "
-      + "Для участі в цьому голосуванні Вам слід мати рівень авторизації не нижче ніж: "
-      + (this.get('v1')=='1' ? 'Авторизація через соціальну мережу'   // 1
-       : this.get('v2')=='1' ? "Співвласники"                         // 2
-       : this.get('v3')=='1' ? "Члени громадських об'єднань"          // 3
-       : this.get('v4')=='1' ? "Авторизація по платежу"               // 4
-       : this.get('v5')=='1' ? "Авторизація по банківській карті"     // 5
-       : '' ) + '.' })
+      var authLevel = this.get('v1')=='1' ? 1
+       : this.get('v2')=='1' ? 2
+       : this.get('v3')=='1' ? 3
+       : this.get('v4')=='1' ? 4
+       : this.get('v5')=='1' ? 5
+       : 1
+      this.set({'usr_status': (new IntlMessageFormat(window.localeMsg[window.localeLang].YOU_CANNOT_VOTE_BECAUSE_OF_AUTHENTIFICATION_LEVEL, window.localeLang)).format({authLevel: authLevel})})
     } else if( this.get('can_user') == '0' ) {
-      this.set({ 'usr_status': "Ви не можете приймати участь в цьому голосуванні, оскільки предмет голосування є поза Вашими сферами." })
+      this.set({ 'usr_status': window.localeMsg[window.localeLang].YOU_CANNOT_VOTE_BECAUSE_OF_SPHERE})
     } 
     function isAuthLevelOk(that){
       if(that.get('v0') == 1
@@ -321,10 +319,10 @@ var ResultsView = Backbone.Marionette.CompositeView.extend({
   templateHelpers: function(){
     var title, disabled, hide
     if(this.model.get('type')==='resulting'){
-      title = 'Результати голосування'
+      title = window.localeMsg[window.localeLang].VOTING_RESULTS
       hide = ''
     } else {
-      title = 'Результати індикативного голосування'
+      title = window.localeMsg[window.localeLang].INDICATIVE_VOTING_RESULTS
       hide = 'display: none;'
     }
     disabled = ( +this.model.get('totalVotes') === 0 ? 'disabled' : '' ) 
@@ -353,7 +351,7 @@ var VotingView = Backbone.Marionette.LayoutView.extend({
       offerFinishTime: reverseDateFormat(this.model.get('offer_finish_time')),
       votingStatus: ( state.user.voting_status
                       ? window.state.usrAuthLvl[+state.user.voting_status]
-                      : 'Ви не зареєструвались' )
+                      : window.localeMsg[window.localeLang].YOU_ARE_NOT_LOGGED_IN )
     } 
     return result
   },
@@ -425,7 +423,7 @@ var VotingView = Backbone.Marionette.LayoutView.extend({
         res = [], //  resulting votes
         ind = []  //  indicating votes
     res[0] = {}
-    res[0].title = 'Всі категорії користувачів'
+    res[0].title = window.localeMsg[window.localeLang].ALL_USER_CATHEGORIES
     res[0].minus = +this.model.get('votes_minus')
     res[0].plus = +this.model.get('votes_plus')
     res[0].abst = +this.model.get('votes_abstained')
@@ -588,15 +586,15 @@ var AdministrationNCOView = Backbone.Marionette.CompositeView.extend({
       if( doesNcoMeetAuthorChoise ){
         res.showNcoBtn = true
         this.ncoAction = 'takeIt'
-        res.txt = 'Прийняти адміністрування'
+        res.txt = window.localeMsg[window.localeLang].TAKE_ADMINISTRATION
       } else if( doesNcoBid ){
         res.showNcoBtn = true
         this.ncoAction = 'withdraw'
-        res.txt = 'Відкликати пропозицію'
+        res.txt = window.localeMsg[window.localeLang].WITHDRAW_PROPOSAL
       } else {
         res.showNcoBtn = true
         this.ncoAction = 'propose'
-        res.txt = 'Запропонувати свою НКО'
+        res.txt = window.localeMsg[window.localeLang].PROPOSE_OUR_NCO
       }
     }
     return res
@@ -646,8 +644,6 @@ var ProgramModel = Backbone.Model.extend({
 var Objects2_5View = Backbone.Marionette.LayoutView.extend({
   template: "#objects2-5_full_view",
   templateHelpers: function (){
-    // var subject_id = new IntlMessageFormat(window.localeMsg[window.localeLang].SUBJECT_ID[type], window.localeLang)
-    // subject_id = subject_id.format()
     var subject_id = window.localeMsg[window.localeLang].SUBJECT_ID[+this.model.get('type')]
     var subject_expiration = window.localeMsg[window.localeLang].SUBJECT_EXPIRATION[+this.model.get('type')]
     var subject_discussion = window.localeMsg[window.localeLang].SUBJECT_DISCUSSION[+this.model.get('type')]
@@ -674,7 +670,7 @@ var Objects2_5View = Backbone.Marionette.LayoutView.extend({
     console.log('Кнопка "Відкликати" натиснута.')
   },
   showListPP: function(){
-    alert("Ця функція поки що недоступна.")
+    alert(window.localeMsg[window.localeLang].THIS_FUNCTION_IS_NOT_AVAILABLE_YET)
   },
   triggers: {
     'click .donate': 'pay:donate'
@@ -683,7 +679,6 @@ var Objects2_5View = Backbone.Marionette.LayoutView.extend({
     var type = +this.model.get('b_type') === 1000 || !this.model.get('b_type') ? this.model.get('type') : this.model.get('b_type')
     var options = {
       label: window.localeMsg[window.localeLang].FOR_THIS_SUBJECT_AMOUNT_COLLECTED[type],
-      // label: 'Для '+ this.model.get('obj_') +' зібрано коштів',
       collection: _.map(this.model.get('funds'), function(item){
         return $.extend({}, item, { 'withdrawable': false })
       })
@@ -695,8 +690,8 @@ var Objects2_5View = Backbone.Marionette.LayoutView.extend({
     this.showChildView('funds', new View())
 
     options = {
-      label: 'Ваш внесок',
-      amount: ( window.state.user.id ? '' : 'невідомий'+'.' ),
+      label: window.localeMsg[window.localeLang].YOUR_DONATION,
+      amount: ( window.state.user.id ? '' : window.localeMsg[window.localeLang].UNKNOWN +'.' ),
       collection: _.map(this.model.get('my_donations'), function(item){
         return $.extend({}, item, { 'withdrawable': true })
       })
@@ -730,7 +725,7 @@ var ProgramView = Backbone.Marionette.LayoutView.extend({
     console.log('Кнопка "Відкликати" натиснута.')
   },
   showListPP: function(){
-    alert("Ця функція поки що недоступна.")
+    alert(window.localeMsg[window.localeLang].THIS_FUNCTION_IS_NOT_AVAILABLE_YET)
   },
   triggers: {
     'click .donate': 'pay:donate'
@@ -738,7 +733,6 @@ var ProgramView = Backbone.Marionette.LayoutView.extend({
   onBeforeShow: function(){
     var options = {
       label: window.localeMsg[window.localeLang].FOR_THIS_SUBJECT_AMOUNT_COLLECTED[2],
-      // label: 'Для програми зібрано коштів',
       collection: _.map(this.model.get('funds'), function(item){
         return $.extend({}, item, { 'withdrawable': false })
       })
@@ -749,8 +743,8 @@ var ProgramView = Backbone.Marionette.LayoutView.extend({
     })
     var programFundsListView = new View()
     options = {
-      label: 'Ваш внесок',
-      amount: ( window.state.user.id ? '' : 'невідомий.' ),
+      label: window.localeMsg[window.localeLang].YOUR_DONATION,
+      amount: ( window.state.user.id ? '' : window.localeMsg[window.localeLang].UNKNOWN +'.' ),
       collection: _.map(this.model.get('my_donations'), function(item){
         return $.extend({}, item, { 'withdrawable': true })
       })
@@ -782,7 +776,7 @@ var SOS_Info_Emo_View = Backbone.Marionette.ItemView.extend({
       (  window.state.user.bankid  === '1' || window.state.user.gov === '1' 
       || window.state.user.payment === '1' || window.state.user.nco === '1' )
     return {
-      phone: mayUserSeePhone ? this.model.get('phone') : 'Перегляд доступний лише юридичним особам.'  
+      phone: mayUserSeePhone ? this.model.get('phone') : window.localeMsg[window.localeLang].FOR_ORGANIZATIONS_ONLY
     }
   }
 })
@@ -987,7 +981,7 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     $abuseBtn.attr("data-id", this.model.get('id'))
     $abuseBtn.click(function(){
       console.log('image abuse btn clicked for beacon_id:' + $(this).attr('data-id'))
-      alert('Скаргу на зображення надіслано.')
+      alert(window.localeMsg[window.localeLang].ABUSE_ON_IMAGE_SENT)
       $photoPopup.popup('close')
     })
     $photoPopup.popup({

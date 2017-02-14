@@ -16,7 +16,7 @@ var PayByCardView = Backbone.Marionette.ItemView.extend({
   },
   onBeforeShow: function(){
     if( this.model.get('html_response') ){
-      var html = '<p>Натиснувши на зелену кнопку "PAY", Ви перейдете на сайт www.liqpay.com для пожертвування коштів. Будьте готові ввести дані банківської картки.</p>'
+      var html = '<p>'+ window.localeMsg[window.localeLang].PRESSING_BUTTON_PAY_YOU_WILL_BE_REDIRECTED_TO_PAYING_SYSTEM_LIQPAY +'</p>'
       html += this.model.get('html_response')
       this.ui.mainDiv.html(html)
     }

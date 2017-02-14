@@ -47,7 +47,9 @@ var OrgView = Backbone.Marionette.CompositeView.extend({
   template: '#org__tpl',
   templateHelpers: function(){
     var tmp = {
-      text: this.model.get('layer_owner_name') + ', ЄДРПОУ ' + this.model.get('layer_owner_code'),
+      text: this.model.get('layer_owner_name') + ', '
+       + window.localeMsg[window.localeLang].EDRPOU +' '
+       + this.model.get('layer_owner_code'),
       chkd: ( +this.model.get('chkd') ? 'on' : 'off' ),
       isPinnable: this.isPinnable,
       chk: +this.model.get('chkd') ? 'checked' : ''

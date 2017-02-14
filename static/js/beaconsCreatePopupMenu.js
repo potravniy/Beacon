@@ -98,7 +98,7 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
     var that = this
     if ( !this.canCopy ) {
       this.$el.one("popupafteropen", function( event, ui ) {
-        alert('Ви не маєте шару з типом "' + window.lib.bType.getName( that.options.type ) + '"')
+        alert(window.localeMsg[window.localeLang].YOU_DO_NOT_HAVE_APPROPRIATE_LAYER +'"'+ window.lib.bType.getName( that.options.type ) + '"')
       });
     }
   },

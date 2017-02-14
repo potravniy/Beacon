@@ -32,7 +32,7 @@ var LatLngView = Backbone.Marionette.ItemView.extend({
           window.alert('No results found');
         }
       } else {
-        window.infowindow.setContent('Територія, окупована Росією.');
+        window.infowindow.setContent(window.localeMsg[window.localeLang].RUSSIA_OCCUPIED_TERRITORY);
         window.infowindow.open(window.state.map, window.markers[window.markers.length-1]);
       }
     });
@@ -378,9 +378,9 @@ var UsrCountblView = Backbone.Marionette.CompositeView.extend({
   childView: UsrCountblOptionView,
   initialize: function(){
     this.model = new Backbone.Model({
-      title: 'Вкажіть статуси користувачів, чиї голоси будуть зараховуватися в голосуванні',
+      title: window.localeMsg[window.localeLang].USER_STATUSES_ALLOWED_TO_VOTE,
       required: '',
-      label: 'Хто буде голосувати?',
+      label: window.localeMsg[window.localeLang].WHO_WILL_VOTE,
       inputName: 'usr_countbl',
       multi: true
     })
@@ -601,12 +601,12 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     if(       t==2 ||t==3 ||t==4 ||t==5                                                    ) this.addNewChild('tag', TagsView, true)
     if(                                   t==330 ||t==69 ||t==96 ||t==777 ||t==911         ) this.addNewChild('tag', TagsView, false)
     if(       t==2                                                                         ) this.addNewChild('currency', CurrencyView, true)
-    if(t==1 ||       t==3 ||t==4 ||t==5                                                    ) this.addNewChild('endDate', EndDateView, true, (t==1 ? 'Оберіть дату закінчення голосування' : undefined))
-    if(t==1 ||              t==4                                                           ) this.addNewChild('startDate', StartDateView, true, (t==1 ? 'Оберіть дату початку голосування' : undefined))
+    if(t==1 ||       t==3 ||t==4 ||t==5                                                    ) this.addNewChild('endDate', EndDateView, true, (t==1 ? window.localeMsg[window.localeLang].CHOOSE_VOTING_END_DATE : undefined))
+    if(t==1 ||              t==4                                                           ) this.addNewChild('startDate', StartDateView, true, (t==1 ? window.localeMsg[window.localeLang].CHOOSE_VOTING_START_DATE : undefined))
     if(                            t==5                                                    ) this.addNewChild('beneficiar', BeneficiarView, true)
     if(                                   t==330                          ||t==911         ) this.addNewChild('phone', PhoneView, true)
     if(                                            t==69 ||t==96 ||t==777                  ) this.addNewChild('phone', PhoneView, false)
-    if(              t==3 ||t==4 ||t==5 ||t==330                                           ) this.addNewChild('money', MoneyView, true, (t==330 ? 'Орієнтовна вартість проекту' : undefined))
+    if(              t==3 ||t==4 ||t==5 ||t==330                                           ) this.addNewChild('money', MoneyView, true, (t==330 ? window.localeMsg[window.localeLang].PROJECT_COST : undefined))
     if(t==1                                                                                ) this.addNewChild('usrCountbl', UsrCountblView, true)
     if(t==1                                                                                ) this.addNewChild('age', AgeView, true)
     if(t==1                                                                                ) this.addNewChild('support', SupportView, true)
@@ -686,7 +686,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         )
         break;
       default:
-        alert('Для маячків цього типу автозаповнення поки що не працює.\nКоординати нового маячка співпадають з оригіналом.')
+        alert(window.localeMsg[window.localeLang].AUTOCOMPLETE_DOES_NOT_WORK_FOR_THIS_BEACON_TYPE)
         return
     }
   },
@@ -758,7 +758,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       if(tags = this.tag.currentView.getTags()) {
         $('#tags').val(tags)
       } else if(this.tag.currentView.model && this.tag.currentView.model.get('required')) {
-        alert("Поле 'Додати тег' є обов'язковим.")
+        alert(window.localeMsg[window.localeLang].TAG_REQUIRED)
         return validationFailed()
       } else {
         $('#tags').val(null)
@@ -775,7 +775,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       if(programID = this.programID.currentView.getProgramID()){
         $('#program_id').val(programID)
       } else if(this.programID.currentView.model && this.programID.currentView.model.get('required')){
-        alert("Поле 'Виберіть ID програми' є обов'язковим.")
+        alert(window.localeMsg[window.localeLang].PROGRAM_ID_REQUIRED)
         return validationFailed()
       } else {
         $('#program_id').val(null)
@@ -787,20 +787,20 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
           dateStartVoting = new Date(normalizeInput( $('#start_date__input').val() )),
           dateEndVoting = new Date(normalizeInput( $('#end_date__input').val() ))
       if( today > dateFinishSupport ) {
-        alert("Дата завершення збору голосів підтримки не може бути у минулому.")
+        alert(window.localeMsg[window.localeLang].WRONG_DATE_OF_SUPPORT_COMPLETE)
         return validationFailed()
       } else if( dateFinishSupport > dateStartVoting ) {
-        alert("Голосування не може бути розпочато до дати завершення збору голосів підтримки.")
+        alert(window.localeMsg[window.localeLang].WRONG_DATE_OF_VOTING_START)
         return validationFailed()
       } else if( dateStartVoting >= dateEndVoting ) {
-        alert("Голосування не може бути завершено до його початку.")
+        alert(window.localeMsg[window.localeLang].WRONG_DATE_OF_VOTING_COMPLETE)
         return validationFailed()
       }
       var $usr_countbl__select = $('#options__select')
       if($usr_countbl__select.val().length > 0){
         $('#options').val($usr_countbl__select.val().join())
       } else {
-        alert("Вкажіть статуси користувачів, чиї голоси будуть зараховуватися в голосуванні. Потрібно вибрати хоча б один статус.")
+        alert(window.localeMsg[window.localeLang].DEFINE_VOTERS_STATUSES)
         return validationFailed()
       }
     }
@@ -810,7 +810,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     //   if(val = layerTypeView.getLayerType()) {
     //     $('#layer_type').val(val)
     //   } else if(layerTypeView.model && layerTypeView.model.get('required')) {
-    //     alert("Поле 'Категорія повідомлення' є обов'язковим.")
+    //     alert(window.localeMsg[window.localeLang].CATEGORY_REQUIRED)
     //     return validationFailed()
     //   } else {
     //     $('#layer_type').val(null)
@@ -822,7 +822,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       if(val) {
         $('#private_group').val(val)
       } else if(privateView.model && privateView.model.get('required')) {
-        alert("Поле 'Оберіть групу' є обов'язковим.")
+        alert(window.localeMsg[window.localeLang].GROUP_CHOISE_REQUIRED)
         return validationFailed()
       } else {
         $('#private_group').val(null)
@@ -834,11 +834,11 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       if(val.length === 12 && reg.test(val) && val.substring(0,3) === '380') {
       } else if(val.length === 0) {
         if (this.model.get('required') === 'required'){
-          alert("Номер телефону є обов'язковим.")
+          alert(window.localeMsg[window.localeLang].PHONE_NUMBER_REQUIRED)
           return validationFailed()
         }
       } else {
-        alert("Виправте номер телефону.")
+        alert(window.localeMsg[window.localeLang].CORRECT_PHONE_NUMBER)
         return validationFailed()
       }
     }
@@ -921,7 +921,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       }
     })
     promise.fail(function(){
-      alert("Немає зв'язку з сервером.")
+      alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     })
     promise.always(function(){
       $(that.ui.progressWrap).hide()

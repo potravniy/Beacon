@@ -2,7 +2,7 @@ var MsgModel = Backbone.Model.extend({
   defaults: {
     avatar: "//:0",
     user_id: '',
-    text: "Ваше повідомлення може бути першим."
+    text: window.localeMsg[window.localeLang].YOUR_MESSAGE_MAY_BE_FIRST
   }
 })
 var MsgGroup = Backbone.Collection.extend({
@@ -48,7 +48,7 @@ var BeaconsList = Backbone.Collection.extend({
       },
       error: function(){
         $.mobile.loading('hide')
-        alert("Відсутній зв'язок або неполадки на сервері.")
+        alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       }
     })
   },
@@ -66,7 +66,7 @@ var BeaconsList = Backbone.Collection.extend({
         },
         error: function(){
           $.mobile.loading('hide')
-          alert("Відсутній зв'язок або неполадки на сервері.")
+          alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         }
       })
     }
@@ -135,7 +135,7 @@ var MsgView = Backbone.Marionette.ItemView.extend({
     promise.done(function(response){
       console.log("success: ", response)
       if(response.error === 0){
-        alert('Скаргу на повідомлення надіслано.')
+        alert(window.localeMsg[window.localeLang].ABUSE_ON_MESSAGE_SENT)
       }
     });
     promise.fail(function(response){
@@ -237,7 +237,7 @@ var BeaconView = Backbone.Marionette.ItemView.extend({
   onClickAbuse: function (event) {
     event.stopPropagation()
     console.log('button "Abuse" clicked id=' + this.model.get('id'))
-    alert('Скаргу на цю інформацію надіслано.')
+    alert(window.localeMsg[window.localeLang].ABUSE_ON_INFORMATIION_SENT)
   },
   onClickStar: function (event) {
     event.stopPropagation()
@@ -293,7 +293,7 @@ var BeaconView = Backbone.Marionette.ItemView.extend({
     $abuseBtn.attr("data-id", this.model.get('id'))
     $abuseBtn.click(function(){
       console.log('image abuse btn clicked for beacon_id:' + $(this).attr('data-id'))
-      alert('Скаргу на зображення надіслано.')
+      alert(window.localeMsg[window.localeLang].ABUSE_ON_IMAGE_SENT)
       $photoPopup.popup('close')
     })
     $photoPopup.popup({

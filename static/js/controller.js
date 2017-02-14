@@ -26,34 +26,34 @@ function showObjectCreateView(model, options) {
   var titler = ''
   switch (+model.type) {
     case 1:
-      titler = 'Створення голосування'
+      titler = window.localeMsg[window.localeLang].CREATE_VOTING
       break;
     case 2:
-      titler = 'Створення програми'
+      titler = window.localeMsg[window.localeLang].CREATE_PROGRAM
       break;
     case 3:
-      titler = 'Створення проектної пропозиції'
+      titler = window.localeMsg[window.localeLang].CREATE_PROJECT_PROPOSAL
       break;
     case 4:
-      titler = 'Створення проекту'
+      titler = window.localeMsg[window.localeLang].CREATE_PROJECT
       break;
     case 5:
-      titler = 'Створення запиту'
+      titler = window.localeMsg[window.localeLang].CREATE_VOTING
       break;
     case 69:
-      titler = 'Створення маячка "Тут добре"'
+      titler = window.localeMsg[window.localeLang].CREATE_EMOTICON_GOOD
       break;
     case 96:
-      titler = 'Створення маячка "Тут погано"'
+      titler = window.localeMsg[window.localeLang].CREATE_EMOTICON_BAD
       break;
     case 330:
-      titler = 'Створення проекту по бюджету участі'
+      titler = window.localeMsg[window.localeLang].CREATE_PARTICIPATION_BUDGET_PROJECT
       break;
     case 777:
-      titler = 'Створення маячка "Важливо"'
+      titler = window.localeMsg[window.localeLang].CREATE_IMPORTANT
       break;
     case 911:
-      titler = 'Створення маячка "СОС"'
+      titler = window.localeMsg[window.localeLang].CREATE_SOS
       break;
   }
   model = $.extend({}, model, { titler: titler })

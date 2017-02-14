@@ -1,7 +1,7 @@
 "use strict"
 var PopupShareModel = Backbone.Model.extend({
   defaults: {
-    header: "Поширити маячок в"+" :"
+    header: window.localeMsg[window.localeLang].SHARE_BEACON_WITH +" :"
   }
 })
 

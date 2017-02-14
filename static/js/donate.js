@@ -82,9 +82,9 @@ var UserFundslView = Backbone.Marionette.CompositeView.extend({
   },
   initialize: function(){
     this.model = new Backbone.Model({
-      title: 'Виберіть один із своїх фондів' + ':',
+      title: window.localeMsg[window.localeLang].CHOOSE_FUND,
       required: 'required',
-      label: 'Фонди',
+      label: window.localeMsg[window.localeLang].FUNDS,
       inputName: 'fund_id',
       multi: false
     })
@@ -118,7 +118,7 @@ var UserFundslView = Backbone.Marionette.CompositeView.extend({
     })
     var last = [{
       id: 0,
-      optext: 'Платіжна карта'
+      optext: window.localeMsg[window.localeLang].BANK_CARD
     }]
     this.collection = new Backbone.Collection( _.union(first, fundsArray, last) )
   },
@@ -142,13 +142,13 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
   templateHelpers: function(){
     switch (+this.model.get('type')) {
       case 2:
-        return {subtitle: "на програму"+' '}
+        return {subtitle: window.localeMsg[window.localeLang].ON_PROGRAMM +' '}
       case 3:
-        return {subtitle: "на проектну пропозицію"+' '}
+        return {subtitle: window.localeMsg[window.localeLang].ON_PROJECT_PROPOSAL +' '}
       case 4:
-        return {subtitle: "на проект"+' '}
+        return {subtitle: window.localeMsg[window.localeLang].ON_PROJECT +' '}
       case 5:
-        return {subtitle: "на запит"+' '}
+        return {subtitle: window.localeMsg[window.localeLang].ON_REQUEST +' '}
     }
   },
   id: 'donate__wrapper',
@@ -187,9 +187,9 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
   },
   initialize: function(){
     if(window.state.user.id) {
-      this.model.set('header_title', "Пожертвування")
+      this.model.set('header_title', window.localeMsg[window.localeLang].DONATION)
     } else {
-      this.model.set('header_title', "Анонімне пожертвування")
+      this.model.set('header_title', window.localeMsg[window.localeLang].ANONIMOUS_DONATION)
     }
   },
   onBeforeShow: function(){
@@ -197,7 +197,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
         view = null
     model = {
       'required': 'required',
-      'label': 'Сума пожертвування:',
+      'label': window.localeMsg[window.localeLang].DONATION_AMOUNT,
       'realCurrencyOnly': !window.state.user.id
     }
     view = new MoneyView({ model: new Backbone.Model(model) })
@@ -206,7 +206,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
     if (window.state.user.id) {
       model = {
         checkBoxName: 'open',
-        label: 'Пожертвувати анонімно'
+        label: window.localeMsg[window.localeLang].DONATE_ANONIMOUSLY
       }
       this.showChildView('checkbox', new CheckboxView(model))
       this.showChildView('fund', new UserFundslView())
@@ -264,11 +264,11 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
             return fund
           })
           window.showBeaconFullView([{ id: that.model.get('beaconID') }])
-          alert('Дякуємо за Ваш внесок!')
+          alert(window.localeMsg[window.localeLang].THANKS_FOR_DONATE)
         }
       } else {
         showPayByCardView({
-          header: "Пожертвування",
+          header: window.localeMsg[window.localeLang].DONATION,
           html_response: response
         })
       }
@@ -286,19 +286,15 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
         return item.id === formData.fund_id
       })
       if (+fund.saldo < +formData.amount){
-        alert('У цьому фонді менше коштів, ніж Ви хочете пожертвувати.'
-         +'\nВи можете:'
-         +'\n - скористатись банківською карткою,'
-         +'\n - поповнити свій фонд,'
-         +'\n - зменшити суму пожертви.')
+        alert(window.localeMsg[window.localeLang].DONATION_IS_BIGGER_THAN_FUND_AMOUNT)
         return false
       }
     } else if ( window.state.user.id && formData.fund_id === '' ) {
-      alert('Ви не вибрали фонд'+'.')
+      alert(window.localeMsg[window.localeLang].YOU_HAVE_NOT_FUND_CHOOSEN)
       return false
     }
     if( +formData.amount === 0 ) {
-      alert('Ви не вказали суму'+'.')
+      alert(window.localeMsg[window.localeLang].YOU_HAVE_OMITTED_AMOUNT)
       return false
     }
     return true
@@ -309,9 +305,6 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
 })
 
 
-
-  // },
-  // params: {
 
   //     url: "https://gurtom.mobi/sn/create_donate_btn.php?type=2&id=1&amount=1000&curr=980&email=aaa@aaa.aa",
   //     type: "int", // 2 - program, 3 - projet program, 4 - procejt, 5 - request, (b_type || type)

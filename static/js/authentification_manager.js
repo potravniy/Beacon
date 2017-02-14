@@ -36,11 +36,11 @@ function emailAccountActivation(){
     });
     promise.done(function( response ){
       console.log(response[0].msg)
-      alert("Ваш профіль створено!\nУвійти можна через ліве меню -> Login.")
+      alert(window.localeMsg[window.localeLang].PROFILE_CREATED_SUCCESSFULLY)
     })
     promise.fail(function( response ){
       console.log(response[0].error)
-      alert("Ваш профіль не створено!")
+      alert(window.localeMsg[window.localeLang].PROFILE_IS_NOT_CREATED)
     })
     promise.always(function(){
       location.href = 'https://gurtom.mobi'
@@ -65,11 +65,11 @@ function loginDialogInit(){
         showUserInfo()
         Manager.trigger('home')
       } else {
-        alert("Введені облікові дані не дійсні.\nВведіть правильні Ім'я та Пароль.")
+        alert(window.localeMsg[window.localeLang].LOGIN_DATA_ARE_NOT_VALID)
       }
     });
     promise.fail(function(response){
-      alert("Введені облікові дані не дійсні.\nВведіть правильні Ім'я та Пароль.")
+      alert(window.localeMsg[window.localeLang].LOGIN_DATA_ARE_NOT_VALID)
     });
   })
 }
@@ -98,15 +98,15 @@ function logOut(){
 
 function registerDialogInit(){
   console.log("registerDialogInit")
-  $('#registration #login').before("<p class='tip'>Латиницею літери та цифри, 2-64 символи.</p>")
-  $('#registration #email').before("<p class='tip'>Потрібен для завершення реєстрації.</p>")
-  $('#registration #password').before("<p class='tip'>Не менше 6 символів.<br></p>")
-  $('#registration #password-repeat').before("<p class='tip'>Не менше 6 символів.<br></p>")
+  $('#registration #login').before("<p class='tip'>"+ window.localeMsg[window.localeLang].LOGIN_TIP +"</p>")
+  $('#registration #email').before("<p class='tip'>"+ window.localeMsg[window.localeLang].EMAIL_TIP +"</p>")
+  $('#registration #password').before("<p class='tip'>"+ window.localeMsg[window.localeLang].PASSWORD_TIP +"<br></p>")
+  $('#registration #password-repeat').before("<p class='tip'>"+ window.localeMsg[window.localeLang].PASSWORD_TIP +"<br></p>")
   
   $('#registration').submit(function (e) {
     e.preventDefault()
     if(!$('#g-recaptcha-response').val()) {
-      alert("Заповніть поле 'Я не робот'.")
+      alert(window.localeMsg[window.localeLang].FILL_CAPTCHA_ALERT)
       return
     }
     var promise = loggingRequest($(this).serialize(), 4)
@@ -180,10 +180,10 @@ function resetDialogInit(verif_code){
 
   function resetPass() {
     if($pass1.val() !== $pass2.val()) {
-      alert('Паролі не співпадають.')
+      alert(window.localeMsg[window.localeLang].PASSWORDS_DO_NOT_MATCH)
       return
     } else if ($pass1.val().length < 6) {
-      alert('Пароль не може мати менше 6 символів.')
+      alert(window.localeMsg[window.localeLang].PASSWORD_MUST_BE_6_LETTERS_OR_MORE)
       return
     }
     $.mobile.loading('show')
@@ -232,17 +232,17 @@ function confirmVerification(usr_id, verif_code){
   })
   promise.done(function(response){
     if(response.error && response.error===2001){
-      alert("Ваш обліковий запис створено успішно. Ласкаво просимо до спільноти.")
+      alert(window.localeMsg[window.localeLang].LOGIN_CREATED)
     } else if(response.error && response.error===1002){
-      alert("Активація облікового запису не відбулася.\nБудьласка, спробуйте відновити пароль.")
+      alert(window.localeMsg[window.localeLang].ACCOUNT_ACTIVATION_FAILED)
       Manager.trigger('pass_restore')
     } else {
-      alert("Упс... щось пішло не так. Повторіть спробу через деякий час.")
+      alert(window.localeMsg[window.localeLang].FAIL)
       Manager.trigger('home')
     } 
   });
   promise.fail(function(response){
-    alert("Упс... щось пішло не так. Повторіть спробу через деякий час.")
+    alert(window.localeMsg[window.localeLang].FAIL)
     Manager.trigger('home')
   });
   promise.always(function(response){

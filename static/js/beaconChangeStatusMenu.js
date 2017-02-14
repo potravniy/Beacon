@@ -124,7 +124,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         color: "",
         icon: "ui-icon-progress_empty",
         index: 0,
-        text: "Cтатуси відсутні"
+        text: window.localeMsg[window.localeLang].NO_STATUSES
       })
     }
     this.collection = new Backbone.Collection(collection)
@@ -155,7 +155,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         break;
       case 'lendhand':
         console.log('Btn lendhand clicked.')
-        var phone = prompt('Введіть номер телефону у форматі 380XXXXXXXXX:', window.state.user.phone)
+        var phone = prompt(window.localeMsg[window.localeLang].ENTER_YOUR_PHONE_NUMBER_380XXXXXXXXX, window.state.user.phone)
         if (phone) {
           data.phone = phone
           break
@@ -177,7 +177,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         this.exit()
         return
       case 'delete':
-        var r = confirm("Видалити маячок?");
+        var r = confirm(window.localeMsg[window.localeLang].REMOVE_BEACON +"?");
         if (r === true) {
           var that = this
           $.ajax({
@@ -191,15 +191,15 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
               if(response.error === 0){
                 window.state.sendGET(window.state.urlMarkers)
                 if (window.state.singleBeacon) closeSingleBeaconMode()
-                alert('Маячок видалено')
+                alert(window.localeMsg[window.localeLang].BEACON_REMOVED)
                 that.exit()
               } else {
-                alert('Помилка при видаленні маячка')
+                alert(window.localeMsg[window.localeLang].BEACON_REMOVE_ERROR)
                 that.exit()
               }
             },
             error: function(){
-              alert('Помилка при видаленні маячка')
+              alert(window.localeMsg[window.localeLang].BEACON_REMOVE_ERROR)
             }
           })
         }
@@ -229,7 +229,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
           return
         }
         if ( response.error === 3 ) {
-          alert ( 'Невірний формат номеру телефону' )
+          alert (window.localeMsg[window.localeLang].WRONG_PHONE_NUMBER_FORMAT)
           return
         }
         that.setCollection(that.options, response)

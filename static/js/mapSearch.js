@@ -27,13 +27,13 @@ var HashAndIdMapSearchView = MapSearchView.extend({
     switch (options.searchType) {
       case 'hash':
         var model = {
-          placeholder: '#хеш-тег',
+          placeholder: window.localeMsg[window.localeLang].HASH_TAG,
           inputType: 'text'
         }
         break;
       case 'id':
         var model = {
-          placeholder: 'id маячка ( cardID )',
+          placeholder: window.localeMsg[window.localeLang].BEACON_ID,
           inputType: 'text'
         }
         break;
@@ -74,7 +74,7 @@ var HashAndIdMapSearchView = MapSearchView.extend({
 var GoogleMapSearchView = MapSearchView.extend({
   initialize: function(){
     var model = {
-      placeholder: 'адреса чи місце на карті',
+      placeholder: window.localeMsg[window.localeLang].ADDRESS_OR_PLACE_ON_MAP,
       inputType: 'text'
     }
     model.value = '' 

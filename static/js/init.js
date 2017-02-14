@@ -108,6 +108,17 @@ $.ajax({
   }
 })
 
+var data = {}
+data[window.localeMsg[window.localeLang].VOTING] = '1'
+data[window.localeMsg[window.localeLang].PROGRAMM] = '2'
+data[window.localeMsg[window.localeLang].PROJECT_PROPOSAL] = '3'
+data[window.localeMsg[window.localeLang].PROJECT] = '4'
+data[window.localeMsg[window.localeLang].REQUEST] = '5'
+data[window.localeMsg[window.localeLang].EMOTICON_GOOD] = '69'
+data[window.localeMsg[window.localeLang].EMOTICON_BAD] = '96'
+data[window.localeMsg[window.localeLang].PARTICIPATIVE_BUDGET] = '330'
+data[window.localeMsg[window.localeLang].IMPORTANT] = '777'
+data[window.localeMsg[window.localeLang].SOS] = '911'
 
 window.Lib = Marionette.Object.extend({
   tagList: function(that) {
@@ -155,18 +166,7 @@ window.Lib = Marionette.Object.extend({
     return doc2.documentElement.textContent
   },
   bType: {
-    _data: {
-      'голосування': '1',
-      'програма': '2',
-      'проектна пропозиція': '3',
-      'проект': '4',
-      'запит': '5',
-      'тут добре': '69',
-      'тут погано': '96',
-      'проект по бюджету участі': '330', 
-      'важливо': '777',
-      'СОС': '911'
-    },
+    _data: data,
     getCode: function(name){
       return window.lib.bType._data[name]
     },
@@ -188,15 +188,16 @@ window.Lib = Marionette.Object.extend({
     else return 'undefined'
   }
 })
+
 window.lib = new window.Lib()
 
 window.state.usrAuthLvl = [  //  Index corresponds to v+index in response JSON.
-  'Авторизовані через електронну пошту',  //  "v0"
-  'Авторизовані через соціальні мережі',
-  "Члени громадських об'єднань",
-  'Співвласники',
-  'Авторизовані через платіж',
-  'Авторизовані через банківську ідентифікацію'
+  window.localeMsg[window.localeLang].AUTH_WITH_EMAIL,  //  v0
+  window.localeMsg[window.localeLang].AUTH_WITH_SOCIAL_NET,
+  window.localeMsg[window.localeLang].CIVIL_ORGS_MEMBERS,
+  window.localeMsg[window.localeLang].COOWNERS,
+  window.localeMsg[window.localeLang].AUTH_WITH_PAYMENT,
+  window.localeMsg[window.localeLang].AUTH_WITH_BANK_ID
 ]
 window.state.listMenu = [
   { b_type: "911",
@@ -283,7 +284,7 @@ window.state.listMenu = [
 
 var btnsCopyDel = [
   {
-    text: 'Скопіювати до себе',
+    text: window.localeMsg[window.localeLang].COPY_TO_ME,
     className: 'copy',
     isAvailable: function(options){
       var full = options.full && options.full.length > 0
@@ -292,7 +293,7 @@ var btnsCopyDel = [
     }
   },
   {
-    text: 'Видалити маячок',
+    text: window.localeMsg[window.localeLang].REMOVE_BEACON,
     className: 'delete',
     isAvailable: function(options){
       return window.state.user.id === options.author_id && (options.b_status.join() === "0,0,0,0" || options.b_status.join() === "1,0,0,0")
@@ -307,12 +308,12 @@ window.state.statusList.SOS = [
     icon: 'ui-icon-progress_empty',
     text: [
       ' ',
-      'Очікує на перевірку',
-      'Прийнято до перевірки'
+      window.localeMsg[window.localeLang].VERIFICATION_EXPECTED,
+      window.localeMsg[window.localeLang].VERIFICATION_TAKEN
     ],
     btns: [
       {
-        text: 'Прийняти до перевірки',
+        text: window.localeMsg[window.localeLang].TAKE_VERIFICATION,
         className: 'verify',
         chngTo: 1,
         isAvailable: function(options){
@@ -325,13 +326,13 @@ window.state.statusList.SOS = [
     bStatusIndex: 1,
     icon: 'ui-icon-progress_one',
     text: [
-      'Спростовано',
-      'Очікує на підтверження',
-      'Підтверджено'
+      window.localeMsg[window.localeLang].DISPROVEN,
+      window.localeMsg[window.localeLang].CONFIRMATION_EXPECTED,
+      window.localeMsg[window.localeLang].CONFIRMED
     ],
     btns: [
       {
-        text: 'Підтвердити',
+        text: window.localeMsg[window.localeLang].CONFIRM,
         className: 'confirm',
         chngTo: 1,
         isAvailable: function(options){
@@ -339,7 +340,7 @@ window.state.statusList.SOS = [
         }
       },
       {
-        text: 'Спростувати',
+        text: window.localeMsg[window.localeLang].DISPROVE,
         className: 'disprove',
         chngTo: -1,
         isAvailable: function(options){
@@ -353,12 +354,12 @@ window.state.statusList.SOS = [
     icon: 'ui-icon-progress_two',
     text: [
       ' ',
-      'Очікує на допомогу',
-      'Допомогу запропоновано'
+      window.localeMsg[window.localeLang].WAITS_FOR_HELP,
+      window.localeMsg[window.localeLang].HELP_PROPOSED
     ],
     btns: [
       {
-        text: 'Запропонувати свою допомогу',
+        text: window.localeMsg[window.localeLang].PROPOSE_MY_HELP,
         className: 'lendhand',
         chngTo: 1,
         isAvailable: function(options){
@@ -372,12 +373,12 @@ window.state.statusList.SOS = [
     icon: 'ui-icon-progress_full',
     text: [
       ' ',
-      'Очікує завершення',
-      'Завершено'
+      window.localeMsg[window.localeLang].EXPECTS_COMPLETION,
+      window.localeMsg[window.localeLang].COMPLETED
     ],
     btns: [
       {
-        text: 'Завершити',
+        text: window.localeMsg[window.localeLang].COMPLETE,
         className: 'complete',
         chngTo: 1,
         isAvailable: function(options, b_st){
@@ -397,12 +398,12 @@ window.state.statusList.infoAndEvent = [
     icon: 'ui-icon-progress_empty',
     text: [
       '',
-      'Очікує на початок',
-      'Розпочато'
+      window.localeMsg[window.localeLang].EXPECTS_START,
+      window.localeMsg[window.localeLang].STARTED
     ],
     btns: [
       {
-        text: 'Розпочати',
+        text: window.localeMsg[window.localeLang].START,
         className: 'start',
         chngTo: 1,
         isAvailable: function(options, b_st){
@@ -416,12 +417,12 @@ window.state.statusList.infoAndEvent = [
     icon: 'ui-icon-progress_full',
     text: [
       '',
-      'Очікує завершення',
-      'Завершено'
+      window.localeMsg[window.localeLang].EXPECTS_COMPLETION,
+      window.localeMsg[window.localeLang].COMPLETED
     ],
     btns: [
       {
-        text: 'Завершити',
+        text: window.localeMsg[window.localeLang].COMPLETE,
         className: 'complete',
         chngTo: 1,
         isAvailable: function(options, b_st){
@@ -444,9 +445,9 @@ window.state.statusList.projPropAndProjectAndRequest = [
     bStatusIndex: 0,
     icon: 'ui-icon-progress_empty',
     text: [
-      'Кошти не зібрано',
-      'Збір коштів',
-      'Кошти зібрано'
+      window.localeMsg[window.localeLang].AMOUNT_NOT_COLLECTED,
+      window.localeMsg[window.localeLang].AMOUNT_COLLECTION,
+      window.localeMsg[window.localeLang].AMOUNT_COLLECTED
     ]
   },
   {
@@ -454,8 +455,8 @@ window.state.statusList.projPropAndProjectAndRequest = [
     icon: 'ui-icon-progress_one',
     text: [
       ' ',
-      'Визначення НКО для адміністрування',
-      'НКО для адміністрування визначено'
+      window.localeMsg[window.localeLang].DETERMINING_NCO_FOR_ADMINISTRATION,
+      window.localeMsg[window.localeLang].NCO_FOR_ADMINISTRATION_DETERMINED
     ]
   },
   {
@@ -463,12 +464,12 @@ window.state.statusList.projPropAndProjectAndRequest = [
     icon: 'ui-icon-progress_two',
     text: [
       ' ',
-      'Переведення коштів на НКО',
-      'Кошти на Нко переведено'
+      window.localeMsg[window.localeLang].FUNDS_TRANFERRING_TO_NCO,
+      window.localeMsg[window.localeLang].FUNDS_TRANFERRED_TO_NCO
     ],
     btns: [
       {
-        text: 'Перевести кошти НКО',
+        text: window.localeMsg[window.localeLang].TRANFER_FUNDS_TO_NCO,
         className: 'transfer',
         chngTo: 1,
         isAvailable: function(){
@@ -482,12 +483,12 @@ window.state.statusList.projPropAndProjectAndRequest = [
     icon: 'ui-icon-progress_full',
     text: [
       ' ',
-      'Очікує завершення',
-      'Завершено'
+      window.localeMsg[window.localeLang].EXPECTS_COMPLETION,
+      window.localeMsg[window.localeLang].COMPLETED
     ],
     btns: [
       {
-        text: 'Завершити',
+        text: window.localeMsg[window.localeLang].COMPLETE,
         className: 'complete',
         chngTo: 1,
         isAvailable: function(options){
@@ -511,15 +512,6 @@ window.state.statusList.partBudg_Vot_WeightVot = [
     btns: btnsCopyDel
   }
 ]
-
-
-
-
-
-
-
-
-
 
 function getSpheresForVoting(){
   $.ajax({
@@ -595,7 +587,7 @@ setTimeout(function(){
   $('.warning').remove()
 }, 4000)
 
-function makeLangJson(){
+function updateLocaleFilesWithNewCommonMsg(){
   window.old_localeMsg = {}
   var oReq = new XMLHttpRequest();
   oReq.addEventListener("load", function() {
@@ -630,21 +622,29 @@ function makeLangJson(){
     if(!window.old_localeMsg.en || !window.old_localeMsg.uk || !window.old_localeMsg.ru || !window.commonMsg){
       return
     }
-    var step1 = _.pick(window.commonMsg, function(val, key){
-      return _.isObject(val)
-    })
-    var step2 = _.mapObject(step1, function(val, key){
-      return val.msg
-    })
+    window.normalisedCommonMsg = _.reduce(window.commonMsg, function( memo, val, key){
+      if(val.msg) memo[key] = val.msg
+      return memo
+    }, {})
+    console.log('commonMsg.msg.length=', Object.keys(window.normalisedCommonMsg).length)
     var langs = ['en', 'uk', 'ru']
     
     window.new_localeMsg = _.mapObject(langs, function(lang){
       var oldLocale =_.clone(window.old_localeMsg[lang][lang])
       var obj = {}
-      obj[lang] = $.extend({}, step2, oldLocale)
-      console.log(obj)
+      obj[lang] = $.extend({}, window.normalisedCommonMsg, _.pick(oldLocale, Object.keys(window.normalisedCommonMsg)))
+      console.log('local_'+ lang +'.json.length=', Object.keys(obj[lang]).length)
+      console.log('Omitted: ', _.omit(oldLocale, Object.keys(window.normalisedCommonMsg)))
+      download(obj, 'local_'+ lang +'.json');
       return obj
     })
+    function download(text, name) {
+      var a = document.createElement("a");
+      var file = new Blob([JSON.stringify(text)], {type: 'application/json'});
+      a.href = URL.createObjectURL(file);
+      a.download = name;
+      a.click();
+    }
   }
 
 }

@@ -182,8 +182,7 @@ function normalizeInput(date) {
   if(date.indexOf('.') !== -1) temp = date.split('.')
   else if(date.indexOf('-') !== -1) temp = date.split('-')
   else if(date.indexOf('/') !== -1) temp = date.split('/')
-  else alert( 'Будь-ласка, у полі "Дата" між днями, місяцем та роком '
-    + 'використовуте такі розділювачі, як: "." або "-" або "/".' )
+  else alert(window.localeMsg[window.localeLang].USE_FOLLOWING_SEPARATORS)
   if(temp[temp.length - 1].length > 2) res = temp.reverse().join('-')
   else res = temp.join('-')
   return res

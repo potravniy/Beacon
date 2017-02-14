@@ -57,6 +57,10 @@
 
   "file2": "beaconBriefCardsList.js",
   
+  "YOUR_MESSAGE_MAY_BE_FIRST": {
+    "where": "MsgModel line 5",
+    "msg": "Ваше повідомлення може бути першим."
+  },
   "ABUSE_ON_MESSAGE_SENT": {
     "where": "MsgView onClickBtn promise.done alert line 138",
     "msg": "Скаргу на повідомлення надіслано."
@@ -136,6 +140,22 @@
   "PROGRAM_ID_REQUIRED": {
     "where": "ObjectCreateView verifyInputs alert line 778",
     "msg": "Поле 'Виберіть ID програми' є обов'язковим."
+  },
+  "WRONG_DATE_OF_SUPPORT_COMPLETE": {
+    "where": "this.usrCountbl.currentView alert line 790",
+    "msg": "Дата завершення збору голосів підтримки не може бути у минулому."
+  },
+  "WRONG_DATE_OF_VOTING_START": {
+    "where": "ObjectCreateView verifyInputs alert line 793",
+    "msg": "Голосування не може бути розпочато до дати завершення збору голосів підтримки."
+  },
+  "WRONG_DATE_OF_VOTING_COMPLETE": {
+    "where": "ObjectCreateView verifyInputs alert line 796",
+    "msg": "Голосування не може бути завершено до його початку."
+  },
+  "DEFINE_VOTERS_STATUSES": {
+    "where": "ObjectCreateView verifyInputs alert line 803",
+    "msg": "Вкажіть статуси користувачів, чиї голоси будуть зараховуватися в голосуванні. Потрібно вибрати хоча б один статус."
   },
   "CATEGORY_REQUIRED": {
     "where": "ObjectCreateView verifyInputs alert line 813",
@@ -298,7 +318,7 @@
     "msg": "Ця функція поки що недоступна."
   },
   "FOR_THIS_SUBJECT_AMOUNT_COLLECTED": {
-    "where": "Objects2_5View onBeforeShow line 664",
+    "where": "Objects2_5View onBeforeShow line 681, 735",
     "msg": [
       "unused",
       "unused",
@@ -549,6 +569,14 @@
   "CHOOSE_TYPE": {
     "where": "OptionForNativeSelectComponent initialize line 49; ChangeGovMenuItemView onBeforeShow name line 94",
     "msg": "Оберіть тип"
+  },
+  "FILL_FIELD_LAYER_NAME": {
+    "where": "ChangeGovMenuView save line 210",
+    "msg": "Заповніть поле 'Додайте назву шару'"
+  },
+  "CHOOSE_LAYER_TYPE": {
+    "where": "ChangeGovMenuView save line 213",
+    "msg": "Не обрано тип шару"
   },
   "FOLLOWING_NOT_EMPTY_LAYERS_WERE_NOT_ERASED": {
     "where": "ChangeGovMenuView send notErased.length line 246",

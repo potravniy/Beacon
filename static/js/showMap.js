@@ -86,7 +86,7 @@ window.onload = function() {
 	window.mapListenerClick = undefined
 	window.state.oReq.addEventListener("load", renderMarkers)
 	window.state.oReq.addEventListener("error", function(){
-		alert("Відсутній зв'язок або неполадки на сервері.")
+		alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
 	})
 	mapInit()
 	window.state.map.off = function(){
@@ -170,7 +170,7 @@ function renderMarkers() {
 	try {
 		var response = JSON.parse(this.responseText)
 	} catch (error) {
-		alert("Помилка на сервері.")
+		alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
 		throw new Error("Invalid JSON received from "+ this.responseURL)
 	}
 	if(window.state.map.myPosition) {
