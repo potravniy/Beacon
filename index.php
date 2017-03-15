@@ -1,14 +1,14 @@
 <?php
 
+//test/
+
 if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
   {
     $l_lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
   }else{
     $l_lang = 'en';
   }
-
-require_once('./lang_'.$l_lang.'.php');
-
+require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
 ?>
 
 <!doctype html>
@@ -16,6 +16,7 @@ require_once('./lang_'.$l_lang.'.php');
   <head>
     <!--<base href="https://gurtom.mobi/">-->
     <meta charset="utf-8">
+    <link rel="manifest" href="/manifest.json">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="<?php echo META_DESCRIPTION ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,67 +25,49 @@ require_once('./lang_'.$l_lang.'.php');
 
     <!-- Add to homescreen for Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" sizes="192x192" href="./static/img/android-desktop.png">
+    <link rel="icon" sizes="192x192" href="/static/img/android-desktop.png">
 
     <!-- Add to homescreen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="<?php echo BEACON ?>">
-    <link rel="apple-touch-icon-precomposed" href="./static/img/android-desktop.png">
+    <link rel="apple-touch-icon-precomposed" href="/static/img/android-desktop.png">
 
     <!-- Tile icon for Win8 (144x144 + tile color) -->
-    <meta name="msapplication-TileImage" content="./static/img/ms-touch-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="/static/img/ms-touch-icon-144x144.png">
     <meta name="msapplication-TileColor" content="#3372DF">
 
-    <link rel="shortcut icon" href="./static/img/favicon.ico">
+    <link rel="shortcut icon" href="/static/img/favicon.ico">
 
-    <!--<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
-    
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Intl.~locale.en,Intl.~locale.ru,Intl.~locale.uk"></script>
-    <script src="./static/js/vendor/intl-messageformat.min.js"></script>
-    <script src="./static/js/vendor/locale-data/en.js"></script> <!-- from https://github.com/yahoo/intl-messageformat/tree/master/dist/locale-data -->
-    <script src="./static/js/vendor/locale-data/uk.js"></script>
-    <script src="./static/js/vendor/locale-data/ru.js"></script>
+    <script src="/static/js/vendor/intl-messageformat.min.js"></script>
+    <!-- from https://github.com/yahoo/intl-messageformat/tree/master/dist/locale-data -->
+    <script src="<?php echo "/static/js/vendor/locale-data/".$l_lang.".js"; ?>"></script>
     <script>
       (function(){
-        var source = null
-        if( Array.isArray(navigator.languages) && navigator.languages.length > 0 ) source = navigator.languages
-        else if( navigator.language ) source = navigator.language
-        else if( navigator.browserLanguage ) source = navigator.browserLanguage
-        var msg = new IntlMessageFormat('', source)
-        window.localeLang = msg.resolvedOptions().locale
-        var src = "./static/js/lang/local_en.json"
-        if ( window.localeLang === 'uk' ) src = "./static/js/lang/local_uk.json"
-        if ( window.localeLang === 'ru' ) src = "./static/js/lang/local_ru.json"
+        var src = "<?php echo "/static/js/lang/local_".$l_lang.".json"; ?>"
         var oReq = new XMLHttpRequest();
         oReq.addEventListener("load", function() {
+          if(JSON.parse(this.response).error){
+            alert(JSON.parse(this.response).error)
+            return
+          }
           window.localeMsg = JSON.parse( this.responseText )
+          window.localeLang = "<?php echo $l_lang; ?>"
         });
         oReq.open("GET", src, false);
         oReq.send();
-
-        var reg = null, lang
-        if ( Array.isArray(source) ) source = source[0]
-        if ( source.length > 4 && source.indexOf('-') > -1 ) {
-          lang = source.split('-')[0]
-          reg = source.split('-')[1]
-        } else {
-          lang = source.substr(0, 2)
-        }
-        var goog = document.createElement("script")
-        goog.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD9GrBwQ_NFlEMzjrAkE4KzsZcTsqf0_h8&language="
-        + lang + "&region=" + reg + "&libraries=places"
-        document.head.appendChild(goog)
       })()
     </script>
+    <script src="<?php echo "https://maps.googleapis.com/maps/api/js?key=AIzaSyD9GrBwQ_NFlEMzjrAkE4KzsZcTsqf0_h8&language=".$l_lang."&libraries=places"; ?>"></script>
 
     <style>
       h1 {display: none;}
       a {display: none;}
       .page {display: none;}
     </style>
-    <link rel="stylesheet" href="./static/css/vendor/jquery.mobile-1.4.5_modified.css">
-    <link rel="stylesheet" href="./static/css/beacon.css">
+    <link rel="stylesheet" href="/static/css/vendor/jquery.mobile-1.4.5_modified.css">
+    <link rel="stylesheet" href="/static/css/beacon.css">
 
   </head>
   <body>
@@ -112,12 +95,16 @@ require_once('./lang_'.$l_lang.'.php');
             <a href="#favorite__list" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-map" class="ui-btn ui-corner-all ui-icon-star-empty ui-btn-icon-notext ui-btn-inline favorite-button"><?php echo FAVORITE ?></a>
           </div>
           <div class="ui-nodisc-icon buttons-wrapper lower-left">
-            <a id="create_btn" href="#" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline"><?php echo ADD ?></a><br>
+            <a id="create_btn" href="#" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add-beacon ui-btn-icon-notext ui-btn-inline"><?php echo ADD ?></a><br>
             <a href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline"><?php echo SHARE ?></a>
           </div>
         </div> <!-- /beacons-map__the-map -->
         
         <div id="beacons-map__the-beacons">
+          <div id="cards-region"></div>
+          <div id="clipboard-region">
+            Clipboard
+          </div>
           <!--<p>Place for Beacon Cards or Beacon Create.</p>-->
         </div>    <!-- /beacons-map__the-beacons -->
         
@@ -189,13 +176,13 @@ require_once('./lang_'.$l_lang.'.php');
         </div>
         <ul class="menu">
           <li>
-            <a class="main-menu ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#menu-page"><?php echo MAIN_MENU ?></a>
+            <a class="main-menu ui-link" data-ajax="false" data-link = "menu-page" href="/main.html#menu-page"><?php echo MAIN_MENU ?></a>
           </li>
           <li>
-            <a class="activities menu-icon-activities ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#my-activities-page"><?php echo MY_ACTIVITIES ?></a>
+            <a class="activities menu-icon-activities ui-link" data-ajax="false" data-link = "menu-page" href="/main.html#my-activities-page"><?php echo MY_ACTIVITIES ?></a>
           </li>
           <li>
-            <a class="menu-icon-tasks ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#my-tasks-page"><?php echo MY_TASKS ?></a>
+            <a class="menu-icon-tasks ui-link" data-ajax="false" data-link = "menu-page" href="/main.html#my-tasks-page"><?php echo MY_TASKS ?></a>
           </li>
           <li>
             <a class="profile menu-icon-profile" data-ajax="false" href="#"><?php echo MY_PROFILE ?></a>
@@ -204,7 +191,7 @@ require_once('./lang_'.$l_lang.'.php');
             &nbsp;
           </li>
           <li>
-            <a class="menu-icon-help ui-link" data-ajax="false" data-link = "menu-page" href="./main.html#help"><?php echo HELP ?></a>
+            <a class="menu-icon-help ui-link" data-ajax="false" data-link = "menu-page" href="/main.html#help"><?php echo HELP ?></a>
           </li>
           <li class="login">
             <a class="menu-icon-login ui-link" data-ajax="false" data-link = "menu-page" href="#"><?php echo LOGIN ?></a>
@@ -227,7 +214,7 @@ require_once('./lang_'.$l_lang.'.php');
             </ul>
           </div>
           <div id="user_rating" class="scrollable_content">
-            <h4 class="filter_title"><?php echo AUTH_TITLE ?>:</h4>
+            <h4 class="filter_title"><?php echo AUTH_TITLE ?> </h4>
             <ul data-role="listview" class="listview">
               <li>
                 <input type="checkbox" data-role="flipswitch" name="all" id="all" data-on-text="" data-off-text="" data-wrapper-class="custom-size-flipswitch" checked>
@@ -382,9 +369,9 @@ require_once('./lang_'.$l_lang.'.php');
           <div class="ui-block-b">
             <div class="custom-border-radius">
               <h5><?php echo ENTER_SOCIAL ?></h5>
-              <a href="./sn/gp.php" data-ajax="false" class="gp ui-btn ui-icon-google_plus ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Google+</a>
-              <a href="./sn/fb.php" data-ajax="false" class="ui-btn ui-icon-facebook ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Facebook</a>
-              <a href="./sn/li.php" data-ajax="false" class="ui-btn ui-icon-linkedin ui-btn-icon-notext ui-nodisc-icon ui-corner-all">LinkedIn</a>
+              <a href="/sn/gp.php" data-ajax="false" class="gp ui-btn ui-icon-google_plus ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Google+</a>
+              <a href="/sn/fb.php" data-ajax="false" class="ui-btn ui-icon-facebook ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Facebook</a>
+              <a href="/sn/li.php" data-ajax="false" class="ui-btn ui-icon-linkedin ui-btn-icon-notext ui-nodisc-icon ui-corner-all">LinkedIn</a>
             </div>
             <a href="#" class="registration ui-btn ui-input-btn ui-corner-all ui-shadow"><?php echo QUESTION_FIRST_TIME ?></a>
             <a href="#" class="restore_pass ui-btn ui-input-btn ui-corner-all ui-shadow"><?php echo QUESTION_RESTORE_PASSWORD ?></a>
@@ -720,11 +707,11 @@ require_once('./lang_'.$l_lang.'.php');
         </div>
         <div data-role="navbar" class="navbar">
           <ul >
-            <li><button data-icon="share" class="share ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo SHARE ?></button></li>
-            <li><button data-icon="link" class="link ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo LINK ?></button></li>
-            <li><button data-icon="error_outline" class="error ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo DISPROVE ?></button></li>
-            <li><button data-icon="star-<% if (+favorite) { %>full<% } else { %>empty<% } %>" class="star ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo ADD_TO_FAVORITE ?></button></li>
-            <li><button data-icon="add" class="add_linked ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a"><?php echo ADD_NEW ?></button></li>
+            <li><button class="share ui-icon-share ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo SHARE ?></button></li>
+            <li><button class="link ui-icon-<%-link_icon%> ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo LINK ?></button></li>
+            <li><button class="error ui-icon-error_outline ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo DISPROVE ?></button></li>
+            <li><button class="star ui-icon-star-<% if (+favorite) { %>full<% } else { %>empty<% } %> ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo ADD_TO_FAVORITE ?></button></li>
+            <li><button class="add_linked ui-icon-add ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo ADD_NEW ?></button></li>
           </ul>
         </div>
         <div id="chat_region"></div>
@@ -927,21 +914,6 @@ require_once('./lang_'.$l_lang.'.php');
       </td>
     </script>
 
-    <script id="map_view" type="text/template">
-      <div id="the-map"></div>
-      <label for="map_search" class="ui-hidden-accessible map_search"></label>
-      <input data-wrapper-class="wrapper_map_search" type="search" name="map_search" id="map_search" placeholder="<?php echo MAP_SEARCH_PLACEHOLDER ?>">
-      <div class="ui-nodisc-icon buttons-wrapper upper-right unused">
-        <a href="#" id="near" class="ui-btn ui-corner-all ui-icon-nearby ui-btn-icon-notext ui-btn-inline"><?php echo NEARBY ?></a><br>
-        <a href="#" id="location" class="ui-btn ui-corner-all ui-icon-my_location ui-btn-icon-notext ui-btn-inline"><?php echo LOCATION ?></a><br>
-        <a href="#favorite__list" data-rel="popup" data-transition="slideup" data-position-to="#beacons-map__the-map" class="ui-btn ui-corner-all ui-icon-star-empty ui-btn-icon-notext ui-btn-inline favorite-button"><?php echo FAVORITE ?></a>
-      </div>
-      <div class="ui-nodisc-icon buttons-wrapper lower-left">
-        <a id="create_btn" href="#" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add ui-btn-icon-notext ui-btn-inline"><?php echo ADD ?></a><br>
-        <a id="share" href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline"><?php echo SHARE ?></a>
-      </div>
-    </script>
-
     <script id="create_beacon__geo_tpl" type="text/template">
       <div data-role="header" class="header">
         <a href="#" class="settings ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-settings ui-btn-icon-notext ui-btn-left ui-nodisc-icon"><?php echo CLOSE ?></a>
@@ -1131,6 +1103,33 @@ require_once('./lang_'.$l_lang.'.php');
       </div>
     </script>
 
+    <script id="clipboard__tpl" type="text/template">
+      <% if( on_supply == 0 && on_demand == 0 || isExpanded) { %>
+        <div class="clipboard_title"><%- clipboardTitle %></div>
+        <% if(isExpanded){ %>
+          <div class="ui-btn-left ui-icon-close ui-btn-icon-notext ui-btn-inline"></div>
+        <% } %>
+      <% } %>
+      <% if( on_supply > 0 || on_demand > 0 || isExpanded) { %>
+        <div class="demand">
+          <span class="demand_label"><%- demand_title %>: </span>
+          <span class="collected"><%- on_demand %></span>
+          <% if( on_demand > 0 ) { %>
+            <a href="#" aria-hidden="true" class="demand_clear ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden ui-btn-inline ui-mini" title="<?php echo CLEAR_TEXT ?>"><?php echo CLEAR_TEXT ?></a>
+          <% } %>
+        </div>
+        <div class="supply">
+          <span class="supply_label"><%- supply_title %>: </span>
+          <span class="collected"><%- on_supply %></span>
+          <% if( on_supply > 0 ) { %>
+            <a href="#" aria-hidden="true" class="supply_clear ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden ui-btn-inline ui-mini" title="<?php echo CLEAR_TEXT ?>"><?php echo CLEAR_TEXT ?></a>
+          <% } %>
+        </div>
+      <% } %>
+      <div class="clipboard_collection ui-grid-a my-responsive ui-nodisc-icon">
+        <div class="clipboard__full-view empty"></div>
+      </div>
+    </script>
 
     <script>
       (function(){
@@ -1144,9 +1143,9 @@ require_once('./lang_'.$l_lang.'.php');
     </script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-    <script src="./static/js/vendor/json2.js"></script>
-    <script src="./static/js/vendor/underscore-min.js"></script>
-    <script src="./static/js/vendor/jquery-1.11.1.min.js"></script>
+    <script src="/static/js/vendor/json2.js"></script>
+    <script src="/static/js/vendor/underscore-min.js"></script>
+    <script src="/static/js/vendor/jquery-1.11.1.min.js"></script>
     <script>
       $(document).on("mobileinit", function () {
         $.mobile.hashListeningEnabled = false;
@@ -1155,28 +1154,29 @@ require_once('./lang_'.$l_lang.'.php');
         $.mobile.ajaxEnabled=false;
       });
     </script>
-    <script src="./static/js/vendor/jquery.mobile-1.4.5.js"></script>
-    <script src="./static/js/vendor/backbone.js"></script>
-    <script src="./static/js/vendor/backbone.marionette.js"></script>
-    <script src="./static/js/showMap.js"></script>
-    <script src="./static/js/init.js" async defer></script>
-    <script src="./static/js/jQM_tweaks.js"></script>
-    <script src="./static/js/filtersService.js"></script>
-    <script src="./static/js/router.js"></script>
-    <script src="./static/js/beaconBriefCardsList.js"></script>
-    <script src="./static/js/beaconsCreatePopupMenu.js"></script>
-    <script src="./static/js/beaconCreateView.js"></script>
-    <script src="./static/js/beaconFullView.js"></script>
-    <script src="./static/js/govEditBeaconCreatePopupMenu.js"></script>
-    <script src="./static/js/beaconChangeStatusMenu.js"></script>
-    <script src="./static/js/payByCardPopup.js"></script>
-    <script src="./static/js/donate.js"></script>
-    <script src="./static/js/controller.js"></script>
-    <script src="./static/js/authentification_manager.js"></script>
-    <script src="./static/js/fourthFilter.js"></script>
-    <script src="./static/js/shareInSocialNet.js"></script>
-    <script src="./static/js/mapSearch.js"></script>
-    <script src="./static/js/profilePopup.js"></script>
+    <script src="/static/js/vendor/jquery.mobile-1.4.5.js"></script>
+    <script src="/static/js/vendor/backbone.js"></script>
+    <script src="/static/js/vendor/backbone.marionette.js"></script>
+    <script src="/static/js/showMap.js"></script>
+    <script src="/static/js/init.js"></script>
+    <script src="/static/js/jQM_tweaks.js"></script>
+    <script src="/static/js/filtersService.js"></script>
+    <script src="/static/js/router.js"></script>
+    <script src="/static/js/beaconBriefCardsList.js"></script>
+    <script src="/static/js/beaconsCreatePopupMenu.js"></script>
+    <script src="/static/js/beaconCreateView.js"></script>
+    <script src="/static/js/beaconFullView.js"></script>
+    <script src="/static/js/govEditBeaconCreatePopupMenu.js"></script>
+    <script src="/static/js/beaconChangeStatusMenu.js"></script>
+    <script src="/static/js/payByCardPopup.js"></script>
+    <script src="/static/js/donate.js"></script>
+    <script src="/static/js/clipboard.js"></script>
+    <script src="/static/js/controller.js"></script>
+    <script src="/static/js/authentification_manager.js"></script>
+    <script src="/static/js/fourthFilter.js"></script>
+    <script src="/static/js/shareInSocialNet.js"></script>
+    <script src="/static/js/mapSearch.js"></script>
+    <script src="/static/js/profilePopup.js"></script>
 
   </body>
 </html>

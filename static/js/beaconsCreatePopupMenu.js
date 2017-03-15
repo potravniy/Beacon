@@ -54,11 +54,21 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
   },
   initialize: function(options){
     var collection = []
+    var isParentDemand = _.isEmpty(options)
+      ? null
+      : window.lib.isDemand(options)
     if( window.getListMenuOrg.isAvailable() ) {
       collection = $.extend([], window.state.listMenuOrg)
     }
     else {
-      collection = $.extend([], window.state.listMenu)
+      collection = _.filter(window.state.listMenu, function(it){
+        var getIt = _.isNull(isParentDemand)
+          ? true
+          : isParentDemand
+            ? !window.lib.isDemand(it)
+            : window.lib.isDemand(it)
+        return getIt
+      })
     }
     if ( options.b_id && options.type ){
       this.canCopy = _.some(collection, function(item){
@@ -67,17 +77,7 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
     } else {
       this.canCopy = true
     }
-    // if( !(options.parent_type && options.parent_type === '2') ) {
-    //   collection = _.filter(collection, function(item) {
-    //     return item.type !== '3';   //  Project proposal can be created as object linked to Program object only/
-    //   })
-    // }
-
-    // collection = _.map(collection, function(item){
-    //   return $.extend(item, options)
-    // })
     this.collection.set(collection)
-    // window.mainRegion.showMap()
   },
   onDomRefresh: function(){
     if( state.user.gov === '1' || state.user.nco === '1' ) {

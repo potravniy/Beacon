@@ -245,25 +245,27 @@ function getListOrgs() {
       dataType: "json",
       crossDomain: true,
       success: function ( response ) {
+        if(response.error){
+          alert(window.localeMsg[window.localeLang][response.error])
+          return
+        }
         if(response.length === 0){
-          console.log('listOrgs is empty')
-        } else if(response.length>1){
+          alert(window.localeMsg[window.localeLang].FAIL)
+        } else {
           window.state.listOrgs = response
           window.showFourthFilter()
           window.Manager.trigger('state_update')
-        } else {
-          console.log( 'listOrgs is not received, error:'+ response[0].error )
         }
       },
       error: function(){
-        console.log('listOrgs request error')
+        alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       }
     })
   }
 }
 
 function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft, ocp, oc, op, lcp, lc, lp) {
-  console.log('filterViewUpdateFromDataURL')
+  // console.log('filterViewUpdateFromDataURL')
   $('#beacon_status').off()
   $('#user_rating').off()
   $('#actions input').off()

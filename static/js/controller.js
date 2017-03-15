@@ -2,20 +2,26 @@
 
 //  Controller
 
-window.rightRegion = new Backbone.Marionette.Region({el: "#beacons-map__the-beacons"})
+window.cardsRegion = new Backbone.Marionette.Region({el: "#cards-region"})
 window.createBeaconMenuRegion = new Backbone.Marionette.Region({el: "#create_beacon__geo_region"})
 window.rightPopupRegion = new Backbone.Marionette.Region({el: "#right_popup__region"})
 window.fourthFilterRegion = new Backbone.Marionette.Region({el: "#categories"})
 window.mapSearchRegion = new Backbone.Marionette.Region({el: "#map_search_container"})
 window.profileRegion = new Backbone.Marionette.Region({el: ".profile_page__wrapper"})
+window.clipboardRegion = new Backbone.Marionette.Region({el: "#clipboard-region"})
 window.showBeaconsListView()
+window.showClipboard()
 
 function showBeaconsListView() {
   window.beaconsList = new BeaconsList()
   window.beaconsListView = new BeaconListView({
-    collection: beaconsList,
+    collection: window.beaconsList,
   });
-  window.rightRegion.show(window.beaconsListView);
+  window.cardsRegion.show(window.beaconsListView);
+}
+function showClipboard() {
+  window.clipboardView = new ClipboardView();
+  window.clipboardRegion.show(window.clipboardView);
 }
 
 function beaconsListGetNewCollection(){
@@ -64,10 +70,10 @@ function showObjectCreateView(model, options) {
     var options = {model: model}
   }
   window.objectCreateView = new ObjectCreateView(options)
-  window.rightRegion.show(objectCreateView);
+  window.cardsRegion.show(objectCreateView);
 }
 
-function showBeaconFullView(param){
+function showBeaconFullView(param, region){
   var model = ( Array.isArray(param) ? param[0] : param )
   window.beaconFullViewModel = new BeaconFullModel(model)
   if( model.hasOwnProperty('full') ) {
@@ -83,8 +89,13 @@ function showBeaconFullView(param){
     })
   }
   function showFullView(){
-    window.beaconFullView = new BeaconFullView({ model: beaconFullViewModel })
-    window.rightRegion.show(window.beaconFullView);
+    window.beaconFullView = new BeaconFullView({
+      model: beaconFullViewModel,
+      region: region
+    })
+    region
+      ? region.show(window.beaconFullView)
+      : window.cardsRegion.show(window.beaconFullView)
   }
 }
 
@@ -145,7 +156,7 @@ function closeSingleBeaconMode() {
 function showDonateView(param) {
   window.donateModel = new DonateModel( param )
   window.donateView = new DonateView({ model: window.donateModel })
-  window.rightRegion.show(window.donateView)
+  window.cardsRegion.show(window.donateView)
   console.log('Switch to showDonateView')
 }
 
@@ -165,7 +176,7 @@ function showFourthFilter() {
   window.listOrgCollection = new ListOrgCollection( makeListOrgs() )
   window.fourthFilterView = new FourthFilterView()
   window.fourthFilterRegion.show(window.fourthFilterView)
-  console.log('Switch to fourthFilterView')
+  // console.log('Switch to fourthFilterView')
 }
 
 function checkLoggedInThen(func, args) {

@@ -101,10 +101,14 @@ $.ajax({
   dataType: "json",
   crossDomain: true,
   success: function ( response ) {
+    if(response.error){
+      alert(window.localeMsg[window.localeLang][response.error])
+      return
+    }
     window.state.listNCO = response
   },
   error: function(){
-    console.log('nco request error')
+    alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
   }
 })
 
@@ -176,6 +180,21 @@ window.Lib = Marionette.Object.extend({
       }
       return undefined
     }
+  },
+  isDemand: function(model){
+    var type
+    if(model.get){
+      type = +model.get('b_type') === 1000 || !model.get('b_type')
+        ? model.get('type')
+        : model.get('b_type')
+    } else {
+      type = model.type || model.parent_type
+    }
+    return type > 50
+  },
+  isAuthor: function(model){
+    var options = model.get ? model.attributes : model
+    return window.state.user.id === options.author_id
   },
   getNCObyID: function(id){
     for(var i=0; i<window.state.listNCO.length; i++) {
@@ -288,15 +307,14 @@ var btnsCopyDel = [
     className: 'copy',
     isAvailable: function(options){
       var full = options.full && options.full.length > 0
-      var isNotAuthor = window.state.user.id && window.state.user.id !== options.author_id  
-      return full && isNotAuthor 
+      return full && !window.lib.isAuthor(options)
     }
   },
   {
     text: window.localeMsg[window.localeLang].REMOVE_BEACON,
     className: 'delete',
     isAvailable: function(options){
-      return window.state.user.id === options.author_id && (options.b_status.join() === "0,0,0,0" || options.b_status.join() === "1,0,0,0")
+      return window.lib.isAuthor(options) && (options.b_status.join() === "0,0,0,0" || options.b_status.join() === "1,0,0,0")
     }
   }
 ]
@@ -307,20 +325,20 @@ window.state.statusList.SOS = [
     bStatusIndex: 0,
     icon: 'ui-icon-progress_empty',
     text: [
-      ' ',
-      window.localeMsg[window.localeLang].VERIFICATION_EXPECTED,
-      window.localeMsg[window.localeLang].VERIFICATION_TAKEN
+      window.localeMsg[window.localeLang].DELETED,
+      window.localeMsg[window.localeLang].DRAFT,
+      window.localeMsg[window.localeLang].NEW
     ],
-    btns: [
-      {
-        text: window.localeMsg[window.localeLang].TAKE_VERIFICATION,
-        className: 'verify',
-        chngTo: 1,
-        isAvailable: function(options){
-          return +window.state.user.id > 0 && window.state.user.id !== options.author_id
-        }
-      }
-    ],
+    // btns: [
+    //   {
+    //     text: window.localeMsg[window.localeLang].TAKE_VERIFICATION,
+    //     className: 'verify',
+    //     chngTo: 1,
+    //     isAvailable: function(options){
+    //       return +window.state.user.id > 0 && !window.lib.isAuthor(options)
+    //     }
+    //   }
+    // ],
   },
   {
     bStatusIndex: 1,
@@ -336,7 +354,7 @@ window.state.statusList.SOS = [
         className: 'confirm',
         chngTo: 1,
         isAvailable: function(options){
-          return (+window.state.user.nco > 0 || +window.state.user.gov > 0 || +window.state.user.voting_status > 0) && window.state.user.id !== options.author_id && options.b_status[3] < 1
+          return (+window.state.user.nco > 0 || +window.state.user.gov > 0 || +window.state.user.voting_status > 0) && !window.lib.isAuthor(options) && options.b_status[3] < 1
         }
       },
       {
@@ -344,7 +362,7 @@ window.state.statusList.SOS = [
         className: 'disprove',
         chngTo: -1,
         isAvailable: function(options){
-          return (+window.state.user.nco > 0 || +window.state.user.gov > 0 || +window.state.user.voting_status > 0) && window.state.user.id !== options.author_id && options.b_status[3] < 1
+          return (+window.state.user.nco > 0 || +window.state.user.gov > 0 || +window.state.user.voting_status > 0) && !window.lib.isAuthor(options) && options.b_status[3] < 1
         }
       }
     ]
@@ -363,7 +381,7 @@ window.state.statusList.SOS = [
         className: 'lendhand',
         chngTo: 1,
         isAvailable: function(options){
-          return +window.state.user.id > 0 && window.state.user.id !== options.author_id
+          return +window.state.user.id > 0 && !window.lib.isAuthor(options)
         }
       }
     ]
@@ -382,7 +400,7 @@ window.state.statusList.SOS = [
         className: 'complete',
         chngTo: 1,
         isAvailable: function(options, b_st){
-          return (+window.state.user.nco > 0 || +window.state.user.gov > 0 || window.state.user.id === options.author_id) && b_st < 1
+          return (+window.state.user.nco > 0 || +window.state.user.gov > 0 || window.lib.isAuthor(options)) && b_st < 1
         }
       }
     ]
@@ -407,7 +425,7 @@ window.state.statusList.infoAndEvent = [
         className: 'start',
         chngTo: 1,
         isAvailable: function(options, b_st){
-          return window.state.user.id === options.author_id && b_st < 1 
+          return !window.lib.isAuthor(options) && b_st < 1 
         }
       }
     ],
@@ -426,7 +444,7 @@ window.state.statusList.infoAndEvent = [
         className: 'complete',
         chngTo: 1,
         isAvailable: function(options, b_st){
-          return window.state.user.id === options.author_id && b_st < 1
+          return window.lib.isAuthor(options) && b_st < 1
         }
       }
     ]
@@ -518,11 +536,15 @@ function getSpheresForVoting(){
     url: "https://gurtom.mobi/sph.php",
     dataType: "json",
     crossDomain: true,
-    success: function ( response ) {
+    success: function (response) {
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error])
+        return
+      }
       window.state.sphereJSON = response
     },
     error: function(){
-      console.log('sphere request error')
+      alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     }
   })
 }
@@ -533,16 +555,18 @@ function getListMenuOrg() {
     dataType: "json",
     crossDomain: true,
     success: function ( response ) {
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error])
+        return
+      }
       if(response.length === 0){
-        console.log('listMenuOrg is empty')
+        alert(window.localeMsg[window.localeLang].FAIL)
+        return
       }
       window.state.listMenuOrg = response
     },
     error: function(response){
-      // if(response.readyState === 4 && response.statusText === "OK" && response.status === 200){
-      //   window.state.listMenuOrg = JSON.parse(response.responseText)
-      // }
-      console.log('listMenuOrg request error')
+      alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     }
   })
 }
@@ -594,28 +618,28 @@ function updateLocaleFilesWithNewCommonMsg(){
     window.commonMsg = JSON.parse( this.responseText )
     mergeCommonMsgWithLocaleMsg()
   });
-  oReq.open("GET", "./static/js/lang/commonMsg.json");
+  oReq.open("GET", "/static/js/lang/commonMsg.json");
   oReq.send();
   var oReq_en = new XMLHttpRequest();
   oReq_en.addEventListener("load", function() {
     window.old_localeMsg.en = JSON.parse( this.responseText )
     mergeCommonMsgWithLocaleMsg()
   });
-  oReq_en.open("GET", "./static/js/lang/local_en.json");
+  oReq_en.open("GET", "/static/js/lang/local_en.json");
   oReq_en.send();
   var oReq_uk = new XMLHttpRequest();
   oReq_uk.addEventListener("load", function() {
     window.old_localeMsg.uk = JSON.parse( this.responseText )
     mergeCommonMsgWithLocaleMsg()
   });
-  oReq_uk.open("GET", "./static/js/lang/local_uk.json");
+  oReq_uk.open("GET", "/static/js/lang/local_uk.json");
   oReq_uk.send();
   var oReq_ru = new XMLHttpRequest();
   oReq_ru.addEventListener("load", function() {
     window.old_localeMsg.ru = JSON.parse( this.responseText )
     mergeCommonMsgWithLocaleMsg()
   });
-  oReq_ru.open("GET", "./static/js/lang/local_ru.json");
+  oReq_ru.open("GET", "/static/js/lang/local_ru.json");
   oReq_ru.send();
 
   function mergeCommonMsgWithLocaleMsg(){

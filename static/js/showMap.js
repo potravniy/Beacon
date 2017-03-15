@@ -45,7 +45,7 @@ window.state = {
 		if(window.beaconsListView && !window.beaconsListView.isDestroyed) {
 			beaconsList.getNewCollection()
 		}
-		console.log('request is send')
+		!window.clipboardView.isShowndBefore && window.clipboardView.initialShow()
 	},
 	urlMarkers: 'https://gurtom.mobi/map_cluster.php?',
 	urlRequest: function(){
@@ -76,7 +76,6 @@ window.state = {
 }
 
 window.onload = function() {
-	console.log('window.onload')
 	if (!History.started) window.Manager.start();
 	window.markers = []
 	window.i = 0
@@ -93,12 +92,10 @@ window.onload = function() {
 		if(window.requestMarkersListener.b) {
 			window.google.maps.event.removeListener(window.requestMarkersListener)
 		}
-		console.log('map.off')
 	}
 	window.state.map.on = function(){
 		if(!window.requestMarkersListener.b) window.requestMarkersListener = window.state.map.addListener('idle', _.debounce(requestMarkers, 500))
 		google.maps.event.trigger(window.state.map,'resize')
-		console.log('map.on')
 	}
 	if(!window.state.initFromURL) tryGeoLocation()
 	$(":mobile-pagecontainer").pagecontainer({
@@ -164,18 +161,25 @@ function requestMarkers() {
 }
 
 function renderMarkers() {
+	if(this.toString()==="[object XMLHttpRequest]"){
+		try {
+			window.markersList = JSON.parse(this.responseText)
+		} catch (error) {
+			alert(window.localeMsg[window.localeLang].FAIL)
+			throw new Error("Invalid JSON received from "+ this.responseURL)
+			return
+		}
+		if(window.markersList.error){
+			alert(window.localeMsg[window.localeLang][window.markersList.error])
+			return
+		}
+	}
 	var contents = [],
 			image = null
 	deleteMarkers()
-	try {
-		var response = JSON.parse(this.responseText)
-	} catch (error) {
-		alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
-		throw new Error("Invalid JSON received from "+ this.responseURL)
-	}
 	if(window.state.map.myPosition) {
 		image = {
-			url: './static/css/images/my_location.png',
+			url: '/static/css/images/my_location.png',
 			size: new google.maps.Size(24, 24),
 			scaledSize: new google.maps.Size(24, 24),
 			origin: new google.maps.Point(0, 0),
@@ -189,11 +193,11 @@ function renderMarkers() {
 		});
 	}
 	//	Render clusters first
-	for(i=0; i<response.length; i++){
-		if (+response[i].c_n > 1) {
+	for(i=0; i<window.markersList.length; i++){
+		if (+window.markersList[i].c_n > 1) {
 			image = {
 				path: google.maps.SymbolPath.CIRCLE,
-				scale: 2 + window.state.map.getZoom() * Math.log(parseInt(response[i].c_n)),
+				scale: 2 + window.state.map.getZoom() * Math.log(parseInt(window.markersList[i].c_n)),
 				fillColor: '#00f',
 				fillOpacity: 0.3,
 				strokeWeight: 0
@@ -201,23 +205,24 @@ function renderMarkers() {
 			markers[i] = new window.google.maps.Marker({
 				map: window.state.map,
 				icon: image,
-				title: response[i].c_n,
+				title: window.markersList[i].c_n,
 				zIndex: 10,
 				optimized: false,
-				position: new google.maps.LatLng(response[i].lat, response[i].lng)
+				position: new google.maps.LatLng(window.markersList[i].lat, window.markersList[i].lng)
 			});
 		}
 	}
 	//	Render markers
-	for(i=0; i<response.length; i++){
-		if (response[i].c_n === '1') {
-			createMarker(response[i], i) 
+	for(i=0; i<window.markersList.length; i++){
+		if (window.markersList[i].c_n === '1') {
+			createMarker(window.markersList[i], i) 
 		}
 	}
 }
 
 function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_type, r.layer_owner_id, r.title, r.id, r.lat, r.lng, i)
 	var iconURL = r.img || getIconURL(r, true)
+	index = index === undefined ? window.markers.length : index
 	markers[index] = new window.google.maps.Marker({
 		map: window.state.map,
 		title: r.title + ', id:' + r.id,
@@ -258,13 +263,14 @@ function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_t
 			}) 
     });
 	}
+	return markers[index]
 }
 
 function createSingleMarker(r, draggable) {
   window.state.map.off()
 	window.state.singleBeacon = true
   hideMarkers()
-	createMarker(r, markers.length, draggable)
+	createMarker(r, undefined, draggable)
 }
 
 function setSingleBeaconMode() {

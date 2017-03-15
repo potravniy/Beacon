@@ -93,10 +93,6 @@
     "where": "LiItemView onClickBtn success alert line 194",
     "msg": "Маячок видалено"
   },
-  "BEACON_REMOVE_ERROR": {
-    "where": "LiItemView onClickBtn success/error alert line 197, 202",
-    "msg": "Помилка при видаленні маячка"
-  },
   "WRONG_PHONE_NUMBER_FORMAT": {
     "where": "LiItemView setChange success alert line 232",
     "msg": "Невірний формат номеру телефону"
@@ -654,13 +650,17 @@
     "where": "btnsCopyDel text line 285",
     "msg": "Скопіювати до себе"
   },
-  "VERIFICATION_EXPECTED": {
-    "where": "window.state.statusList.SOS line 309",
-    "msg": "Очікує на перевірку"
+  "DELETED": {
+    "where": "btnsCopyDel text line 285",
+    "msg": "Видалений"
   },
-  "VERIFICATION_TAKEN": {
-    "where": "window.state.statusList.SOS line 310",
-    "msg": "Прийнято до перевірки"
+  "DRAFT": {
+    "where": "btnsCopyDel text line 285",
+    "msg": "Чорновик"
+  },
+  "NEW": {
+    "where": "btnsCopyDel text line 285",
+    "msg": "Новий"
   },
   "TAKE_VERIFICATION": {
     "where": "window.state.statusList.SOS line 314",
@@ -793,6 +793,33 @@
     "msg": "Поширити маячок в"
   },
   
-  "file20": "showMap.js"
+  "file20": "showMap.js",
+
+  "file21": "clipboard.js",
+
+  "DEMAND": {
+    "where": "ClipboardModel line 7",
+    "msg": "Demand"
+  },
+  "SUPPLY": {
+    "where": "ClipboardModel line 8",
+    "msg": "Supply"
+  },
+  "CLIPBOARD_TITLE": {
+    "where": "ClipboardView line 18",
+    "msg": "No beacons selected"
+  },
+  "SELECTED_BEACONS": {
+    "where": "ClipboardView line 18",
+    "msg": "Selected beacons"
+  },
+  "CREATE_LINK_QUESTION": {
+    "where": "ClipboardView onClickAdd line 278",
+    "msg": "Are you going to link selected beacons?"
+  },
+  "LINK_CREATED_SUCCESSFULLY": {
+    "where": "ClipboardView onClickAdd line 296",
+    "msg": "Successful link creation."
+  }
 
 }

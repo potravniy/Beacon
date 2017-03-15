@@ -37,18 +37,13 @@ var MsgCollectionView = Backbone.Marionette.CompositeView.extend({
       data: data
     })
     promise.done(function(response){
-      console.log("success: ", response)
-      if(response.error === 0){
-        that.collection.add(response.msg)
-      } else if(response.error === 4){
-        alert(window.localeMsg[window.localeLang].THIS_MESSAGE_YOU_HAVE_SENT)
-      } else if(response.error === 100){
-        alert(window.localeMsg[window.localeLang].YOUR_AUTHORIZATION_MUST_BE_HIGHER)
-      }
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error])
+        return
+      } else that.collection.add(response.msg)
     });
     promise.fail(function(response){
-      console.log("error")
-      alert("Error: "+ response[0].error_uk)
+      alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     });
     promise.always(function(response){
       $.mobile.loading('hide')
@@ -510,14 +505,15 @@ var VotingView = Backbone.Marionette.LayoutView.extend({
       data: data
     })
     promise.done(function ( response ) {
-      if(response[0].msg_uk) alert(response[0].msg_uk)
-      else{
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error])
+      } else {
         that.model.set(response[0].full[0])
         that.model.extendModel()
       }
     })
     promise.fail(function(){
-      alert( window.localeMsg[window.localeLang].FAIL )
+      alert( window.localeMsg[window.localeLang].CONNECTION_ERROR )
     })
     promise.always(function(){
       $.mobile.loading('hide')
@@ -811,6 +807,7 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
       full: this.model.get('full') || '',
       b_status: i,
       color: bs[i]>0 ? 'green' : bs[i]<0 ? 'red' : '',
+      link_icon: this.model.get('linked') === '1' ? 'linked' : 'unlinked',
       icon_url: window.getIconURL(this.model.attributes, true) 
     }  
     return $.extend({}, window.lib.tagList(this), obj )
@@ -883,18 +880,21 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
   },
   onClickAdd: function (event) {
     event.stopPropagation()
-    var options = {
-      'parent_id': this.model.get('id'),
-      'parent_type': +this.model.get('b_type') === 1000 ? this.model.get('type') : this.model.get('b_type'),
-      'parent_model': this.model.attributes
+    if(window.clipboardView.collection.isEmpty()){
+      var options = {
+        'parent_id': this.model.get('id'),
+        'parent_type': +this.model.get('b_type') === 1000 ? this.model.get('type') : this.model.get('b_type'),
+        'parent_model': this.model.attributes
+      }
+      if(options.parent_type == '2'){
+        $.extend(options, { 'program_id': this.model.get('full')[0].id })
+      }
+      window.checkLoggedInThen(showBeaconCreateMenu, options)
+    } else {
+      var confirm = prompt("Are you sure?")
     }
-    if(options.parent_type == '2'){
-      $.extend(options, { 'program_id': this.model.get('full')[0].id })
-    }
-    checkLoggedInThen(showBeaconCreateMenu, options)
   },
   onBeforeShow: function(){
-    console.log("OnBeforeShow FullView")
     var type = +this.model.get('b_type') === 1000 ? this.model.get('type') : this.model.get('b_type')
     var addOptions = {}
     addOptions.author_id = this.model.get('author_id')
@@ -908,20 +908,20 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
         break
       case '2':
         Model = ProgramModel
-        View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : ProgramView
+        View = Objects2_5View // ProgramView
         break
       case '3':
         Model = ProgramModel
-        View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : null
+        View = Objects2_5View
         addOptions.program_link = "https://gurtom.mobi/beacon.php#main/6/48.47700521/31.57012122/"+ this.model.get('program_beacon_id') +"/0,1,7,8,9,10/0/2/-/-/-/-/-/-/-/-/mm/-"
         break
       case '4':
         Model = ProgramModel
-        View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : null
+        View = Objects2_5View
         break
       case '5':
         Model = ProgramModel
-        View = window.state.user.id === '14409' || window.state.user.id === '1' ? Objects2_5View : null
+        View = Objects2_5View
         break
       case '69':
       case '96':
@@ -967,7 +967,11 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     showDonateView(param)
   },
   exit: function(){
-    window.closeSingleBeaconMode()
+    if(this.options.region){
+      window.clipboardView.removeFullView()
+    } else {
+      window.closeSingleBeaconMode()
+    }
   },
   onClickStatusBtn: function(){
     showPopupStatusBeacon( this.model.attributes )
@@ -989,5 +993,10 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
         $abuseBtn.off()
       }
     });
+  },
+  onRender: function(){
+    if(!window.lib.isDemand(this.model) && !window.lib.isAuthor(this.model)){
+      this.ui.add.prop( "disabled", true )
+    }
   }
 })

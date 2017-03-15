@@ -62,7 +62,6 @@ $btnCards.click(function() {
 })
 
 function setHeights(e){
-  console.log('resize')
   var $el = $('#container')
   var maxHeight = $(window).height(),
       rule = null

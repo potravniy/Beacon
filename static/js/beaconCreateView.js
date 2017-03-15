@@ -226,13 +226,20 @@ var TagsView = Backbone.Marionette.ItemView.extend({
           tag: value
         },
         success: function ( response ) {
+          if(response.error){
+            alert(window.localeMsg[window.localeLang][response.error])
+            return
+          }
           $.each( response, function ( i, val ) {
             html += '<li>' + val.tag.replace(/&amp;#39;/g, "'") + '</li>';
           });
           that.ui.tagUl.html( html );
           that.ui.tagUl.listview( "refresh" );
           that.ui.tagUl.trigger( "updatelayout");
-        } 
+        },
+        error: function(){
+          alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
+        }
       })
     }
   }, 
@@ -255,6 +262,14 @@ var TagsView = Backbone.Marionette.ItemView.extend({
           'tag': e.target.value,
           'new': '1'
         }
+      })
+      promise.success(function(response){
+        if(response.error){
+          alert(window.localeMsg[window.localeLang][response.error])
+        }
+      })
+      promise.error(function(){
+        alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       })
       promise.always(function(response){
         console.log(response)
@@ -460,13 +475,20 @@ var PrivateView = Backbone.Marionette.ItemView.extend({
           filter: $input.val()
         },
         success: function ( response ) {
+          if(response.error){
+            alert(window.localeMsg[window.localeLang][response.error])
+            return
+          }
           $.each( response, function ( i, val ) {
             html += '<li data-id="'+ val.id +'">' + val.org + '</li>';
           });
           $ul.html( html );
           $ul.listview( "refresh" );
           $ul.trigger( "updatelayout");
-        } 
+        },
+        error: function(){
+          alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
+        }
       })
     }
   },
@@ -733,22 +755,27 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         }
       }
       client.onerror = function(){
-        console.log(client.responseText);
+        alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         that.ui.progressWrap.hide()
       }
+
+
+
       client.onreadystatechange = function(){
         if (client.readyState == 4 && client.status == 200){
-          console.log(client.responseText);
-          if ( client.responseText.indexOf("The") === 0 
-            || client.responseText.indexOf("This") === 1 ) {
+          if(client.responseText.substr(0,8) === '/uploads'){
+            $('#img').val(client.responseText)
+            that.sendForm()
+          } else if(JSON.parse(client.response).error){
             that.ui.progressWrap.hide()
-            alert ( client.responseText )
-            return
+            alert(window.localeMsg[window.localeLang][JSON.parse(client.response).error])
           }
-          $('#img').val(client.responseText)
-          that.sendForm()
         }
       }
+
+
+
+
       upload();  
     } else this.sendForm()
   },
@@ -831,7 +858,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     if(this.phone.currentView){
       var val = this.phone.currentView.ui.input.val(),
           reg = /^\d+$/
-      if(val.length === 12 && reg.test(val) && val.substring(0,3) === '380') {
+      if(reg.test(val) && val.length >= 12 && val.length <= 16) {
       } else if(val.length === 0) {
         if (this.model.get('required') === 'required'){
           alert(window.localeMsg[window.localeLang].PHONE_NUMBER_REQUIRED)
@@ -890,9 +917,8 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         alert( window.localeMsg[window.localeLang].FAIL )
         return
       }
-      if( response[0] && response[0].error ){
-        if( response[0].error_uk ) alert( response[0].error_uk )
-        else alert( response[0].error )
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error])
         return
       }
       window.state.singleBeacon = true

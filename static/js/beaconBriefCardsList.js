@@ -45,44 +45,45 @@ var BeaconsList = Backbone.Collection.extend({
       reset: true,
       success: function(res){
         $.mobile.loading('hide')
+        window.clipboardView.setWidth()
+        if(res.error){
+          alert(window.localeMsg[window.localeLang][res.error])
+        }
       },
       error: function(){
         $.mobile.loading('hide')
+        window.clipboardView.setWidth()
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       }
     })
   },
   getNextPage: function() {
-    if (this.hasMorePages) {
+    var that = this
+    if (this.hasMorePages && !this.isFetching) {
       $.mobile.loading('show')
   		this.page += 1;
       this.url = this.baseUrl + window.state.urlRequest()
-       + '&ls=' + (this.page * this.limit)
+        + '&ls=' + (this.page * this.limit)
+      this.isFetching = true
       this.fetch({
         add: true,
         remove: false,
-        success: function(){
+        success: function(res){
+          that.isFetching = false
           $.mobile.loading('hide')
+          window.clipboardView.setWidth()
+          if(res.error){
+            alert(window.localeMsg[window.localeLang][res.error])
+          }
         },
         error: function(){
+          that.isFetching = false
           $.mobile.loading('hide')
-          alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
+          window.clipboardView.setWidth()
+        alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         }
       })
     }
-  },
-  getBeaconById: function(beaconID) {
-    this.url = this.baseUrl + 'b_id=' + beaconID
-    $.mobile.loading('show')
-    this.fetch({
-      reset: true,
-      success: function(){
-        $.mobile.loading('hide')
-      },
-      error: function(){
-        $.mobile.loading('hide')
-      }
-    })
   },
   parse: function(response) {
   	if (response.length < this.limit) this.hasMorePages = false
@@ -133,14 +134,14 @@ var MsgView = Backbone.Marionette.ItemView.extend({
       data: data
     })
     promise.done(function(response){
-      console.log("success: ", response)
-      if(response.error === 0){
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error])
+      } else {
         alert(window.localeMsg[window.localeLang].ABUSE_ON_MESSAGE_SENT)
       }
     });
     promise.fail(function(response){
-      console.log("error")
-      alert("Error: "+ response.error)
+      alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     });
     promise.always(function(response){
       $.mobile.loading('hide')
@@ -154,6 +155,7 @@ var BeaconView = Backbone.Marionette.ItemView.extend({
     var i = window.indexOfLastNonEmptyElement(bs) || 0
     var obj = {
       full: this.model.get('full') || '',
+      link_icon: this.model.get('linked') === '0' ? 'unlinked' : 'linked',
       // title: window.lib.htmlEntityDecode(this.model.get('title')),
       // details: window.lib.htmlEntityDecode(this.model.get('details')),
       b_status: i,
@@ -162,23 +164,21 @@ var BeaconView = Backbone.Marionette.ItemView.extend({
     }
     return $.extend({}, window.lib.tagList(this), obj )
   },
-  // childView: MsgView,
-  // childViewContainer: '.sent-message__wrapper',
   className: function(){
-    var index = _.indexOf(this.model.collection.models, this.model)
+    var index = this.options.isWithinClipboard
+      ? this.options.index.get()
+      : _.indexOf(this.model.collection.models, this.model)
     return "ui-content ui-block-" + ((index % 2) ? "b" : "a")
   },
   attributes: {
     "data-role": "content"
   },
-  // initialize: function(){
-  //   this.collection = new MsgGroup( this.model.get('chat') );
-  // },
   ui: {
     expandBtn: '.expanding_view .btn_wrapper',
     beaconStatusBtn: '.beacon_status',
     img: '.photo',
-    link: '.link'
+    link: '.link',
+    add: '.add_linked'
   },
   modelEvents: {
     "change": 'onModelChange'
@@ -188,12 +188,16 @@ var BeaconView = Backbone.Marionette.ItemView.extend({
     'click @ui.link':'onClickLink',
     'click .error': 'onClickAbuse',
     'click .star': 'onClickStar',
-    'click .add_linked': 'onClickAdd',
+    'click @ui.add': 'onClickAdd',
     'click .header': 'onThisViewClick',
     'click .beacon-content': 'onThisViewClick',
-    'click .expanding_btn': 'goToSingleView',
+    'click .expanding_btn': 'showFullView',
     'click @ui.beaconStatusBtn': 'onClickStatusBtn',
     'click @ui.img': 'onClickImg'
+  },
+  initialize: function(){
+    this.isSelected = !!this.options.isWithinClipboard
+
   },
   onBeforeShow: function(){
     if(  this.model.get('b_type') == '330' || this.model.get('type') == '330'
@@ -245,44 +249,63 @@ var BeaconView = Backbone.Marionette.ItemView.extend({
   },
   onClickAdd: function (event) {
     event.stopImmediatePropagation()
-    var options = {
-      'parent_id': this.model.get('id'),
-      'parent_type': +this.model.get('b_type') === 1000 ? this.model.get('type') : this.model.get('b_type')  
+    if(window.clipboardView.collection.isEmpty()){
+      var options = {
+        'parent_id': this.model.get('id'),
+        'parent_type': +this.model.get('b_type') === 1000 ? this.model.get('type') : this.model.get('b_type')  
+      }
+      window.checkLoggedInThen(showBeaconCreateMenu, options)
+    } else {
+      if(!window.lib.isDemand(this.model)){
+        var confirmed = confirm(window.localeMsg[window.localeLang].CREATE_LINK_QUESTION)
+        if(confirmed){
+          var data = {
+            bid_id: this.model.get('id'),
+            ask_ids: window.clipboardView.getCollectionIdsListAsString('demand')
+          }
+          window.clipboardView.linkSelected(data)
+        }
+      }
     }
-    window.checkLoggedInThen(showBeaconCreateMenu, options)
+  },
+  setBeaconLinked: function(idArray) {
+    if(_.contains(idArray, this.model.get('id'))){
+      var linked = parseInt(this.model.get('linked')) + 1 +''
+      this.model.set({linked: linked})
+      this.render()
+    }
   },
   onClickStatusBtn: function(){
     showPopupStatusBeacon( this.model.attributes )
   },
-  isSelected: false,
   onThisViewClick: function(e){
     var isPhoto = (e.target.className.search('photo') !== -1) 
     var isStatusBtn = (e.target.className.search('beacon_status') !== -1)
     var isExpandBtn = (e.target.className.search('expanding_btn') !== -1) 
     if(!isPhoto && !isStatusBtn && !isExpandBtn) {
-      var id = this.model.get('id')
-      var i = _.findIndex(markers, function(item){
-        return item.beaconID === id
-      })
-      var div = this.$el.find('.beacon')
       if(this.isSelected){
-        markers[i].setAnimation(null)
-        div.css( "outline", "" )
-        this.isSelected = false
+        window.clipboardView.removeBeaconFromCollection(this.model)
       } else {
-        if( i === -1 ) {
-          i = markers.length
-          createMarker(this.model.attributes, i)
-        }
-        markers[i].setAnimation(google.maps.Animation.BOUNCE)
-        div.css( "outline", "#69f solid 3px" )
-        this.isSelected = true
-        this.trigger("marker:bounce", this.model.get('id'));
+        window.clipboardView.addBeaconToCollection(this.model)
       }
     }
   },
-  goToSingleView: function(e){
-    window.showBeaconFullView([{ id: this.model.get('id') }])
+  toggleSelected: function(){
+    this.isSelected = !this.isSelected
+    this.styleSelected()
+  },
+  styleSelected: function(){
+    var div = this.$el.find('.beacon')
+    if(this.isSelected){
+      div.css( "box-shadow", "0 0 2px 3px #46f" )
+    } else {
+      div.css( "box-shadow", "" )
+    }
+  },
+  showFullView: function(e){
+    this.options && this.options.region
+      ? window.clipboardView.showFullView(this.model.get('id'))
+      : window.showBeaconFullView([{ id: this.model.get('id') }])
   },
   onClickImg: function(){
     var $photoPopup = $('#popupPhoto')
@@ -301,6 +324,12 @@ var BeaconView = Backbone.Marionette.ItemView.extend({
         $abuseBtn.off()
       }
     });
+  },
+  onRender: function(){
+    this.styleSelected()
+    if(!window.lib.isDemand(this.model) && !window.lib.isAuthor(this.model)){
+      this.ui.add.prop( "disabled", true )
+    }
   }
 });
 var BeaconEmptyListView = Backbone.Marionette.ItemView.extend({
@@ -320,18 +349,31 @@ var BeaconListView = Backbone.Marionette.CollectionView.extend({
      }
   },
   initialize: function(){
-    window.$outerDiv = $('#beacons-map__the-beacons')
+    window.$outerDiv = $('#cards-region')
     window.$innerDiv = this.$el
     window.$outerDiv.on('scroll', this.handleCollectionUpdate)
   },
   onBeforeDestroy: function(){
     window.$outerDiv.off('scroll', this.handleCollectionUpdate)
+    if(!window.clipboardView.model.get('isExpanded')){
+      $('#clipboard-region').hide()
+    }
   },
   scrollHendlerOn: function(){
     this.$el.parent().bind('scroll', this.handleCollectionUpdate, this)
   },
   handleCollectionUpdate: function (event){
     var scroll = $innerDiv.height() - $outerDiv.height() - $outerDiv.scrollTop()
-    if( scroll < 4 ) beaconsList.getNextPage()
+    if( scroll < -30 ) {
+      beaconsList.getNextPage()
+    }
+  },
+  onRender: function(){
+    window.clipboardView && window.clipboardView.updateBeaconListView('reset')
+    window.clipboardView && window.clipboardView.isShowndBefore && $('#clipboard-region').show()
+    setTimeout(function(){
+      window.clipboardView && window.clipboardView.isShowndBefore && window.clipboardView.setWidth()
+    }, 100)
+
   }
 })

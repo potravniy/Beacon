@@ -120,19 +120,22 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
         }
       }
       client.onerror = function(){
-        console.log(client.responseText);
         that.ui.progressWrap.hide()
+        alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       }
       client.onreadystatechange = function(){
         if (client.readyState == 4 && client.status == 200){
-          console.log(client.responseText);
+          if(response.error){
+            alert(window.localeMsg[window.localeLang][response.error])
+            return
+          }
           that.model.set('img', client.responseText)
           sendNewBeaconAJAX()
         }
       }
       upload();  
     } else sendNewBeaconAJAX()
-    //  Send new beacon
+
     function sendNewBeaconAJAX() {
       var promise = $.ajax({
         type: "POST",
@@ -142,14 +145,18 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
         crossDomain: true,
         data: that.model.attributes
       })
-      promise.done(function ( response ) {
+      promise.done(function (response) {
+        if(response.error){
+          alert(window.localeMsg[window.localeLang][response.error])
+          return
+        }
         window.state.singleBeacon = true
         markers[markers.length-1].setDraggable(false)
         beaconsList.set(response, {reset: true})
         closeBeaconNew()    // showBeaconsListView()
       })
       promise.fail(function(response){
-        alert(response)
+        alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       })
       promise.always(function(){
         $('that.ui.progressWrap').hide()
@@ -173,14 +180,21 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
         data: {
           tag: $input.val()
         },
-        success: function ( response ) {
+        success: function (response) {
+          if(response.error){
+            alert(window.localeMsg[window.localeLang][response.error])
+            return
+          }
           $.each( response, function ( i, val ) {
             html += '<li>' + val.tag.replace(/&amp;#39;/g, "'") + '</li>';
           });
           $ul.html( html );
           $ul.listview( "refresh" );
           $ul.trigger( "updatelayout");
-        } 
+        },
+        error: function(){
+          alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
+        }
       })
     }
   }, 
@@ -238,13 +252,20 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
           type: $input.val()
         },
         success: function ( response ) {
+          if(response.error){
+            alert(window.localeMsg[window.localeLang][response.error])
+            return
+          }
           $.each( response, function ( i, val ) {
             html += '<li data-id="'+ val.id +'">' + val.type + '</li>';
           });
           $ul.html( html );
           $ul.listview( "refresh" );
           $ul.trigger( "updatelayout");
-        } 
+        },
+        error: function(){
+          alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
+        }
       })
     }
   },
@@ -284,13 +305,20 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
           filter: $input.val()
         },
         success: function ( response ) {
+          if(response.error){
+            alert(window.localeMsg[window.localeLang][response.error])
+            return
+          }
           $.each( response, function ( i, val ) {
             html += '<li data-id="'+ val.id +'">' + val.org + '</li>';
           });
           $ul.html( html );
           $ul.listview( "refresh" );
           $ul.trigger( "updatelayout");
-        } 
+        },
+        error: function(){
+          alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
+        }
       })
     }
   },

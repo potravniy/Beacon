@@ -188,18 +188,17 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
             },
             crossDomain: true,
             success: function ( response ) {
-              if(response.error === 0){
+              if(response.error){
+                alert(window.localeMsg[window.localeLang][response.error])
+              } else {
                 window.state.sendGET(window.state.urlMarkers)
                 if (window.state.singleBeacon) closeSingleBeaconMode()
                 alert(window.localeMsg[window.localeLang].BEACON_REMOVED)
                 that.exit()
-              } else {
-                alert(window.localeMsg[window.localeLang].BEACON_REMOVE_ERROR)
-                that.exit()
               }
             },
             error: function(){
-              alert(window.localeMsg[window.localeLang].BEACON_REMOVE_ERROR)
+              alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
             }
           })
         }
@@ -228,8 +227,8 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
           console.log('Status list is empty')
           return
         }
-        if ( response.error === 3 ) {
-          alert (window.localeMsg[window.localeLang].WRONG_PHONE_NUMBER_FORMAT)
+        if(response.error){
+          alert(window.localeMsg[window.localeLang][response.error])
           return
         }
         that.setCollection(that.options, response)
@@ -239,7 +238,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         theModel.set('b_status', response.status)
       },
       error: function(){
-        alert ( window.localeMsg[window.localeLang].FAIL )
+        alert ( window.localeMsg[window.localeLang].CONNECTION_ERROR )
       }
     })
   },

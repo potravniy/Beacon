@@ -35,11 +35,12 @@ function emailAccountActivation(){
       crossDomain: true
     });
     promise.done(function( response ){
-      console.log(response[0].msg)
-      alert(window.localeMsg[window.localeLang].PROFILE_CREATED_SUCCESSFULLY)
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error])
+      } else alert(window.localeMsg[window.localeLang].PROFILE_CREATED_SUCCESSFULLY)
     })
     promise.fail(function( response ){
-      console.log(response[0].error)
+      alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       alert(window.localeMsg[window.localeLang].PROFILE_IS_NOT_CREATED)
     })
     promise.always(function(){
@@ -198,17 +199,13 @@ function resetDialogInit(verif_code){
         }
     })
     promise.done(function(response){
-      console.log("success")
-      if(response[0] && response[0].msg_uk){
-        alert("Message: "+ response[0].msg_uk)
-      } else if(response[0] && response[0].error_uk){
-        alert("Error: "+ response[0].error_uk)
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error])
       }
       Manager.trigger('home')
     });
     promise.fail(function(response){
-      console.log("error")
-      alert("Error: "+ response[0].error_uk)
+      alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     });
     promise.always(function(response){
       console.log(response[0])
@@ -231,18 +228,14 @@ function confirmVerification(usr_id, verif_code){
       }
   })
   promise.done(function(response){
-    if(response.error && response.error===2001){
-      alert(window.localeMsg[window.localeLang].LOGIN_CREATED)
-    } else if(response.error && response.error===1002){
-      alert(window.localeMsg[window.localeLang].ACCOUNT_ACTIVATION_FAILED)
-      Manager.trigger('pass_restore')
-    } else {
-      alert(window.localeMsg[window.localeLang].FAIL)
-      Manager.trigger('home')
+    if(response.error){
+      alert(window.localeMsg[window.localeLang][response.error])
+      if(response.error === 'ACCOUNT_ACTIVATION_FAILED') Manager.trigger('pass_restore')
+      else  Manager.trigger('home')
     } 
   });
   promise.fail(function(response){
-    alert(window.localeMsg[window.localeLang].FAIL)
+    alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     Manager.trigger('home')
   });
   promise.always(function(response){
@@ -257,6 +250,9 @@ function checkLoggedIn(){
     dataType: "json",
     crossDomain: true,
     success: function ( response ) {
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error])
+      }
       if(response[0] && response[0].id && response[0].id > 0){
         window.state.user = response[0]
         if ( window.state.user.email.length > 20 ) {
@@ -271,9 +267,8 @@ function checkLoggedIn(){
       }
       showUserInfo()
     },
-    error: function(response){
-      console.log('Error: ', response)
-      alert('Status check error.')
+    error: function(){
+      alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     } 
   })
 }
@@ -282,7 +277,6 @@ function showUserInfo(){
   if( window.getListMenuOrg.isAvailable() ){
     window.getListMenuOrg()
   }
-  console.log('showUserInfo')
   window.getListOrgs()
   getSpheresForVoting()
   var name = ''
@@ -298,7 +292,7 @@ function showUserInfo(){
   $('#header h1').text( name )
   $('#left-panel .username').text(window.state.user.login)
   $('#left-panel .email').text(window.state.user.email || '')
-  $('#left-panel .avatar').css({'background-image': 'url(../..'+ window.state.user.avatar +')'})
+  $('#left-panel .avatar').css({'background-image': 'url('+ window.state.user.avatar +')'})
   if(window.state.user.id){
     $('#left-panel.auth-panel .menu li.login').hide()
     $('#left-panel.auth-panel .menu li.logout').show()
@@ -335,6 +329,9 @@ function removeAccount(){
     crossDomain: true
   })
   .then(function(response){
+    if(response.error){
+      alert(window.localeMsg[window.localeLang][response.error])
+    }
     checkLoggedIn()
     console.log(response)
     console.log(response[0].action)

@@ -348,14 +348,12 @@ var ListOrgCollection = Backbone.Collection.extend({
         data: { "filter": result.length===0 ? [{'filter':'empty'}] : result }
       })
       promise.done(function(response){
-        if(response.error===0){
-          console.log("UserPrefer4thFilter updated successfully")
-        } else if(response.error!==0){
-          console.log("UserPrefer4thFilter update failed, error:"+ response.error)
+        if(response.error){
+          alert(window.localeMsg[window.localeLang][response.error])
         }
       });
       promise.fail(function(response){
-        console.log("UserPrefer4thFilter update failed.")
+        alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       });
     } else if ( !state.user.filters ) {
       state.user.filters = []

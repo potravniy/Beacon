@@ -21,8 +21,12 @@ var ChangeGovMenuItemModel = Backbone.Model.extend({
         headers: {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'},
         type: 'POST'
       });
-      promise.done(function(data){
-        that.set({ img: data })
+      promise.done(function(response){
+        if(response.error){
+          alert(window.localeMsg[window.localeLang][response.error])
+          return
+        }
+        that.set({ img: response })
         that.unset('file')
       })
       promise.fail(function(){

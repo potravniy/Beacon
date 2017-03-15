@@ -4,9 +4,9 @@ var Manager = new Marionette.Application();
 Manager.App = {}
 Manager.API = {
     home: function(z, lt, ln, qw, al, bs, bt, st, ft, ocp, oc, op, lcp, lc, lp, vs, ia){
-    	console.log('router.home', Manager.getCurrentRoute())
+    	// console.log('router.home', Manager.getCurrentRoute())
       if(z && lt && ln){
-      	console.log('router.home resets state')
+      	// console.log('router.home resets state')
         window.state.zoom = +z
         window.state.center.lat = +lt
         window.state.center.lng = +ln
@@ -39,7 +39,7 @@ Manager.API = {
       $(":mobile-pagecontainer").pagecontainer("change", $('#reset_pass_dialog'), {changeHash: false})
     },
     create: function(){
-      console.log("route to create was triggered");
+      // console.log("route to create was triggered");
     }
   }
 Manager.App.Router = Marionette.AppRouter.extend({
@@ -56,7 +56,7 @@ Manager.App.Router = Marionette.AppRouter.extend({
   },
   controller: Manager.API,
   onRoute: function(name, path, args){
-    console.log("onRouteHandler\n" + name +'\n'+ path +'\n'+ args);
+    // console.log("onRouteHandler\n" + name +'\n'+ path +'\n'+ args);
   }
 })
 
@@ -82,7 +82,7 @@ Manager.on("start", function(){
   $('.history_back').click(function(){
     window.history.back()
   })
-  console.log('router started')
+  // console.log('router started')
 });
 Manager.on('state_update', function(){
   Manager.navigate(serializeState())
@@ -94,22 +94,22 @@ Manager.on('home', function(){
 Manager.on('login', function(){
   Manager.navigate('login')
   Manager.API.login()
-  console.log("login event handler");
+  // console.log("login event handler");
 })
 Manager.on('registration', function(){
   Manager.navigate('registration')
   Manager.API.registration()
-  console.log("registration event handler");
+  // console.log("registration event handler");
 })
 Manager.on('pass_restore', function(){
   Manager.navigate('pass_restore')
   Manager.API.passRestore()
-  console.log("pass_restore event handler");
+  // console.log("pass_restore event handler");
 })
 Manager.on('pass_reset', function(){
   Manager.API.passReset()
   Manager.navigate('pass_reset')
-  console.log("pass_reset event handler");
+  // console.log("pass_reset event handler");
 })
 
 function serializeState(id, lat, lng) {

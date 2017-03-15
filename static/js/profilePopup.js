@@ -9,7 +9,6 @@ var AddressView = Backbone.Marionette.ItemView.extend({
 var ProfilePopupView = Backbone.Marionette.CompositeView.extend({
   template: '#profile_popup__tpl',
   className: 'profile',
-  childView:
   initialize: function(){
     this.collection = new Backbone.Collection(window.state.user.adr)
   },

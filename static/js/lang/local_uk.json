@@ -21,7 +21,6 @@
     "ENTER_YOUR_PHONE_NUMBER_380XXXXXXXXX": "Введіть номер телефону у форматі 380XXXXXXXXX:",
     "REMOVE_BEACON": "Видалити маячок",
     "BEACON_REMOVED": "Маячок видалено",
-    "BEACON_REMOVE_ERROR": "Помилка при видаленні маячка",
     "WRONG_PHONE_NUMBER_FORMAT": "Невірний формат номеру телефону",
     "RUSSIA_OCCUPIED_TERRITORY": "Територія, окупована Росією.",
     "USER_STATUSES_ALLOWED_TO_VOTE": "Вкажіть статуси користувачів, чиї голоси будуть зараховуватися в голосуванні",
@@ -199,8 +198,9 @@
     "AUTH_WITH_PAYMENT": "Авторизовані через платіж",
     "AUTH_WITH_BANK_ID": "Авторизовані через банківську ідентифікацію",
     "COPY_TO_ME": "Скопіювати до себе",
-    "VERIFICATION_EXPECTED": "Очікує на перевірку",
-    "VERIFICATION_TAKEN": "Прийнято до перевірки",
+    "DELETED": "Видалений",
+    "DRAFT": "Чорновик",
+    "NEW": "Новий",
     "TAKE_VERIFICATION": "Прийняти до перевірки",
     "DISPROVEN": "Спростовано",
     "CONFIRMATION_EXPECTED": "Очікує на підтверження",
@@ -228,6 +228,12 @@
     "BEACON_ID": "id маячка ( cardID )",
     "ADDRESS_OR_PLACE_ON_MAP": "адреса чи місце на карті",
     "PRESSING_BUTTON_PAY_YOU_WILL_BE_REDIRECTED_TO_PAYING_SYSTEM_LIQPAY": "Натиснувши на зелену кнопку 'PAY', Ви перейдете на сайт www.liqpay.com для пожертвування коштів. Будьте готові ввести дані банківської картки.",
-    "SHARE_BEACON_WITH": "Поширити маячок в"
+    "SHARE_BEACON_WITH": "Поширити маячок в",
+    "DEMAND": "Попит",
+    "SUPPLY": "Пропозиція",
+    "CLIPBOARD_TITLE": "Немає вибраних маячків",
+    "SELECTED_BEACONS": "Выбрані маячки",
+    "CREATE_LINK_QUESTION": "Are you going to link selected beacons?",
+    "LINK_CREATED_SUCCESSFULLY": "Successful link creation."
   }
 }

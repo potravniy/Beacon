@@ -250,22 +250,20 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
       data: formData
     })
     promise.done(function( response ){
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error])
+        return
+      }
       if(window.lib.isJson(response) && JSON.parse(response)[0]){
         var responseParsed = JSON.parse(response)[0]
-        if(responseParsed.msg_uk) {
-          alert(responseParsed.msg_uk)
-        } else if(responseParsed.error_uk) {
-          alert(responseParsed.error_uk)
-        } else {
-          state.user.funds = _.map(state.user.funds, function(fund){
-            if(fund.id === responseParsed.fund_id){
-              fund.saldo = responseParsed.saldo
-            }
-            return fund
-          })
-          window.showBeaconFullView([{ id: that.model.get('beaconID') }])
-          alert(window.localeMsg[window.localeLang].THANKS_FOR_DONATE)
-        }
+        state.user.funds = _.map(state.user.funds, function(fund){
+          if(fund.id === responseParsed.fund_id){
+            fund.saldo = responseParsed.saldo
+          }
+          return fund
+        })
+        window.showBeaconFullView([{ id: that.model.get('beaconID') }])
+        alert(window.localeMsg[window.localeLang].THANKS_FOR_DONATE)
       } else {
         showPayByCardView({
           header: window.localeMsg[window.localeLang].DONATION,
