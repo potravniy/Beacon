@@ -14,14 +14,23 @@ Manager.API = {
         window.state.user_auth = (al==='-' ? '' : al)
         window.state.b_status = (bs==='-' ? '' : bs)
         window.state.b_types = (bt==='-' ? '' : bt)
-        window.state.start = (st==='-' ? '' : st)
-        window.state.finish = (ft==='-' ? '' : ft)
+        window.state.start = (st==='-' ? '' : decodeURIComponent(st))
+        window.state.finish = (ft==='-' ? '' : decodeURIComponent(ft))
         window.filterViewUpdateFromDataURL(al, bs, bt, qw, st, ft, ocp, oc, op, lcp, lc, lp)
         window.state.viewState = vs
-        var viewStateIdArray = (ia==='-' ? [] : _.map(ia.split(','), function(item){ return parseInt(item, 10) }))
-        window.state.viewStateIdArray = viewStateIdArray
-        window.state.initFromURL = true
+        window.state.viewStateId = ia === '-' ? '' : ia
       }
+      checkLoggedIn()
+      window.state.initFromURL = true
+      switch (window.state.viewState) {
+        case 'mm':
+          window.showBeaconsListView()
+          break;
+        case 'ms':
+          window.showBeaconFullView()
+          break;
+      }
+      window.showClipboard()
       $(":mobile-pagecontainer").pagecontainer("change", $('#beacons-map'), {changeHash: false})
     },
     login: function(usr_id, verif_code){
@@ -46,7 +55,7 @@ Manager.App.Router = Marionette.AppRouter.extend({
   appRoutes: {
     "": 'home',
     'home/:zoom': 'home',
-    "main/:zoom/:lat/:lng/:mapSearch/:authLevel/:bStatus/:bTypes/:startTime/:finishTime/:ocp/:oc/:op/:lcp/:lc/:lp/:viewState/:viewStateIdArray": 'home',
+    "main/:zoom/:lat/:lng/:mapSearch/:authLevel/:bStatus/:bTypes/:startTime/:finishTime/:ocp/:oc/:op/:lcp/:lc/:lp/:viewState/:viewStateId": 'home',
     "login": 'login',
     "login/:usr_id/:verif_code": 'login',
     "registration": 'registration',
@@ -121,8 +130,8 @@ function serializeState(id, lat, lng) {
     + '/'+ (window.state.user_auth==='' ? '-' : window.state.user_auth)
     + '/'+ (window.state.b_status==='' ? '-' : window.state.b_status)
     + '/'+ (window.state.b_types==='' ? '-' : window.state.b_types)
-    + '/'+ (window.state.start==='' ? '-' : window.state.start)
-    + '/'+ (window.state.finish==='' ? '-' : window.state.finish)
+    + '/'+ (window.state.start==='' ? '-' : encodeURIComponent(window.state.start))
+    + '/'+ (window.state.finish==='' ? '-' : encodeURIComponent(window.state.finish))
     + '/'+ (fourthFilter.ocp==='' ? '-' : fourthFilter.ocp)
     + '/'+ (fourthFilter.oc==='' ? '-' : fourthFilter.oc)
     + '/'+ (fourthFilter.op==='' ? '-' : fourthFilter.op)
@@ -130,6 +139,6 @@ function serializeState(id, lat, lng) {
     + '/'+ (fourthFilter.lc==='' ? '-' : fourthFilter.lc)
     + '/'+ (fourthFilter.lp==='' ? '-' : fourthFilter.lp)
     + '/'+ window.state.viewState
-    + '/'+ (window.state.viewStateIdArray.length===0 ? '-' : window.state.viewStateIdArray.join())
-  return str
+    + '/'+ (window.state.viewStateId === '' ? '-' : window.state.viewStateId)
+  return encodeURI(str)
 }

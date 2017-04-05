@@ -127,7 +127,7 @@ var UserFundslView = Backbone.Marionette.CompositeView.extend({
     $("#options__select-menu .ui-last-child .ui-btn").css({"text-align": "center"})
   }
 })
-//  donate known:
+//  donate knows:
 // fund_id: int,
 // currency: int
 // amount: int
@@ -165,7 +165,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
   ui: {
     submitBtn: '#submit_btn',
     form: '#donate__form',
-    closeBtn: '.header a'
+    closeBtn: '.header .close'
   },
   events: {
     'click @ui.submitBtn': 'send',
@@ -262,7 +262,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
           }
           return fund
         })
-        window.showBeaconFullView([{ id: that.model.get('beaconID') }])
+        window.showBeaconFullView({ id: that.model.get('beaconID') })
         alert(window.localeMsg[window.localeLang].THANKS_FOR_DONATE)
       } else {
         showPayByCardView({
@@ -298,7 +298,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
     return true
   } ,
   close: function(){
-    console.log('DonateView close onclick')
+    window.showFullView()
   }
 })
 

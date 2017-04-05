@@ -137,19 +137,20 @@ var NCOView = Backbone.Marionette.ItemView.extend({   //  It should be a Collect
   id: 'nco__wrapper',
   ui: {
     input: '#nco__autocomplete-input',
-    ncoUl: '#nco__ul',
-    storage: '#nco_storage'
+    ncoUl: '#nco__ul'
   },
   events: {
     'focus @ui.input': 'enableFiltering',
     'click @ui.ncoUl': 'setNCO'
   },
   onRender: function(){
-    var html = ''
-    $.each( window.state.listNCO, function ( i, val ) {
-      html += '<li>' + val.nco_type +' '+ val.nco_name +', '+ val.city
-        +', '+ val.street +', '+ val.build +', id='+ val.id + '</li>';
-    });
+    var html = _.reduce(window.state.listNCO, function(memo, val){
+      if(!this.filter || this.filter && this.filter(val)){
+        memo += '<li>' + val.nco_type +' '+ val.nco_name +', '+ val.city
+          +', '+ val.street +', '+ val.build +', id='+ val.id + '</li>';
+      }
+      return memo
+    }, '', this)
     this.ui.ncoUl.html( html );
   },
   enableFiltering: function(){
@@ -158,6 +159,7 @@ var NCOView = Backbone.Marionette.ItemView.extend({   //  It should be a Collect
   setNCO: function(e){
     this.ui.input.val(e.target.innerText)
     this.ui.ncoUl.hide()
+    if(this.informParent) this.informParent(null, this.getNCO())
   },
   getNCO: function(){
     var str = this.ui.input.val() 
@@ -736,17 +738,6 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     if (file){
       var client = new XMLHttpRequest(),
           that = this
-      function upload(){
-        that.ui.progressBar.css({ "width": 0 })
-        that.ui.progressWrap.show()
-        var formData = new FormData();
-        formData.append("picture", file);
-        client.open("post", "https://gurtom.mobi/i/up.php?type="
-        + that.model.get('type') , true);
-        client.setRequestHeader('Accept'
-        ,'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8')
-        client.send(formData);
-      }
       client.upload.onprogress = function(e) {
         if (e.lengthComputable) {
           var percentCompleted = (100 * e.loaded / e.total).toFixed(0) + '%';
@@ -758,25 +749,28 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         that.ui.progressWrap.hide()
       }
-
-
-
       client.onreadystatechange = function(){
         if (client.readyState == 4 && client.status == 200){
-          if(client.responseText.substr(0,8) === '/uploads'){
-            $('#img').val(client.responseText)
-            that.sendForm()
-          } else if(JSON.parse(client.response).error){
+          var response = JSON.parse(client.response)
+          if(response.error){
             that.ui.progressWrap.hide()
-            alert(window.localeMsg[window.localeLang][JSON.parse(client.response).error])
+            console.log(response.msg)
+            alert(window.localeMsg[window.localeLang][response.error] || response.error)
+          } else {
+            $('#img').val(response.img)
+            that.sendForm()
           }
         }
       }
-
-
-
-
-      upload();  
+      this.ui.progressBar.css({ "width": 0 })
+      this.ui.progressWrap.show()
+      var formData = new FormData();
+      formData.append("picture", file);
+      client.open("post", "https://gurtom.mobi/i/up.php?type="
+      + this.model.get('type') , true);
+      client.setRequestHeader('Accept'
+      ,'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8')
+      client.send(formData);
     } else this.sendForm()
   },
   verifyInputs: function(that){
@@ -913,12 +907,12 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       data: that.ui.form.serialize()
     })
     promise.done(function( response ){
-      if( response.length === 0 ){
+      if(typeof response !== "object"){
         alert( window.localeMsg[window.localeLang].FAIL )
         return
       }
       if(response.error){
-        alert(window.localeMsg[window.localeLang][response.error])
+        alert(window.localeMsg[window.localeLang][response.error] || response.error)
         return
       }
       window.state.singleBeacon = true
@@ -939,9 +933,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       })
       if(that.latLng.currentView){
         markers[markers.length-1].setDraggable(false)
-        showBeaconFullView(res)                      //  Add alert on error!
-        // beaconsList.set(response, {reset: true})
-        // showBeaconsListView()
+        showBeaconFullView(res[0])                      //  Add alert on error!
       } else {
         that.exit()
       }

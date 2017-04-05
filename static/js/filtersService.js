@@ -4,21 +4,12 @@ var $filter_processing_beacons = $('#processing_beacons')
 var $filter_closed_beacons = $('#closed_beacons')
 $('#beacon_status').click(_.debounce(beaconStatusRead, 1000))
 function beaconStatusRead(event){
-  var result = ''
-  if($filter_new_beacons.prop("checked")) result += "0"
-  if($filter_confirmed_beacons.prop("checked")){
-    if(result) result += ",1"
-    else result += "1"
-  }
-  if($filter_processing_beacons.prop("checked")){
-    if(result) result += ",2"
-    else result += "2"
-  }
-  if($filter_closed_beacons.prop("checked")){
-    if(result) result += ",3"
-    else result += "3"
-  }
-  window.state.b_status = result
+  var result = []
+  if($filter_new_beacons.prop("checked")) result.push("0")
+  if($filter_confirmed_beacons.prop("checked")) result.push("1")
+  if($filter_processing_beacons.prop("checked")) result.push("2")
+  if($filter_closed_beacons.prop("checked")) result.push("3")
+  window.state.b_status = result.join(',')
   window.state.sendGET(window.state.urlMarkers)
 }
 
@@ -31,29 +22,14 @@ var $filter_payments = $('#payments')
 var $filter_bank_id = $('#bank-id')
 $('#user_rating').click(_.debounce(userRatingRead, 1000))
 function userRatingRead(event){
-  var result = ''
-  if($filter_e_mail.prop("checked")) result += "0"
-  if($filter_social_net.prop("checked")){
-    if(result) result += ",1"
-    else result += "1"
-  }
-  if($filter_co_owners.prop("checked")){
-    if(result) result += ",7"
-    else result += "7"
-  }
-  if($filter_organisations.prop("checked")){
-    if(result) result += ",8"
-    else result += "8"
-  }
-  if($filter_payments.prop("checked")){
-    if(result) result += ",9"
-    else result += "9"
-  }
-  if($filter_bank_id.prop("checked")){
-    if(result) result += ",10"
-    else result += "10"
-  }
-  window.state.user_auth = result
+  var result = []
+  if($filter_e_mail.prop("checked")) result.push("0")
+  if($filter_social_net.prop("checked")) result.push("1")
+  if($filter_co_owners.prop("checked")) result.push("7")
+  if($filter_organisations.prop("checked")) result.push("8")
+  if($filter_payments.prop("checked")) result.push("9")
+  if($filter_bank_id.prop("checked")) result.push("10")
+  window.state.user_auth = result.join(',')
   window.state.sendGET(window.state.urlMarkers)
 }
 function setAllActions(e){
@@ -80,42 +56,18 @@ var $filter_sos = $('#sos')
 
 function actionsRead(event){
   if(event.target.nodeName === 'INPUT'){
-    var result = '',
-        push = function(val){
-          if(result) result += "," + val
-          else result += val
-        }
-    if($filter_votings.prop("checked")) {
-      push(1)
-    }
-    if($filter_programms.prop("checked")){
-      push(2)
-    }
-    if($filter_project_proposals.prop("checked")){
-      push(3)
-    }
-    if($filter_projects.prop("checked")){
-      push(4)
-    }
-    if($filter_requests.prop("checked")){
-      push(5)
-    }
-    if($filter_positive.prop("checked")){
-      push(69)
-    }
-    if($filter_negative.prop("checked")){
-      push(96)
-    }
-    if($filter_budget.prop("checked")){
-      push(330)
-    }
-    if($filter_info.prop("checked")){
-      push(777)
-    }
-    if($filter_sos.prop("checked")){
-      push(911)
-    }
-    window.state.b_types = result
+    var result = []
+    if($filter_votings.prop("checked")) result.push('1')
+    if($filter_programms.prop("checked")) result.push('2')
+    if($filter_project_proposals.prop("checked")) result.push('3')
+    if($filter_projects.prop("checked")) result.push('4')
+    if($filter_requests.prop("checked")) result.push('5')
+    if($filter_positive.prop("checked")) result.push('69')
+    if($filter_negative.prop("checked")) result.push('96')
+    if($filter_budget.prop("checked")) result.push('330')
+    if($filter_info.prop("checked")) result.push('777')
+    if($filter_sos.prop("checked")) result.push('911')
+    window.state.b_types = result.join(',')
     window.state.sendGET(window.state.urlMarkers)
   }
 }
@@ -123,7 +75,13 @@ function actionsRead(event){
 var $filter_date_picker = $('#time_range .date_picker'),
     $timeFilterWrapper = $('#time_range')[0]
 $filter_date_picker.hide()
-$("#time_range input:radio").change(timeRangeChanged)
+$("#time_range input:radio").change(function(e){
+  window.timeRangeChanged(e)
+  window.state.initFromURL && window.state.sendGET(window.state.urlMarkers)
+})
+$("#time_range input:radio").one('init', function(e){
+  window.timeRangeChanged(e)
+})
 function timeRangeChanged(e) {
   var theMoment = formatTime(new Date()),
       dateFrom;
@@ -162,7 +120,6 @@ function timeRangeChanged(e) {
   function setDatesForAJAX(start, finish){
     window.state.start = encodeURIComponent(start)
     window.state.finish = encodeURIComponent(finish)
-    window.state.sendGET(window.state.urlMarkers)
   }
 }
 $filter_date_picker.change(datePickerChanged)
@@ -233,6 +190,7 @@ $(window).load(function(){
   })
   $('#actions input').change(_.debounce(actionsRead, 1000))
   $filter_all.change(setAllActions)
+  $('#last_week').prop('checked', true).checkboxradio('refresh').trigger('init')  //  activates option "for last week"
 })
 
 function getListOrgs() {
@@ -269,31 +227,33 @@ function filterViewUpdateFromDataURL (al, bs, bt, qw, st, ft, ocp, oc, op, lcp, 
   $('#beacon_status').off()
   $('#user_rating').off()
   $('#actions input').off()
+  $filter_all.off()
   $filter_date_picker.off()
 
   var arr = al.split(',')
-  if(_.indexOf(arr, '0' ) === -1 ) $filter_e_mail.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '1' ) === -1 ) $filter_social_net.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '7' ) === -1 ) $filter_co_owners.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '8' ) === -1 ) $filter_organisations.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '9' ) === -1 ) $filter_payments.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '10') === -1 ) $filter_bank_id.prop('checked', false).flipswitch( "refresh" )
+  $filter_e_mail.prop('checked', _.indexOf(arr, '0' ) > -1).flipswitch( "refresh" )
+  $filter_social_net.prop('checked', _.indexOf(arr, '1' ) > -1).flipswitch( "refresh" )
+  $filter_co_owners.prop('checked', _.indexOf(arr, '7' ) > -1).flipswitch( "refresh" )
+  $filter_organisations.prop('checked', _.indexOf(arr, '8' ) > -1).flipswitch( "refresh" )
+  $filter_payments.prop('checked', _.indexOf(arr, '9' ) > -1).flipswitch( "refresh" )
+  $filter_bank_id.prop('checked', _.indexOf(arr, '10' ) > -1).flipswitch( "refresh" )
+  $filter_all.prop('checked', arr.length > 3).flipswitch( "refresh" )
   arr = bs.split(',')
-  if(_.indexOf(arr, '0' ) === -1 ) $filter_new_beacons.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '1' ) === -1 ) $filter_confirmed_beacons.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '2' ) === -1 ) $filter_processing_beacons.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '3' ) === -1 ) $filter_closed_beacons.prop('checked', false).flipswitch( "refresh" )
+  $filter_new_beacons.prop('checked', _.indexOf(arr, '0' ) > -1).flipswitch( "refresh" )
+  $filter_confirmed_beacons.prop('checked', _.indexOf(arr, '1' ) > -1).flipswitch( "refresh" )
+  $filter_processing_beacons.prop('checked', _.indexOf(arr, '2' ) > -1).flipswitch( "refresh" )
+  $filter_closed_beacons.prop('checked', _.indexOf(arr, '3' ) > -1).flipswitch( "refresh" )
   arr = bt.split(',')
-  if(_.indexOf(arr, '1' ) === -1 ) $filter_votings.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '2' ) === -1 ) $filter_programms.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '3' ) === -1 ) $filter_project_proposals.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '4' ) === -1 ) $filter_projects.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '5' ) === -1 ) $filter_requests.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '69') === -1 ) $filter_positive.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '96') === -1 ) $filter_negative.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '330') === -1 ) $filter_budget.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '777') === -1 ) $filter_info.prop('checked', false).flipswitch( "refresh" )
-  if(_.indexOf(arr, '911') === -1 ) $filter_sos.prop('checked', false).flipswitch( "refresh" )
+  $filter_votings.prop('checked', _.indexOf(arr, '1' ) > -1).flipswitch( "refresh" )
+  $filter_programms.prop('checked', _.indexOf(arr, '2' ) > -1).flipswitch( "refresh" )
+  $filter_project_proposals.prop('checked', _.indexOf(arr, '3' ) > -1).flipswitch( "refresh" )
+  $filter_projects.prop('checked', _.indexOf(arr, '4' ) > -1).flipswitch( "refresh" )
+  $filter_requests.prop('checked', _.indexOf(arr, '5' ) > -1).flipswitch( "refresh" )
+  $filter_positive.prop('checked', _.indexOf(arr, '69' ) > -1).flipswitch( "refresh" )
+  $filter_negative.prop('checked', _.indexOf(arr, '96' ) > -1).flipswitch( "refresh" )
+  $filter_budget.prop('checked', _.indexOf(arr, '330' ) > -1).flipswitch( "refresh" )
+  $filter_info.prop('checked', _.indexOf(arr, '777' ) > -1).flipswitch( "refresh" )
+  $filter_sos.prop('checked', _.indexOf(arr, '911' ) > -1).flipswitch( "refresh" )
   // if(_.indexOf(arr, '1000') === -1 ) $filter_organizations.prop('checked', false).flipswitch( "refresh" )
   if(qw !== '-'){
     qw = decodeURIComponent(qw)

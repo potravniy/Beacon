@@ -190,20 +190,22 @@ window.Lib = Marionette.Object.extend({
     } else {
       type = model.type || model.parent_type
     }
-    return type > 50
+    return +type > 50 && +type !== 330
+  },
+  areInSameCategory: function(beaconA, beaconB){
+    return window.lib.isDemand(beaconA) === window.lib.isDemand(beaconB)
   },
   isAuthor: function(model){
     var options = model.get ? model.attributes : model
     return window.state.user.id === options.author_id
   },
   getNCObyID: function(id){
-    for(var i=0; i<window.state.listNCO.length; i++) {
-      if ( window.state.listNCO[i].id === id) return window.state.listNCO[i]
-    }
-    return undefined
+    return _.find(window.state.listNCO, function(NCO){
+      return NCO.id == id
+    })
   },
   getNameNCObyID: function(id){
-    if(id !== '0') return window.lib.getNCObyID(id).nco_name
+    if(id !== 0) return window.lib.getNCObyID(id).nco_name
     else return 'undefined'
   }
 })
@@ -307,7 +309,8 @@ var btnsCopyDel = [
     className: 'copy',
     isAvailable: function(options){
       var full = options.full && options.full.length > 0
-      return full && !window.lib.isAuthor(options)
+      var isOrg = +window.state.user.gov > 0 || +window.state.user.nco > 0
+      return full && isOrg && !window.lib.isAuthor(options)
     }
   },
   {
@@ -510,7 +513,7 @@ window.state.statusList.projPropAndProjectAndRequest = [
         className: 'complete',
         chngTo: 1,
         isAvailable: function(options){
-          return !!options.full && window.state.user.id === options.nco_id && +options.nco_acceptance === 1
+          return !!options.full && window.state.user.id === options.nco_id && options.nco_acceptance !== 0
         }
       }
     ]
@@ -550,28 +553,29 @@ function getSpheresForVoting(){
 }
 
 function getListMenuOrg() {
-  $.ajax({
-    url: "https://gurtom.mobi/beacon_list_layers.php",
-    dataType: "json",
-    crossDomain: true,
-    success: function ( response ) {
-      if(response.error){
-        alert(window.localeMsg[window.localeLang][response.error])
-        return
+  if(+window.state.user.gov > 0 || +window.state.user.nco > 0){
+    $.ajax({
+      url: "https://gurtom.mobi/beacon_list_layers.php",
+      dataType: "json",
+      crossDomain: true,
+      success: function ( response ) {
+        if(response.error){
+          alert(window.localeMsg[window.localeLang][response.error])
+          return
+        }
+        if(response.length === 0){
+          alert(window.localeMsg[window.localeLang].FAIL)
+          return
+        }
+        window.state.listMenuOrg = response
+      },
+      error: function(response){
+        alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       }
-      if(response.length === 0){
-        alert(window.localeMsg[window.localeLang].FAIL)
-        return
-      }
-      window.state.listMenuOrg = response
-    },
-    error: function(response){
-      alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
-    }
-  })
-}
-getListMenuOrg.isAvailable = function(){
-  return +window.state.user.gov > 0 || +window.state.user.nco > 0
+    })
+  } else {
+    window.state.listMenuOrg = undefined
+  }
 }
 
 function getIconURL(r, relative) {

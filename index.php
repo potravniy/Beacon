@@ -1,7 +1,5 @@
 <?php
 
-//test/
-
 if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
   {
     $l_lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
@@ -9,6 +7,7 @@ if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
     $l_lang = 'en';
   }
 require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
+
 ?>
 
 <!doctype html>
@@ -20,6 +19,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="<?php echo META_DESCRIPTION ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#e9e9e9">
     
     <title><?php echo BEACON ?></title>
 
@@ -31,7 +31,10 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="<?php echo BEACON ?>">
+    <link rel="apple-touch-icon" href="/static/img/android-desktop.png">
     <link rel="apple-touch-icon-precomposed" href="/static/img/android-desktop.png">
+    <link rel="apple-touch-startup-image" href="/static/img/android-desktop.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <!-- Tile icon for Win8 (144x144 + tile color) -->
     <meta name="msapplication-TileImage" content="/static/img/ms-touch-icon-144x144.png">
@@ -160,8 +163,8 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
       <div id="footer" data-role="footer" data-position="fixed" data-update-page-padding="false" data-fullscreen="true" data-tap-toggle="false"> 
         <div data-role="navbar">
           <ul>
-            <li><a href="#" id="btn__the-map" class="ui-btn-active"><?php echo MAP ?></a></li>
-            <li><a href="#" id="btn__the-beacons" class=""><?php echo BEACONS ?></a></li>
+            <li><a href="#" id="btn__the-map" class="footer_buttons ui-btn-active"><?php echo MAP ?></a></li>
+            <li><a href="#" id="btn__the-beacons" class="footer_buttons"><?php echo BEACONS ?></a></li>
           </ul>
         </div>
       </div>    <!-- /footer -->
@@ -254,7 +257,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
               <label for="any"><?php echo LAST_ANY ?></label>
               <input type="radio" name="radio-time" id="last_hour" value="hour">
               <label for="last_hour"><?php echo LAST_HOUR ?></label>
-              <input type="radio" name="radio-time" id="last_day" value="day" checked="checked">
+              <input type="radio" name="radio-time" id="last_day" value="day">
               <label for="last_day"><?php echo LAST_DAY ?></label>
               <input type="radio" name="radio-time" id="last_week" value="week">
               <label for="last_week"><?php echo LAST_WEEK ?></label>
@@ -369,14 +372,14 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
           <div class="ui-block-b">
             <div class="custom-border-radius">
               <h5><?php echo ENTER_SOCIAL ?></h5>
-              <a href="/sn/gp.php" data-ajax="false" class="gp ui-btn ui-icon-google_plus ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Google+</a>
-              <a href="/sn/fb.php" data-ajax="false" class="ui-btn ui-icon-facebook ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Facebook</a>
-              <a href="/sn/li.php" data-ajax="false" class="ui-btn ui-icon-linkedin ui-btn-icon-notext ui-nodisc-icon ui-corner-all">LinkedIn</a>
+              <a href="#" data-ajax="false" class="google_plus_login gp ui-btn ui-icon-google_plus ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Google+</a>
+              <a href="#" data-ajax="false" class="facebook_login ui-btn ui-icon-facebook ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Facebook</a>
+              <a href="#" data-ajax="false" class="linkedin_login ui-btn ui-icon-linkedin ui-btn-icon-notext ui-nodisc-icon ui-corner-all">LinkedIn</a>
             </div>
             <a href="#" class="registration ui-btn ui-input-btn ui-corner-all ui-shadow"><?php echo QUESTION_FIRST_TIME ?></a>
             <a href="#" class="restore_pass ui-btn ui-input-btn ui-corner-all ui-shadow"><?php echo QUESTION_RESTORE_PASSWORD ?></a>
           </div>
-          <a href="https://goo.gl/bZZkoL" target="_blank" class="org ui-btn ui-corner-all"><?php echo REGISTER_CORPORATE ?></a>
+          <a href="https://goo.gl/bZZkoL" target="_blank" class="org ui-btn ui-corner-all" rel="noopener"><?php echo REGISTER_CORPORATE ?></a>
         </div>
       </form>
     </div>
@@ -562,14 +565,12 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <input id="beneficiar_name" type="text" name="ben" pattern=".{100,}" <%-required%>>
     </script>
     <script id="nco__tpl" type="text/template">
-      <div id="nco__wrapper">
-        <p><strong><?php echo NCO_BID ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></p>
-        <h6><?php echo MESSAGE_AUTOCOMPLITE ?></h6>
-        <form class="ui-filterable" autocomplete="off">
-          <input id="nco__autocomplete-input" data-type="search" placeholder="<?php echo CHOOSE_NCO ?>" data-wrapper-class="input" autocomplete="off">
-        </form>
-        <ul id="nco__ul" data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#nco__autocomplete-input"></ul>
-      </div>
+      <p><strong><?php echo NCO_BID ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></p>
+      <h6><?php echo MESSAGE_AUTOCOMPLITE ?></h6>
+      <form class="ui-filterable" autocomplete="off">
+        <input id="nco__autocomplete-input" data-type="search" placeholder="<?php echo CHOOSE_NCO ?>" data-wrapper-class="input" autocomplete="off">
+      </form>
+      <ul id="nco__ul" data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#nco__autocomplete-input"></ul>
     </script>
     <script id="description_tpl" type="text/template">
       <label for="description"><strong><?php echo DESCRIPTION_FULL ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
@@ -708,10 +709,15 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <div data-role="navbar" class="navbar">
           <ul >
             <li><button class="share ui-icon-share ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo SHARE ?></button></li>
-            <li><button class="link ui-icon-<%-link_icon%> ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo LINK ?></button></li>
+            <li>
+              <button class="link ui-icon-<%-link_icon%> ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo LINK ?></button>
+              <% if(showBreakLinkBtn){ %>
+                <button class="break_link ui-icon-break_link ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo LINK ?></button>
+              <% } %>
+            </li>
             <li><button class="error ui-icon-error_outline ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo DISPROVE ?></button></li>
             <li><button class="star ui-icon-star-<% if (+favorite) { %>full<% } else { %>empty<% } %> ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo ADD_TO_FAVORITE ?></button></li>
-            <li><button class="add_linked ui-icon-add ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo ADD_NEW ?></button></li>
+            <li><button class="add_linked ui-icon-add_link ui-btn-icon-notext ui-nodisc-icon ui-bar-inherit ui-bar ui-bar-a ui-btn ui-btn-icon-top"><?php echo ADD_NEW ?></button></li>
           </ul>
         </div>
         <div id="chat_region"></div>
@@ -752,7 +758,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
       <p class="voting"><?php echo VOTE_SPHERE ?>: <strong><%- sphereStr %></strong>.</p>
       <p class="voting"><?php echo VOTE_STATUS ?>: <strong><%- v_status %></strong></p>
       <p class="voting"><?php echo DESCRIPTION_FULL ?>: <br><strong><%- descr %></strong></p>
-      <a href="<%- discussion_link %>" class="ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left ui-mini" target="_blank"><?php echo VOTE_DESCUSSION ?></a>
+      <a href="<%- discussion_link %>" class="discussion_btn ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left ui-mini" target="_blank"><?php echo VOTE_DESCUSSION ?></a>
       <hr>
       <p class="voting"><?php echo YOUR_AUTH_LEVEL ?>: <strong>"<%- votingStatus %>".</strong></p>
       <p class="voting"><?php echo YOUR_STATUS ?>: <strong><%- usr_status %></strong></p>
@@ -818,7 +824,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     <script id="program_full_view" type="text/template">
       <p class="project"><?php echo PROGRAM_DESCRIPTION ?>:<br><%= description %></p>
       <p class="project"><?php echo PROGRAM_ID ?>: <strong><%- id %></strong></p>
-      <a href="<%- discussion_link %>" class="ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left" target="_blank"><?php echo PROGRAM_DISCUSSION ?></a>
+      <a href="<%- discussion_link %>" class="discussion_btn ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left" target="_blank"><?php echo PROGRAM_DISCUSSION ?></a>
       <p class="project"><?php echo NUMBER_OF_PP ?>: <strong><%- pp %>.</strong> <a href="#" class="pp_list ui-btn ui-corner-all ui-btn-inline ui-mini"><?php echo PP_LIST ?></a></p>
       <hr>
       <div class="funds"></div>
@@ -829,7 +835,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     </script>
 
     <script id="objects2-5_full_view" type="text/template">
-      <p class="project"><?php echo PROJECT_DESCRIPTION ?>:<br><%= description %></p>
+      <p class="project"><%- subject_description_title %>:<br><%- description %></p>
       <p class="project"><%- subject_id %>: <strong><%- id %></strong></p>
       <% if( type === "3" ){ %>
         <p class="project">
@@ -850,7 +856,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <p class="project"><%- closed %> <strong> <%- ts_closed %>.</strong></p>
       <% } %>
       <% if( discussion_link ){ %>
-        <a href="<%- discussion_link %>" class="ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left" target="_blank"><%- subject_discussion %></a>
+        <a href="<%- discussion_link %>" class="discussion_btn ui-btn ui-corner-all ui-icon-twitter ui-btn-icon-left" target="_blank"><%- subject_discussion %></a>
       <% } %>
       <% if( type === "2" ){ %>
         <p class="project"><?php echo NUMBER_OF_PP ?>: <strong><%- pp %>.</strong> <a href="#" class="pp_list ui-btn ui-corner-all ui-btn-inline ui-mini"><?php echo PP_LIST ?></a></p>
@@ -859,29 +865,30 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
       <div class="funds"></div>
       <hr>
       <div class="contribution"></div>
-      <a href="#" class="donate ui-btn ui-corner-all ui-icon-add ui-btn-icon-left"><?php echo DONATE ?></a>
+      <button class="donate ui-btn ui-corner-all ui-icon-add ui-btn-icon-left"><?php echo DONATE ?></button>
+      <!--<a href="#" class="donate ui-btn ui-corner-all ui-icon-add ui-btn-icon-left"><?php echo DONATE ?></a>-->
       <div class="nco"></div>
     </script>
 
     <script id="admin_nco_view" type="text/template">
       <h3><%- subject_administration %></h3>
-      <% if( nco_acceptance === "0" && nco_id === "0" ){ %>
+      <% if( nco_acceptance === 0 && nco_id === 0 ){ %>
         <p class="project"><?php echo NCO_NOT_SELECTED_BY_AUTHOR ?></p>
       <% } %>
-      <% if( nco_acceptance === "0" && nco_id !== 0 ){ %>
+      <% if( nco_acceptance === 0 && nco_id !== 0 ){ %>
         <p class="project"><?php echo NCO_SELECTED_BY_AUTHOR ?>
           <strong> <%- ncoName %> </strong>
         </p>
       <% } %>
       <div class="nco_choise"></div>
-      <% if( nco_acceptance === "0" && nco_bids.length === 0 ){ %>
+      <% if( nco_acceptance === 0 && nco_bids.length === 0 ){ %>
         <p class="project"><%- no_nco %></p>
       <% } %>
-      <% if( nco_acceptance !== "0" ){ %>
+      <% if( nco_acceptance !== 0 ){ %>
         <p class="project"><%- nco_defined %></p>
       <% } %>
-      <% if( nco_acceptance === "0" && nco_bids.length !== 0 ){ %>
-        <p class="project"><%- nco_list %>)</p>
+      <% if( nco_acceptance === 0 && nco_bids.length !== 0 ){ %>
+        <p class="project"><%- nco_list %>:</p>
       <% } %>
       <div class="nco_list"></div>
       <% if( showNcoBtn ){ %>
@@ -890,9 +897,12 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     </script>
 
     <script class="nco_wants_admin" type="text/template">
-      <p class="project"> <%- item.nco_name %>.</p>
-      <% if( button ){ %>
-        <button class="accept"><?php echo ACCEPT_PROPOSAL ?></p>
+      <label class="project"> <%- item.nco_name %></label>
+      <% if( authorBtn ){ %>
+        <button class="accept" data-mini="true"><?php echo ACCEPT_PROPOSAL ?></p>
+      <% } %>
+      <% if( ncoBtn ){ %>
+        <button class="withdraw" data-mini="true"><%- ncoBtnText %></p>
       <% } %>
     </script>
 
@@ -917,7 +927,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     <script id="create_beacon__geo_tpl" type="text/template">
       <div data-role="header" class="header">
         <a href="#" class="settings ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-settings ui-btn-icon-notext ui-btn-left ui-nodisc-icon"><?php echo CLOSE ?></a>
-        <h1><?php echo BEACON_CREATE ?></h1>
+        <h1><%- title %></h1>
         <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
       </div>
       <div data-role="main" class="listview_wrapper">
@@ -1008,7 +1018,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
           <% if(id !== '0') { %>
             <h4 class="follower"><%-subtitle%> "<%-details%>", id:<%- id %></h4>
           <% } %>
-          <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon history_back"><?php echo CLOSE ?></a>
+          <button class="close ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></button>
         </div>
         <div data-role="main" class="main ui-content">
           <form action="" id="donate__form">
@@ -1104,13 +1114,17 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     </script>
 
     <script id="clipboard__tpl" type="text/template">
-      <% if( on_supply == 0 && on_demand == 0 || isExpanded) { %>
+      <% if( on_supply == 0 && on_demand == 0 || isExpanded || isLinking) { %>
         <div class="clipboard_title"><%- clipboardTitle %></div>
-        <% if(isExpanded){ %>
+        <% if(isExpanded || isLinking){ %>
           <div class="ui-btn-left ui-icon-close ui-btn-icon-notext ui-btn-inline"></div>
         <% } %>
       <% } %>
-      <% if( on_supply > 0 || on_demand > 0 || isExpanded) { %>
+      <div class="linking_parent__region my-responsive ui-grid-a clearfix"></div>
+      <% if(isLinking){ %>
+        <button class="make_link ui-btn ui-corner-all ui-icon-add_link ui-btn-icon-left">Link with:</button>
+      <% } %>
+      <% if(!isLinking && (on_supply > 0 || on_demand > 0 || isExpanded)) { %>
         <div class="demand">
           <span class="demand_label"><%- demand_title %>: </span>
           <span class="collected"><%- on_demand %></span>
@@ -1126,8 +1140,12 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
           <% } %>
         </div>
       <% } %>
-      <div class="clipboard_collection ui-grid-a my-responsive ui-nodisc-icon">
+      <div >
         <div class="clipboard__full-view empty"></div>
+        <div class="clipboard_collection ui-grid-a my-responsive ui-nodisc-icon"></div>
+        <% if(isLinking){ %>
+          <p class="clipboard__help"><%- help %></p>
+        <% } %>
       </div>
     </script>
 
@@ -1154,9 +1172,9 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         $.mobile.ajaxEnabled=false;
       });
     </script>
-    <script src="/static/js/vendor/jquery.mobile-1.4.5.js"></script>
-    <script src="/static/js/vendor/backbone.js"></script>
-    <script src="/static/js/vendor/backbone.marionette.js"></script>
+    <script src="/static/js/vendor/jquery.mobile-1.4.5.min.js"></script>
+    <script src="/static/js/vendor/backbone-min.js"></script>
+    <script src="/static/js/vendor/backbone.marionette.min.js"></script>
     <script src="/static/js/showMap.js"></script>
     <script src="/static/js/init.js"></script>
     <script src="/static/js/jQM_tweaks.js"></script>
@@ -1177,6 +1195,56 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     <script src="/static/js/shareInSocialNet.js"></script>
     <script src="/static/js/mapSearch.js"></script>
     <script src="/static/js/profilePopup.js"></script>
+    <!--<script>
+      'use strict';   //  https://github.com/GoogleChrome/sw-precache/blob/master/demo/app/js/service-worker-registration.js#L20
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js').then(function(reg) {
+            console.log('ServiceWorker succesfully registered')
+            // updatefound is fired if sw.js changes.
+            reg.onupdatefound = function() {
+              var installingWorker = reg.installing;
+              installingWorker.onstatechange = function() {
+                switch (installingWorker.state) {
+
+                  case 'installed':
+                    if (navigator.serviceWorker.controller) {
+                      console.log('New or updated content is available.');
+                    } else {
+                      console.log('Content is now available offline!');
+                    }
+                    break;
+
+                  case 'redundant':
+                    console.error('The installing service worker became redundant.');
+                    break;
+                }
+              };
+            };
+          }).catch(function(e) {
+            console.error('Error during service worker registration:', e);
+          });
+        });
+      }
+    </script>-->
+    <script>
+      'use strict'
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.getRegistrations()
+          .then(function(arrSW) {
+            if(arrSW.length > 0) {
+              arrSW.forEach(function(sw){
+                sw.unregister()
+                .then(function(){
+                  console.log('ServiceWorker for '+ sw.scope +' has been unregistered.')
+                })
+              })
+            }
+          })
+        });
+      }
+    </script>
 
   </body>
 </html>

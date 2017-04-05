@@ -556,15 +556,33 @@ var FundsListView = Backbone.Marionette.CompositeView.extend({
 })
 var oneNCOwantsAdmin = Backbone.Marionette.ItemView.extend({
   template: '.nco_wants_admin',
-  initialize: function(){
-    console.log('nco_wants_admin: ', this.model.attributes)
-    this.triggers = {
-      'click .accept': 'accept:' + this.model.get('item').id
-    }
+  className: function(){
+    return this.model.get('authorBtn') || this.model.get('ncoBtn') ? 'ui-field-contain' : ''
+  },
+  triggers: {
+    'click .accept': 'accept',
+    'click .withdraw': 'withdraw'
   }
 })
 var AdministrationNCOView = Backbone.Marionette.CompositeView.extend({
   template: '#admin_nco_view',
+  initialize: function(){
+    var that = this
+    if(this.model.get('nco_acceptance') === 0) {
+      this.model.set({ nco_bids: this.model.get('nco_bids') || [] })
+      var list = this.model.get('nco_bids').map(function(item){
+        return {
+          authorBtn: window.lib.isAuthor(that.model),
+          item: window.lib.getNCObyID( item ),
+          ncoBtn: +window.state.user.id === item,
+          ncoBtnText: window.localeMsg[window.localeLang].WITHDRAW_PROPOSAL
+        }
+      })
+      this.collection = new Backbone.Collection( list )
+    } else {
+      this.collection = new Backbone.Collection( [] )
+    }
+  },
   templateHelpers: function(){
     var res = {
       subject_administration: window.localeMsg[window.localeLang].SUBJECT_ADMINISTRATION[+this.model.get('type')],
@@ -573,23 +591,20 @@ var AdministrationNCOView = Backbone.Marionette.CompositeView.extend({
       nco_list: window.localeMsg[window.localeLang].LIST_NCO[+this.model.get('type')],
       ncoName: window.lib.getNameNCObyID( this.model.get('nco_id') ),
       showNcoBtn: false,
-      txt: ''
+      txt: '',
+      isAuthor: window.lib.isAuthor(this.model)
     }
-    if( window.state.user.nco !== '0' && this.model.get('nco_acceptance') === "0" ){
-      var doesNcoBid = this.model.get('nco_bids').indexOf(window.state.user.id) > -1,
-          doesNcoMeetAuthorChoise = this.model.get('nco_id') === window.state.user.id
+    if( +window.state.user.nco > '0' && this.model.get('nco_acceptance') === 0 ){
+      var doesNcoBid = _.contains(this.model.get('nco_bids'), +window.state.user.id),
+          doesNcoMeetAuthorChoise = this.model.get('nco_id') == window.state.user.id
 
       if( doesNcoMeetAuthorChoise ){
         res.showNcoBtn = true
-        this.ncoAction = 'takeIt'
         res.txt = window.localeMsg[window.localeLang].TAKE_ADMINISTRATION
       } else if( doesNcoBid ){
-        res.showNcoBtn = true
-        this.ncoAction = 'withdraw'
-        res.txt = window.localeMsg[window.localeLang].WITHDRAW_PROPOSAL
+        res.showNcoBtn = false
       } else {
         res.showNcoBtn = true
-        this.ncoAction = 'propose'
         res.txt = window.localeMsg[window.localeLang].PROPOSE_OUR_NCO
       }
     }
@@ -599,25 +614,70 @@ var AdministrationNCOView = Backbone.Marionette.CompositeView.extend({
   childView: oneNCOwantsAdmin,
   childViewContainer: '.nco_list',
   events: {
-    'click .nco_decision': 'sendNCOdecision'
+    'click .nco_decision': 'sendRequest'
   },
-  initialize: function(){
-    if(this.model.get('nco_acceptance') === "0") {
-      var btn = window.state.user.id === this.model.get('author_id') ? true : false
-      this.model.set({ nco_bids: this.model.get('nco_bids') || [] })
-      var list = this.model.get('nco_bids').map(function(item){
-        return {
-          item: window.lib.getNCObyID( item ),
-          button: btn
+  childEvents: {
+    'accept': 'onAccept',
+    'withdraw': 'withdraw'
+  },
+  onAccept: function(view){
+    var confirmed = confirm(window.localeMsg[window.localeLang].CONFIRM_FINAL_DECISION)
+    if(confirmed) this.sendRequest(null, view.model.get('item').id)
+  },
+  withdraw: function(){
+    this.sendRequest()
+  },
+  sendRequest: function(e, nco_id){
+    $.mobile.loading('show')
+    var that = this
+    var data = {
+      beacon_id: +this.model.get('b_id')
+    }
+    if(nco_id) data.nco_id = parseInt(nco_id)
+    var promise = $.ajax({
+      type: "POST",
+      url: nco_id ? "/beacon_nco_ask.php" : "/beacon_nco_bid.php",
+      dataType: "json",
+      crossDomain: true,
+      data: data
+    })
+    promise.done(function(response){
+      if(response.error){
+        alert(window.localeMsg[window.localeLang][response.error] || response.error)
+      } else {
+        window.showFullView(response)
+      }
+    });
+    promise.fail(function(response){
+      alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
+    });
+    promise.always(function(response){
+      $.mobile.loading('hide')
+    })
+  },
+  onRender: function(){
+    if(window.lib.isAuthor(this.model) && this.model.get('nco_acceptance') === 0){
+      var nco_bids = this.model.get('nco_bids')
+      var view = NCOView.extend({
+        model: new Backbone.Model({'required': ''}),
+        informParent: this.sendRequest.bind(this),
+        filter: function(item){
+          return !_.contains(nco_bids, +item.id)
         }
       })
-      this.collection = new Backbone.Collection( list )
-    } else {
-      this.collection = new Backbone.Collection( [] )
+      this.choiseView = new view()
+      this.choiseRegion = new Backbone.Marionette.Region({el: this.$('.nco_choise')})
+      this.choiseRegion.show(this.choiseView)
     }
   },
-  sendNCOdecision: function(){
-    console.log("NCO descision is: ", this.ncoAction)
+  onBeforeDestroy: function(){
+    if(this.choiseRegion){
+      this.choiseRegion.reset()
+      this.choiseRegion = null
+    }
+    if(this.choiseView){
+      this.choiseView = null
+    }
   }
 })
 var ProgramModel = Backbone.Model.extend({
@@ -631,7 +691,7 @@ var ProgramModel = Backbone.Model.extend({
     program_id: 'undefined',
     program_title: 'undefined',
     amount_asking: 'undefined',
-    nco_acceptance: '0',
+    nco_acceptance: 0,
     nco_bids: [],
     nco_id: '0',
     amount: ''
@@ -650,7 +710,8 @@ var Objects2_5View = Backbone.Marionette.LayoutView.extend({
       closed: window.localeMsg[window.localeLang].SUBJECT_CLOSED[+this.model.get('type')],
       dt_expired: this.model.get('dt_expired') || false,
       ts_closed: this.model.get('ts_closed') || false,
-      currency: window.lib.currency.getName(this.model.get('currency_asking'))
+      currency: window.lib.currency.getName(this.model.get('currency_asking')),
+      subject_description_title: window.localeMsg[window.localeLang].SUBJECT_DESCRIPTION_TITLE[+this.model.get('type')]
     }
   },
   regions: {
@@ -685,18 +746,20 @@ var Objects2_5View = Backbone.Marionette.LayoutView.extend({
     })
     this.showChildView('funds', new View())
 
-    options = {
-      label: window.localeMsg[window.localeLang].YOUR_DONATION,
-      amount: ( window.state.user.id ? '' : window.localeMsg[window.localeLang].UNKNOWN +'.' ),
-      collection: _.map(this.model.get('my_donations'), function(item){
-        return $.extend({}, item, { 'withdrawable': true })
+    if(window.state.user.id){
+      options = {
+        label: window.localeMsg[window.localeLang].YOUR_DONATION,
+        amount: ( window.state.user.id ? '' : window.localeMsg[window.localeLang].UNKNOWN +'.' ),
+        collection: _.map(this.model.get('my_donations'), function(item){
+          return $.extend({}, item, { 'withdrawable': true })
+        })
+      }
+      model = new FundsLabelModel(options)
+      View = FundsListView.extend({
+        model: model
       })
+      this.showChildView('contribution', new View())
     }
-    model = new FundsLabelModel(options)
-    View = FundsListView.extend({
-      model: model
-    })
-    this.showChildView('contribution', new View())
 
     if(this.model.get('type') !== '2'){
       View = AdministrationNCOView.extend({
@@ -754,17 +817,6 @@ var ProgramView = Backbone.Marionette.LayoutView.extend({
     this.showChildView('contribution', contributionListView)
   }
 })
-// var ProjProposModel = Backbone.Model.extend({
-//   defaults: {
-//     id: 0,
-//     my_donations: [],
-//     description: "",
-//     funds: [],
-//     discussion_link: undefined,
-//     pp: undefined,
-//     amount: ''
-//   }
-// })
 var SOS_Info_Emo_View = Backbone.Marionette.ItemView.extend({
   template: '#sos_extention_view_tpl',
   templateHelpers: function(){
@@ -779,6 +831,7 @@ var SOS_Info_Emo_View = Backbone.Marionette.ItemView.extend({
 var BeaconFullModel = BeaconModel.extend({
   parse: function(response) {
     var res = response[0]
+    var key
       for (key in res){
         if(res[key]==='') {
           delete res[key]
@@ -798,7 +851,6 @@ var BeaconFullModel = BeaconModel.extend({
   }
 })
 var BeaconFullView = Backbone.Marionette.LayoutView.extend({
-  baseUrl: 'https://gurtom.mobi/beacon_cards.php?b_id=',
   template: '#beacon_main_tpl',
   templateHelpers: function() {
     var bs = this.model.get('b_status')
@@ -808,7 +860,8 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
       b_status: i,
       color: bs[i]>0 ? 'green' : bs[i]<0 ? 'red' : '',
       link_icon: this.model.get('linked') === '1' ? 'linked' : 'unlinked',
-      icon_url: window.getIconURL(this.model.attributes, true) 
+      icon_url: window.getIconURL(this.model.attributes, true),
+      showBreakLinkBtn: false
     }  
     return $.extend({}, window.lib.tagList(this), obj )
   },
@@ -855,7 +908,7 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
   onClickShare: function (event) {
     var options = {
       title: this.model.get('details'),
-      link: window.location.origin + window.location.pathname + '#' 
+      link: window.location.origin + '#' 
        + serializeState(this.model.get('id'), this.model.get('lat'), this.model.get('lng')) 
     }
     window.showPopupShare(options)
@@ -872,6 +925,8 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
   },
   onClickError: function (event) {
     event.stopPropagation()
+    if(!confirm(window.localeMsg[window.localeLang].SEND_MESSAGE_ABUSE)) return
+    alert(window.localeMsg[window.localeLang].ABUSE_ON_INFORMATIION_SENT)
     console.log('button "error" clicked id=' + this.model.get('id'))
   },
   onClickStar: function (event) {
@@ -879,20 +934,16 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     console.log('button "star" clicked id=' + this.model.get('id'))
   },
   onClickAdd: function (event) {
-    event.stopPropagation()
-    if(window.clipboardView.collection.isEmpty()){
-      var options = {
-        'parent_id': this.model.get('id'),
-        'parent_type': +this.model.get('b_type') === 1000 ? this.model.get('type') : this.model.get('b_type'),
-        'parent_model': this.model.attributes
-      }
-      if(options.parent_type == '2'){
-        $.extend(options, { 'program_id': this.model.get('full')[0].id })
-      }
-      window.checkLoggedInThen(showBeaconCreateMenu, options)
-    } else {
-      var confirm = prompt("Are you sure?")
+    var options = {
+      'parent_id': this.model.get('id'),
+      'parent_type': +this.model.get('b_type') === 1000
+                      ? this.model.get('type')
+                      : this.model.get('b_type')  
     }
+    if(options.parent_type == '2'){
+      $.extend(options, { 'program_id': this.model.get('full')[0].id })
+    }
+    window.checkLoggedInThen(showBeaconCreateMenu, options)
   },
   onBeforeShow: function(){
     var type = +this.model.get('b_type') === 1000 ? this.model.get('type') : this.model.get('b_type')
@@ -951,11 +1002,11 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
       collection: chatCollection,
       beacon_id: this.model.get('id')
     }))
-    if( window.state.b_link === this.model.get('id') ){
-      this.ui.link.addClass('ui-btn-active')
-    } else {
-      this.ui.link.removeClass('ui-btn-active')
-    }
+    // if( window.state.b_link === this.model.get('id') ){
+    //   this.ui.link.addClass('ui-btn-active')
+    // } else {
+    //   this.ui.link.removeClass('ui-btn-active')
+    // }
   },
   donate: function(){
     var param = {
@@ -968,23 +1019,20 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
   },
   exit: function(){
     if(this.options.region){
-      window.clipboardView.removeFullView()
-    } else {
-      window.closeSingleBeaconMode()
-    }
-  },
-  onClickStatusBtn: function(){
-    showPopupStatusBeacon( this.model.attributes )
-  },
-  onClickImg: function(){
-    var $photoPopup = $('#popupPhoto')
-    $('#popupPhoto .photopopup__img').attr("src", this.model.get('b_img'))
-    $photoPopup.popup('open')
-    $photoPopup.popup("reposition", {positionTo: 'window'})
+  } else {
+    window.closeSingleBeaconMode()
+  }
+},
+onClickStatusBtn: function(){
+  showPopupStatusBeacon( this.model.attributes )
+},
+onClickImg: function(){
+  var $photoPopup = $('#popupPhoto')
     var $abuseBtn = $('#popupPhoto .abuse')
     $abuseBtn.attr("data-id", this.model.get('id'))
     $abuseBtn.click(function(){
       console.log('image abuse btn clicked for beacon_id:' + $(this).attr('data-id'))
+      if(!confirm(window.localeMsg[window.localeLang].SEND_PICTURE_ABUSE)) return
       alert(window.localeMsg[window.localeLang].ABUSE_ON_IMAGE_SENT)
       $photoPopup.popup('close')
     })
@@ -998,5 +1046,6 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     if(!window.lib.isDemand(this.model) && !window.lib.isAuthor(this.model)){
       this.ui.add.prop( "disabled", true )
     }
+    this.ui.link.prop( "disabled", true )
   }
 })

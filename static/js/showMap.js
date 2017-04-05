@@ -9,8 +9,8 @@ window.state = {
 	lngmin: 0,
 	lngmax: 0,
 	signsAfterDot: 0,
-	b_types: '1,2,3,4,5,69,96,330,777,911',
-	b_status: '0,1,2,3',
+	b_types: '',
+	b_status: '',
 	b_sources: '',
 	b_layer_type: '',
 	b_layer_owner_id: '',
@@ -41,11 +41,11 @@ window.state = {
 	sendGET: function(url){
 		this.oReq.open("GET", url + this.urlRequest(), true)
 		this.oReq.send()
-		Manager.navigate(serializeState())
+		Manager.trigger('state_update')
 		if(window.beaconsListView && !window.beaconsListView.isDestroyed) {
 			beaconsList.getNewCollection()
 		}
-		!window.clipboardView.isShowndBefore && window.clipboardView.initialShow()
+		window.clipboardView && !window.clipboardView.isShowndBefore && window.clipboardView.initialShow()
 	},
 	urlMarkers: 'https://gurtom.mobi/map_cluster.php?',
 	urlRequest: function(){
@@ -68,8 +68,8 @@ window.state = {
 		+ this.get4thFilter()
 		return result
 	},
-	viewState: 'mm',	//	mm: mapMultiView, cardsMultiView;	  ms: mapMultiView, cardsSingleView;   ss: mapSingleView, cardsSingleView
-	viewStateIdArray: [],
+	viewState: 'mm',	//	mm: mapMultiView, cardsMultiView;	  ms: mapMultiView, cardsFullView;  msd: mapMultiView, donation;
+	viewStateId: '',
 	singleBeacon: false,
 	mapWidth: 0,	// temp values for map resize investigation
 	mapHeight: 0	// temp values for map resize investigation
@@ -154,8 +154,8 @@ function requestMarkers() {
 		window.state.lngmax = +(bounds.getNorthEast().lng().toFixed(8))
 		var delta = (window.state.lngmax - window.state.lngmin)/(window.innerWidth/40)
 		window.state.signsAfterDot = Math.round(-Math.log(delta)/Math.LN10)
-		window.state.mapHeight = window.state.$map.css('height'),
-		window.state.mapWidth  = window.state.$map.css('width'),
+		window.state.mapHeight = window.state.$map.css('height')
+		window.state.mapWidth  = window.state.$map.css('width')
 		window.state.sendGET(window.state.urlMarkers)
 	}
 }
@@ -242,6 +242,7 @@ function createMarker(r, index, draggable){ 	// createMarker(r.b_type, r.layer_t
 		}
 	});
 	markers[index].iconImg = new Image();
+	markers[index].iconImg.alt = '!'
 	markers[index].iconImg.parent = markers[index] 
 	markers[index].iconImg.onload = function () {
 		this.parent.iconImg = null

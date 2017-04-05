@@ -61,6 +61,14 @@
     "where": "MsgModel line 5",
     "msg": "Ваше повідомлення може бути першим."
   },
+  "SEND_MESSAGE_ABUSE": {
+    "where": "MsgView onClickBtn line 122",
+    "msg": "Надіслати скаргу на повідомлення?"
+  },
+  "SEND_PICTURE_ABUSE": {
+    "where": "MsgView onClickBtn line 122",
+    "msg": "Надіслати скаргу на зображення?"
+  },
   "ABUSE_ON_MESSAGE_SENT": {
     "where": "MsgView onClickBtn promise.done alert line 138",
     "msg": "Скаргу на повідомлення надіслано."
@@ -72,6 +80,17 @@
   "ABUSE_ON_IMAGE_SENT": {
     "where": "BeaconView onClickImg alert line 296",
     "msg": "Скаргу на зображення надіслано."
+  },
+  "CREATE_LINK_QUESTION": {
+    "where": "BeaconView onClickAdd line 259",
+    "msg": "Are you going to link selected beacons?"
+  },
+  "YOU_ARE_NOT_OWNER_OF_SELECTED_SUPPLY": {
+    "where": "ClipboardView onClickAdd line 278",
+    "msg": "You can link this beacon to your own supply beacon only. To do that please select your own beacons to the \"Supply\" section."
+  },
+  "UNABLE_TO_UNLINK": {
+    "msg": "Unable to unlink."
   },
 
 
@@ -309,6 +328,10 @@
     "where": "AdministrationNCOView templateHelpers res.txt line 594",
     "msg": "Запропонувати свою НКО"
   },
+  "CONFIRM_FINAL_DECISION": {
+    "where": "AdministrationNCOView onAccept line 630",
+    "msg": "Прийняття пропозиції є остаточним і в подальшому не може бути змінено."
+  },
   "THIS_FUNCTION_IS_NOT_AVAILABLE_YET": {
     "where": "Objects2_5View showListPP alert line 657, 711",
     "msg": "Ця функція поки що недоступна."
@@ -333,6 +356,17 @@
       "ID проектної пропозиції",
       "ID проекту",
       "ID запиту"
+    ]
+  },
+  "SUBJECT_DESCRIPTION_TITLE": {
+    "where": "objects2-5_full_view line 654",
+    "msg": [
+      "unused",
+      "unused",
+      "Опис програми",
+      "Опис проектної пропозиції",
+      "Опис проекту",
+      "Опис запиту"
     ]
   },
   "SUBJECT_EXPIRATION": {
@@ -431,6 +465,14 @@
   "YOU_DO_NOT_HAVE_APPROPRIATE_LAYER": {
     "where": "BeaconCreatePopup onShow alert line 101",
     "msg": "Ви не маєте шару з типом {type}."
+  },
+  "CREATE_BEACON": {
+    "where": "BeaconCreatePopup initialize line 62",
+    "msg": "Створити маячок"
+  },
+  "CREATE_LINKED_BEACON": {
+    "where": "BeaconCreatePopup initialize line 71",
+    "msg": "Створити пов'язаний маячок"
   },
 
 
@@ -738,6 +780,10 @@
     "where": "projPropAndProjectAndRequest line 456",
     "msg": "Визначення НКО для адміністрування"
   },
+  "DETERMINE_NCO_FOR_ADMINISTRATION": {
+    "where": "projPropAndProjectAndRequest line 456",
+    "msg": "Визначити НКО для адміністрування"
+  },
   "NCO_FOR_ADMINISTRATION_DETERMINED": {
     "where": "projPropAndProjectAndRequest line 457",
     "msg": "НКО для адміністрування визначено"
@@ -809,17 +855,158 @@
     "where": "ClipboardView line 18",
     "msg": "No beacons selected"
   },
+  "LINKING_HELP": {
+    "where": "ClipboardView templateHelpers line 49",
+    "msg": "If you do not see here your all selected beacons it means that not all beacons are linkable:\n\n1. It is possible to link beacons of demand* cathegory with beacons of supply* cathegory.\n2. Beacons from the same cathegory are not linkable.\n3. You must be an author of supply cathegory beacon to link it.\n4. You can link your supply cathegory beacon with any beacon of demand cathegory.\n* Demand cathegory includes SOS, Good, Bad and Important beacon's types, supply cathegory includes Voting, Programm, Project, Project Proposal, Request and Participative Budget types."
+  },
   "SELECTED_BEACONS": {
     "where": "ClipboardView line 18",
     "msg": "Selected beacons"
   },
-  "CREATE_LINK_QUESTION": {
-    "where": "ClipboardView onClickAdd line 278",
-    "msg": "Are you going to link selected beacons?"
-  },
   "LINK_CREATED_SUCCESSFULLY": {
     "where": "ClipboardView onClickAdd line 296",
     "msg": "Successful link creation."
-  }
+  },
 
+
+  "no file": "BackEnd error messages",
+
+  "1001": {
+    "msg": "Zero filering result"
+  },
+  "1002": {
+    "msg": "Account activation failed"
+  },
+  "2001": {
+    "msg": "Account created and confirmed. You can log in."
+  },
+  "WRONG_PARAMETERS_SET": {
+    "msg": "WRONG_PARAMETERS_SET"
+  },
+  "NO_RECORDS_FOUND": {
+    "msg": "NO_RECORDS_FOUND"
+  },
+  "WRONG_FORMAT_OF_PHONE_NUMBER": {
+    "msg": "WRONG_FORMAT_OF_PHONE_NUMBER"
+  },
+  "RECORD_ALREADY_EXIST": {
+    "msg": "RECORD_ALREADY_EXIST"
+  },
+  "USER_MUST_BE_LOGGED_IN": {
+    "msg": "USER_MUST_BE_LOGGED_IN"
+  },
+  "UNABLE_TO_DELETE": {
+    "msg": "UNABLE_TO_DELETE"
+  },
+  "MAXIMUM_NUMBER_OF_ADDRESSES_RICHED": {
+    "msg": "MAXIMUM_NUMBER_OF_ADDRESSES_RICHED"
+  },
+  "CITY_NOT_FOUND": {
+    "msg": "CITY_NOT_FOUND"
+  },
+  "COUNTY_NOT_FOUND": {
+    "msg": "COUNTY_NOT_FOUND"
+  },
+  "STATE_NOT_FOUND": {
+    "msg": "STATE_NOT_FOUND"
+  },
+  "COUNTRY_NOT_FOUND": {
+    "msg": "COUNTRY_NOT_FOUND"
+  },
+  "THERE_IS_NO_SUCH_USER": {
+    "msg": "THERE_IS_NO_SUCH_USER"
+  },
+  "UNABLE_TO_TRANSFER_TO_YOURSELF": {
+    "msg": "UNABLE_TO_TRANSFER_TO_YOURSELF"
+  },
+  "UNABLE_TO_ADD_VOTING_TO_THIS_PROGRAM": {
+    "msg": "UNABLE_TO_ADD_VOTING_TO_THIS_PROGRAM"
+  },
+  "UNABLE_TO_ADD_TO_THIS_SPHERE": {
+    "msg": "UNABLE_TO_ADD_TO_THIS_SPHERE"
+  },
+  "WRONG_VOTING_AGES_SET": {
+    "msg": "WRONG_VOTING_AGES_SET"
+  },
+  "WRONG_START_AND_FINISH_VOTING_DATES_SET": {
+    "msg": "WRONG_START_AND_FINISH_VOTING_DATES_SET"
+  },
+  "MINIMUM_SUPPORT_LEVEL_EQUAL_1": {
+    "msg": "MINIMUM_SUPPORT_LEVEL_EQUAL_1"
+  },
+  "VOTING_FINISH_DATE_NOT_SET": {
+    "msg": "VOTING_FINISH_DATE_NOT_SET"
+  },
+  "VOTING_START_DATE_NOT_SET": {
+    "msg": "VOTING_START_DATE_NOT_SET"
+  },
+  "DESCRIPTION_NOT_SET": {
+    "msg": "DESCRIPTION_NOT_SET"
+  },
+  "TITLE_NOT_SET": {
+    "msg": "TITLE_NOT_SET"
+  },
+  "SPHERE_NOT_SET": {
+    "msg": "SPHERE_NOT_SET"
+  },
+  "YOU_ARE_NOT_AUTHORIZED_TO_VOTE_IN_THIS_COMMUNITY": {
+    "msg": "YOU_ARE_NOT_AUTHORIZED_TO_VOTE_IN_THIS_COMMUNITY"
+  },
+  "NO_SUCH_HASH_IN_LAST_1HR_FOUND": {
+    "msg": "NO_SUCH_HASH_IN_LAST_1HR_FOUND"
+  },
+  "USER_UNABLE_TO_ADD_TO_FAVORITES": {
+    "msg": "USER_UNABLE_TO_ADD_TO_FAVORITES"
+  },
+  "MIN_16_SYMBOLS": {
+    "msg": "MIN_16_SYMBOLS"
+  },
+  "YOU_ALREADY_MADE_YOUR_PROPOSITION_TO_THIS_PROGRAM": {
+    "msg": "YOU_ALREADY_MADE_YOUR_PROPOSITION_TO_THIS_PROGRAM"
+  },
+  "ONLY_AUTHOR_CAN_DELETE_VOTING": {
+    "msg": "ONLY_AUTHOR_CAN_DELETE_VOTING"
+  },
+  "YOUR_REQUEST_RECIEVED": {
+    "msg": "YOUR_REQUEST_RECIEVED"
+  },
+  "YOUR_MEMBERSHIP_WAS_STOPPED": {
+    "msg": "YOUR_MEMBERSHIP_WAS_STOPPED"
+  },
+  "IT_WAS_ALREADY_DONE": {
+    "msg": "IT_WAS_ALREADY_DONE"
+  },
+  "UPLOADER_ERROR_MESSAGE": {
+    "msg": "UPLOADER_ERROR_MESSAGE"
+  },
+  "NO_PERMISSION": {
+    "msg": "NO_PERMISSION"
+  },
+  "REGISTRATION_ACTIVATION_SUCCESSFUL": {
+    "msg": "REGISTRATION_ACTIVATION_SUCCESSFUL"
+  },
+  "REGISTRATION_ACTIVATION_NOT_SUCCESSFUL": {
+    "msg": "REGISTRATION_ACTIVATION_NOT_SUCCESSFUL"
+  },
+  "WRONG_RECAPTCHA": {
+    "msg": "WRONG_RECAPTCHA"
+  },
+  "WRONG_RECAPTCHA_PARAMETERS": {
+    "msg": "WRONG_RECAPTCHA_PARAMETERS"
+  },
+  "EMAIL_ALREADY_EXIST": {
+    "msg": "EMAIL_ALREADY_EXIST"
+  },
+  "UNABLE_TO_LINK": {
+    "msg": "UNABLE_TO_LINK"
+  },
+  "WRONG_NUMBER_OF_UPLOADED_FILES": {
+    "msg": "WRONG_NUMBER_OF_UPLOADED_FILES"
+  },
+  "WRONG_CURRENCY_SET": {
+    "msg": "WRONG_CURRENCY_SET"
+  },
+  "DB_ADD_ERROR": {
+    "msg": "DB_ADD_ERROR"
+  }
 }

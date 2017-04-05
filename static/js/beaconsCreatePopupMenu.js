@@ -52,24 +52,25 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
   onSettingsClick: function(){
     showChangeGovMenuView()
   },
+  templateHelpers: function(){
+    return {
+      title: this.title
+    }
+  },
   initialize: function(options){
-    var collection = []
-    var isParentDemand = _.isEmpty(options)
-      ? null
-      : window.lib.isDemand(options)
-    if( window.getListMenuOrg.isAvailable() ) {
+    var collection
+    this.title = window.localeMsg[window.localeLang].CREATE_BEACON
+    if(window.state.listMenuOrg) {
       collection = $.extend([], window.state.listMenuOrg)
-    }
-    else {
+    } else if(!options || _.isEmpty(options)){
+      collection = $.extend([], window.state.listMenu)
+    } else {
       collection = _.filter(window.state.listMenu, function(it){
-        var getIt = _.isNull(isParentDemand)
-          ? true
-          : isParentDemand
-            ? !window.lib.isDemand(it)
-            : window.lib.isDemand(it)
-        return getIt
+        return !window.lib.areInSameCategory(it, options)
       })
+      this.title = window.localeMsg[window.localeLang].CREATE_LINKED_BEACON
     }
+    this.collection.set(collection)
     if ( options.b_id && options.type ){
       this.canCopy = _.some(collection, function(item){
         return item.type === options.type
@@ -77,7 +78,6 @@ BeaconCreatePopup = Backbone.Marionette.CompositeView.extend({
     } else {
       this.canCopy = true
     }
-    this.collection.set(collection)
   },
   onDomRefresh: function(){
     if( state.user.gov === '1' || state.user.nco === '1' ) {

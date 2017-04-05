@@ -50,7 +50,6 @@ function emailAccountActivation(){
 }
 
 function leftPanelInit(){
-  checkLoggedIn()
   $('#left-panel.auth-panel .menu li.login').click( logIn )
   $('#left-panel.auth-panel .menu li.logout').click( logOut )
 }
@@ -61,8 +60,8 @@ function loginDialogInit(){
     e.preventDefault()
     var promise = loggingRequest($(this).serialize(), 0)
     promise.done(function ( response ) {
-      if(response[0] && response[0].id && response[0].id > 0) {
-        window.state.user = response[0]
+      if(response && response.id && response.id > 0) {
+        window.state.user = response
         showUserInfo()
         Manager.trigger('home')
       } else {
@@ -73,7 +72,43 @@ function loginDialogInit(){
       alert(window.localeMsg[window.localeLang].LOGIN_DATA_ARE_NOT_VALID)
     });
   })
+  $('.google_plus_login, .facebook_login, .linkedin_login').click(window.openSocialNetWindow)
 }
+
+function openSocialNetWindow(e){
+  e.preventDefault()
+  $.mobile.loading('show')
+  var network = ''
+  switch (true) {
+    case $('.google_plus_login').is(e.target):
+      network = 'gp'
+      break;
+    case $('.facebook_login').is(e.target):
+      network = 'fb'
+      break;
+    case $('.linkedin_login').is(e.target):
+      network = 'li'
+      break;
+  }
+  window.socialNetworkWindow = window.open(window.state.user.social_links[network])
+  window.intervalID = setInterval(function(){
+    if(window.socialNetworkWindow && window.socialNetworkWindow.closed){
+      socialNetworkWindowClosed()
+      window.clearInterval(window.intervalID)
+    }
+  }, 100)
+}
+
+function socialNetworkWindowClosed(){
+  if(window.socialNetworkWindow){
+    window.checkLoggedIn()
+    .then(function(){
+      window.Manager.trigger('home')
+      $.mobile.loading('hide')
+    })
+  }
+}
+
 function logIn() {
   Manager.trigger('login')
 }
@@ -83,12 +118,14 @@ function logOut(){
   }
   var promise = loggingRequest(data, 0)
   promise.done(function ( response ) {
-    if(response[0] && response[0].id && response[0].id === '-10'){
+    if(response && response.id && response.id === -10){
+      var social_links = window.state.user.social_links
       window.state.user = {
         user_first: window.localeMsg[window.localeLang].GUEST,
         login: 'Guest',
         avatar: '/images/avatar-bg.png'
       }
+      window.state.user.social_links = response.social_links || social_links
       showUserInfo()
     }
   });
@@ -110,25 +147,25 @@ function registerDialogInit(){
       alert(window.localeMsg[window.localeLang].FILL_CAPTCHA_ALERT)
       return
     }
-    var promise = loggingRequest($(this).serialize(), 4)
-    promise.done(function ( response ) {
-      if(response[0] && response[0].msg) {
-        alert(response[0].msg)
-        Manager.trigger('home')
-      } else if(response[0] && response[0].error) {
-        alert("Error: " + response[0].error)
-      } else {
-        if(Array.isArray(response)){
-          alert(response.map(function(item){ return JSON.stringify(item) }).join())
+    loggingRequest($(this).serialize(), 4)
+      .done(function ( response ) {
+        if(response[0] && response[0].msg) {
+          alert(response[0].msg)
+          Manager.trigger('home')
+        } else if(response[0] && response[0].error) {
+          alert("Error: " + response[0].error)
         } else {
-          alert( JSON.stringify(response) )
+          if(Array.isArray(response)){
+            alert(response.map(function(item){ return JSON.stringify(item) }).join())
+          } else {
+            alert( JSON.stringify(response) )
+          }
         }
-      }
-    });
-    promise.fail(function(response){
-      alert("Error: " + response[0].error)
-    });
-    promise.always(grecaptcha.reset())
+      })
+      .fail(function(response){
+        alert("Error: " + response[0].error)
+      })
+      .always(grecaptcha.reset())
   })
 }
 
@@ -242,9 +279,17 @@ function confirmVerification(usr_id, verif_code){
     $.mobile.loading('hide')
   })
 }
-
+// function runCheckLoggedIn(){
+//   window.state.oReq.removeEventListener("load", window.runCheckLoggedIn)
+//   window.checkLoggedIn()
+// }
 function checkLoggedIn(){
-  $.ajax({
+  // if(window.state.latmin === 0){
+  //   window.state.oReq.addEventListener("load", window.runCheckLoggedIn)
+  //   console.log("checkLoggedIn біжить поперед батька в пекло")
+  //   return
+  // }
+  return $.ajax({
     type: "GET",
     url: "https://gurtom.mobi/profile.php",
     dataType: "json",
@@ -253,8 +298,8 @@ function checkLoggedIn(){
       if(response.error){
         alert(window.localeMsg[window.localeLang][response.error])
       }
-      if(response[0] && response[0].id && response[0].id > 0){
-        window.state.user = response[0]
+      if(response && response.id && response.id > 0){
+        window.state.user = response
         if ( window.state.user.email.length > 20 ) {
           window.state.user.email = window.state.user.email.replace('@', ' @')
         }
@@ -264,8 +309,9 @@ function checkLoggedIn(){
           login: 'Guest',
           avatar: '/images/avatar-bg.png'
         }
+        window.state.user.social_links = response.social_links
       }
-      showUserInfo()
+      window.showUserInfo()
     },
     error: function(){
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
@@ -274,11 +320,9 @@ function checkLoggedIn(){
 }
 
 function showUserInfo(){
-  if( window.getListMenuOrg.isAvailable() ){
-    window.getListMenuOrg()
-  }
+  window.getListMenuOrg()
   window.getListOrgs()
-  getSpheresForVoting()
+  window.getSpheresForVoting()
   var name = ''
   if(window.state.user.user_first && window.state.user.user_last){
     name = window.state.user.user_first + ' ' + window.state.user.user_last 
@@ -304,6 +348,11 @@ function showUserInfo(){
     $('#left-panel.auth-panel .menu li.logout').hide()
     $('.menu .activities').addClass('ui-state-disabled')
     $('.menu .profile').addClass('ui-state-disabled').off()
+  }
+  if (window.beaconFullView && window.beaconFullView.isRendered) {
+    window.showFullView()
+  } else if (window.beaconsListView && window.beaconsListView.isRendered){
+    window.beaconsListView.render()
   }
 }
 

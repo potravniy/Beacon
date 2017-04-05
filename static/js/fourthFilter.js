@@ -206,10 +206,11 @@ var SearchView = Backbone.Marionette.ItemView.extend({
   }, 700)
 })
 function makeListOrgs(){
-  if( window.state.user.filters ){
-    var res = _.map(window.state.listOrgs, function(item){
+  var result
+  if( window.state.filter4 ){
+    result = _.map(window.state.listOrgs, function(item){
       var unit = {}
-      var ownrSetts = _.findWhere(window.state.user.filters[0].filter4, {layer_owner_id: +item.layer_owner_id})
+      var ownrSetts = _.findWhere(window.state.filter4, {layer_owner_id: +item.layer_owner_id})
       if ( ownrSetts && ownrSetts.chkd===1 && ownrSetts.pined===1 ) {
         unit.layer_owner_id = +item.layer_owner_id
         unit.layer_owner_code = item.layer_owner_code
@@ -231,7 +232,7 @@ function makeListOrgs(){
         unit.chkd = ownrSetts.chkd
         unit.pined = ownrSetts.pined
         unit.layers = _.map(item.layers, function(layer){
-          var layerSetts = _.findWhere(window.state.user.filters[0].filter4, {uniq_id: +layer.uniq_id})
+          var layerSetts = _.findWhere(window.state.filter4, {uniq_id: +layer.uniq_id})
           var res = {}
           if ( layerSetts ) {
             res.uniq_id = +layer.uniq_id
@@ -253,7 +254,7 @@ function makeListOrgs(){
         unit.chkd = 0
         unit.pined = 0
         unit.layers = _.map(item.layers, function(layer){
-          var layerSetts = _.findWhere(window.state.user.filters[0].filter4, {uniq_id: +layer.uniq_id})
+          var layerSetts = _.findWhere(window.state.filter4, {uniq_id: +layer.uniq_id})
           var res = {}
           if ( layerSetts ) {
             res.uniq_id = +layer.uniq_id
@@ -273,7 +274,7 @@ function makeListOrgs(){
     })
   } else {
     var filter4 = []
-    var res = _.map(window.state.listOrgs, function(item){
+    result = _.map(window.state.listOrgs, function(item){
       var unit = {},
           filt = {}
       unit.layer_owner_code = item.layer_owner_code
@@ -294,11 +295,9 @@ function makeListOrgs(){
       })
       return unit
     })
-    window.state.user.filters = []
-    window.state.user.filters[0] = {}
-    window.state.user.filters[0].filter4 = filter4
+    window.state.filter4 = filter4
   }
-  return res
+  return result
 }
 var ListOrgCollection = Backbone.Collection.extend({
   exportListOrgSetts: function() {
@@ -355,11 +354,8 @@ var ListOrgCollection = Backbone.Collection.extend({
       promise.fail(function(response){
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       });
-    } else if ( !state.user.filters ) {
-      state.user.filters = []
-      state.user.filters[0] = {}
     }
-    state.user.filters[0].filter4 = result
+    window.state.filter4 = result
   }
 })
 var OrgsCollectionView = Backbone.Marionette.CollectionView.extend({
@@ -453,7 +449,7 @@ var FourthFilterView = Backbone.Marionette.LayoutView.extend({
 })
 
 function trans4thFilterStateToRoute(){
-  if ( !window.state.user.filters ) return {
+  if ( !window.state.filter4 ) return {
     ocp: '',
     oc: '',
     op: '',
@@ -467,7 +463,7 @@ function trans4thFilterStateToRoute(){
       layer_chk_pined = [],
       layer_chk = [],
       layer_pined = []
-  _.each(window.state.user.filters[0].filter4, function(item){
+  _.each(window.state.filter4, function(item){
     switch ( '' + item.chkd + item.pined ) {
       case '11':
         if ( item.hasOwnProperty('uniq_id') ) layer_chk_pined.push(item.uniq_id)
@@ -509,10 +505,6 @@ function trans4thFilterRouteToState(arr){
       })
     }
   })
-  if ( !window.state.user.filters ) {
-    window.state.user.filters = []
-    window.state.user.filters[0] = {}
-  }
-  window.state.user.filters[0].filter4 = res
+  window.state.filter4 = res
 }
 

@@ -9,16 +9,58 @@ window.fourthFilterRegion = new Backbone.Marionette.Region({el: "#categories"})
 window.mapSearchRegion = new Backbone.Marionette.Region({el: "#map_search_container"})
 window.profileRegion = new Backbone.Marionette.Region({el: ".profile_page__wrapper"})
 window.clipboardRegion = new Backbone.Marionette.Region({el: "#clipboard-region"})
-window.showBeaconsListView()
-window.showClipboard()
 
 function showBeaconsListView() {
+  if(window.state.viewState !== 'mm'){
+    window.state.viewState = 'mm'
+    window.state.viewStateId = ''
+		Manager.trigger('state_update')
+  }
   window.beaconsList = new BeaconsList()
   window.beaconsListView = new BeaconListView({
     collection: window.beaconsList,
   });
   window.cardsRegion.show(window.beaconsListView);
 }
+
+function showBeaconFullView(model, region){
+  if(model){
+    window.state.viewState = 'ms'
+    window.state.viewStateId = model.id
+		Manager.trigger('state_update')
+  } else {
+    model = {
+      id: window.state.viewStateId
+    }
+  }
+  window.beaconFullViewModel = new BeaconFullModel(model)
+  if(!model || !model.full || _.isEmpty(model.full)) {
+    $.mobile.loading('show')
+    window.beaconFullViewModel
+      .fetch()
+      .done(function(){
+        showFullView()
+      })
+      .always(function(){
+        $.mobile.loading('hide')
+      })
+  } else {
+    showFullView()
+  }
+  window.showFullView = function (model){
+    if(model){
+      window.beaconFullViewModel = new BeaconFullModel(model)
+    }
+    window.beaconFullView = new BeaconFullView({
+      model: window.beaconFullViewModel,
+      region: region
+    })
+    region
+      ? region.show(window.beaconFullView)
+      : window.cardsRegion.show(window.beaconFullView)
+  }
+}
+
 function showClipboard() {
   window.clipboardView = new ClipboardView();
   window.clipboardRegion.show(window.clipboardView);
@@ -44,7 +86,7 @@ function showObjectCreateView(model, options) {
       titler = window.localeMsg[window.localeLang].CREATE_PROJECT
       break;
     case 5:
-      titler = window.localeMsg[window.localeLang].CREATE_VOTING
+      titler = window.localeMsg[window.localeLang].CREATE_REQUEST
       break;
     case 69:
       titler = window.localeMsg[window.localeLang].CREATE_EMOTICON_GOOD
@@ -71,32 +113,6 @@ function showObjectCreateView(model, options) {
   }
   window.objectCreateView = new ObjectCreateView(options)
   window.cardsRegion.show(objectCreateView);
-}
-
-function showBeaconFullView(param, region){
-  var model = ( Array.isArray(param) ? param[0] : param )
-  window.beaconFullViewModel = new BeaconFullModel(model)
-  if( model.hasOwnProperty('full') ) {
-    showFullView()
-  } else {
-    $.mobile.loading('show')
-    window.beaconFullViewModel.fetch()
-    .done(function(){
-      showFullView()
-    })
-    .always(function(){
-      $.mobile.loading('hide')
-    })
-  }
-  function showFullView(){
-    window.beaconFullView = new BeaconFullView({
-      model: beaconFullViewModel,
-      region: region
-    })
-    region
-      ? region.show(window.beaconFullView)
-      : window.cardsRegion.show(window.beaconFullView)
-  }
 }
 
 function showBeaconCreateMenu(options) {
