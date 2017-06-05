@@ -7,16 +7,21 @@ window.createBeaconMenuRegion = new Backbone.Marionette.Region({el: "#create_bea
 window.rightPopupRegion = new Backbone.Marionette.Region({el: "#right_popup__region"})
 window.fourthFilterRegion = new Backbone.Marionette.Region({el: "#categories"})
 window.mapSearchRegion = new Backbone.Marionette.Region({el: "#map_search_container"})
-window.profileRegion = new Backbone.Marionette.Region({el: ".profile_page__wrapper"})
 window.clipboardRegion = new Backbone.Marionette.Region({el: "#clipboard-region"})
 
 function showBeaconsListView() {
+  console.log("showBeaconsListView")
   if(window.state.viewState !== 'mm'){
     window.state.viewState = 'mm'
     window.state.viewStateId = ''
 		Manager.trigger('state_update')
   }
   window.beaconsList = new BeaconsList()
+
+  beaconsList.on('update', function(e){
+    console.log('update', e)
+  })
+
   window.beaconsListView = new BeaconListView({
     collection: window.beaconsList,
   });
@@ -34,19 +39,6 @@ function showBeaconFullView(model, region){
     }
   }
   window.beaconFullViewModel = new BeaconFullModel(model)
-  if(!model || !model.full || _.isEmpty(model.full)) {
-    $.mobile.loading('show')
-    window.beaconFullViewModel
-      .fetch()
-      .done(function(){
-        showFullView()
-      })
-      .always(function(){
-        $.mobile.loading('hide')
-      })
-  } else {
-    showFullView()
-  }
   window.showFullView = function (model){
     if(model){
       window.beaconFullViewModel = new BeaconFullModel(model)
@@ -58,6 +50,19 @@ function showBeaconFullView(model, region){
     region
       ? region.show(window.beaconFullView)
       : window.cardsRegion.show(window.beaconFullView)
+  }
+  if(!model || !model.full || _.isEmpty(model.full)) {
+    $.mobile.loading('show')
+    window.beaconFullViewModel
+      .fetch()
+      .done(function(){
+        showFullView()
+      })
+      .always(function(){
+        $.mobile.loading('hide')
+      })
+  } else {
+    window.showFullView()
   }
 }
 
@@ -230,7 +235,7 @@ function showMapSearchView(){
 
 function showProfile(){
   window.profileView = new ProfilePopupView()
-  window.profileRegion.show(window.profileView)
+  window.profileView.render()
   console.log('Switch to profileView')
 }
 

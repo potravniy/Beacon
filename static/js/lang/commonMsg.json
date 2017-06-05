@@ -93,7 +93,6 @@
     "msg": "Unable to unlink."
   },
 
-
   "file3": "beaconChangeStatusMenu.js",
   
   "NO_STATUSES": {
@@ -120,6 +119,10 @@
 
   "file4": "beaconCreateView.js",
   
+  "NO_ADDRESS_FOUND": {
+    "where": "LatLngView addressLookUp infowindow.setContent line 32",
+    "msg": "No address found"
+  },
   "RUSSIA_OCCUPIED_TERRITORY": {
     "where": "LatLngView addressLookUp infowindow.setContent line 35",
     "msg": "Територія, окупована Росією."
@@ -147,6 +150,14 @@
   "AUTOCOMPLETE_DOES_NOT_WORK_FOR_THIS_BEACON_TYPE": {
     "where": "ObjectCreateView fillFormWithTargetData default alert line 689",
     "msg": "Для маячків цього типу автозаповнення поки що не працює.\nКоординати нового маячка співпадають з оригіналом."
+  },
+  "IS_BEACON_IN_PROPER_POSITION": {
+    "where": "ObjectCreateView checkBeackonPosition 740",
+    "msg": "Is beacon in proper position?"
+  },
+  "YES": {
+    "where": "ObjectCreateView checkBeackonPosition 744",
+    "msg": "Yes"
   },
   "TAG_REQUIRED": {
     "where": "ObjectCreateView verifyInputs alert line 761",
@@ -660,6 +671,9 @@
     "where": "window.Lib bType line 167; window.state.listMenu name line 212",
     "msg": "Важливо"
   },
+  "EVENT": {
+    "msg": "Event"
+  },
   "SOS": {
     "where": "window.Lib bType line 168; window.state.listMenu name line 204",
     "msg": "СОС"
@@ -822,11 +836,14 @@
 
   "file16": "payByCardPopup.js",
   
+  "DONATE": {
+    "where": "PayByCardView PopupModel line 5",
+    "msg": "Пожертвувати"
+  },
   "PRESSING_BUTTON_PAY_YOU_WILL_BE_REDIRECTED_TO_PAYING_SYSTEM_LIQPAY": {
     "where": "PayByCardView onBeforeShow html line 19",
-    "msg": "Натиснувши на зелену кнопку 'PAY', Ви перейдете на сайт www.liqpay.com для пожертвування коштів. Будьте готові ввести дані банківської картки."
+    "msg": "Натиснувши на зелену кнопку 'Пожертвувати', Ви перейдете на сайт www.liqpay.com для пожертвування коштів. Будьте готові ввести дані банківської картки."
   },
-
 
   "file17": "profilePopup.js",
   
@@ -958,8 +975,11 @@
   "USER_UNABLE_TO_ADD_TO_FAVORITES": {
     "msg": "USER_UNABLE_TO_ADD_TO_FAVORITES"
   },
-  "MIN_16_SYMBOLS": {
-    "msg": "MIN_16_SYMBOLS"
+  "PROJECT_DESCRIPTION_MUST_BE_MIN_16_SYMBOLS": {
+    "msg": "DESCRIPTION_MUST_BE_MIN_16_SYMBOLS"
+  },
+  "PROJECT_TITLE_MUST_BE_MIN_6_SYMBOLS": {
+    "msg": "TITLE_MUST_BE_MIN_6_SYMBOLS"
   },
   "YOU_ALREADY_MADE_YOUR_PROPOSITION_TO_THIS_PROGRAM": {
     "msg": "YOU_ALREADY_MADE_YOUR_PROPOSITION_TO_THIS_PROGRAM"
@@ -1008,5 +1028,68 @@
   },
   "DB_ADD_ERROR": {
     "msg": "DB_ADD_ERROR"
+  },
+  "OBJECT_NOT_EXIST": {
+    "msg": "OBJECT_NOT_EXIST"
+  },
+  "NCO_NOT_EXIST": {
+    "msg": "NCO_NOT_EXIST"
+  },
+
+  "PIKADAY_I18N": {
+    "msg": {
+      "previousMonth" : "Previous Month",
+      "nextMonth"     : "Next Month",
+      "months"        : ["January","February","March","April","May","June","July","August","September","October","November","December"],
+      "weekdays"      : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+      "weekdaysShort" : ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+    }
+  },
+
+  "file22": "profilePopup.js",
+
+  "YOUR_PROFILE": {
+    "where": "",
+    "msg": "Your profile"
+  },
+  "FIRST_NAME": {
+    "where": "",
+    "msg": "First name"
+  },
+  "LAST_NAME": {
+    "where": "",
+    "msg": "Last name"
+  },
+  "NICKNAME": {
+    "where": "",
+    "msg": "Nickname"
+  },
+  "BIRTHDAY": {
+    "where": "",
+    "msg": "Date of Birth"
+  },
+  "GENDER": {
+    "where": "",
+    "msg": "gender"
+  },
+  "YOUR_FUNDS": {
+    "where": "",
+    "msg": "Your funds"
+  },
+  "REPLENISH": {
+    "where": "",
+    "msg": "Replenish"
+  },
+  "MALE_FEMALE": {
+    "where": "",
+    "msg": "{gender, plural, =0 {male} =1 {female}}"
+  },
+  "ADD_FUND": {
+    "where": "",
+    "msg": "Add fund"
+  },
+  "YOUR_VOTING_ADDRESSES": {
+    "where": "",
+    "msg": "Adresses for access to local votings"
   }
 }

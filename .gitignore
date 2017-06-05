@@ -8,6 +8,7 @@ unusedPhpTranslations.txt
 /node_modules/
 /.vscode/
 /initial/
+/dist
 
 # Windows image file caches
 Thumbs.db

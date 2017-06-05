@@ -244,7 +244,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
     var promise = $.ajax({
       type: "POST",
       url: url,
-      dataType: "text",
+      dataType: "json",
       xhrFields: { withCredentials: true },
       crossDomain: true,
       data: formData
@@ -254,11 +254,11 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
         alert(window.localeMsg[window.localeLang][response.error])
         return
       }
-      if(window.lib.isJson(response) && JSON.parse(response)[0]){
-        var responseParsed = JSON.parse(response)[0]
-        state.user.funds = _.map(state.user.funds, function(fund){
-          if(fund.id === responseParsed.fund_id){
-            fund.saldo = responseParsed.saldo
+      if(_.isArray(response.funds)){
+        var donatorFund = response.funds[0]
+        window.state.user.funds = _.map(window.state.user.funds, function(fund){
+          if(fund.id === donatorFund.fund_id){
+            fund.saldo = donatorFund.saldo
           }
           return fund
         })
@@ -266,8 +266,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
         alert(window.localeMsg[window.localeLang].THANKS_FOR_DONATE)
       } else {
         showPayByCardView({
-          header: window.localeMsg[window.localeLang].DONATION,
-          html_response: response
+          url: response.url
         })
       }
     })

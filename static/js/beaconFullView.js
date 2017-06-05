@@ -737,7 +737,7 @@ var Objects2_5View = Backbone.Marionette.LayoutView.extend({
     var options = {
       label: window.localeMsg[window.localeLang].FOR_THIS_SUBJECT_AMOUNT_COLLECTED[type],
       collection: _.map(this.model.get('funds'), function(item){
-        return $.extend({}, item, { 'withdrawable': false })
+        return $.extend({}, item, { 'withdrawable': false, replenishable: false })
       })
     }
     var model = new FundsLabelModel(options)
@@ -751,7 +751,7 @@ var Objects2_5View = Backbone.Marionette.LayoutView.extend({
         label: window.localeMsg[window.localeLang].YOUR_DONATION,
         amount: ( window.state.user.id ? '' : window.localeMsg[window.localeLang].UNKNOWN +'.' ),
         collection: _.map(this.model.get('my_donations'), function(item){
-          return $.extend({}, item, { 'withdrawable': true })
+          return $.extend({}, item, { 'withdrawable': true, replenishable: false })
         })
       }
       model = new FundsLabelModel(options)
@@ -793,7 +793,7 @@ var ProgramView = Backbone.Marionette.LayoutView.extend({
     var options = {
       label: window.localeMsg[window.localeLang].FOR_THIS_SUBJECT_AMOUNT_COLLECTED[2],
       collection: _.map(this.model.get('funds'), function(item){
-        return $.extend({}, item, { 'withdrawable': false })
+        return $.extend({}, item, { 'withdrawable': false, replenishable: false })
       })
     }
     var model = new FundsLabelModel(options)
@@ -805,7 +805,7 @@ var ProgramView = Backbone.Marionette.LayoutView.extend({
       label: window.localeMsg[window.localeLang].YOUR_DONATION,
       amount: ( window.state.user.id ? '' : window.localeMsg[window.localeLang].UNKNOWN +'.' ),
       collection: _.map(this.model.get('my_donations'), function(item){
-        return $.extend({}, item, { 'withdrawable': true })
+        return $.extend({}, item, { 'withdrawable': true, replenishable: false })
       })
     }
     model = new FundsLabelModel(options)
@@ -858,6 +858,7 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
     var obj = {
       full: this.model.get('full') || '',
       b_status: i,
+      title: window.localeMsg[window.localeLang][this.model.get('title')],
       color: bs[i]>0 ? 'green' : bs[i]<0 ? 'red' : '',
       link_icon: this.model.get('linked') === '1' ? 'linked' : 'unlinked',
       icon_url: window.getIconURL(this.model.attributes, true),
@@ -1002,11 +1003,6 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
       collection: chatCollection,
       beacon_id: this.model.get('id')
     }))
-    // if( window.state.b_link === this.model.get('id') ){
-    //   this.ui.link.addClass('ui-btn-active')
-    // } else {
-    //   this.ui.link.removeClass('ui-btn-active')
-    // }
   },
   donate: function(){
     var param = {
@@ -1019,15 +1015,18 @@ var BeaconFullView = Backbone.Marionette.LayoutView.extend({
   },
   exit: function(){
     if(this.options.region){
-  } else {
-    window.closeSingleBeaconMode()
-  }
-},
-onClickStatusBtn: function(){
-  showPopupStatusBeacon( this.model.attributes )
-},
-onClickImg: function(){
-  var $photoPopup = $('#popupPhoto')
+    } else {
+      window.closeSingleBeaconMode()
+    }
+  },
+  onClickStatusBtn: function(){
+    showPopupStatusBeacon( this.model.attributes )
+  },
+  onClickImg: function(){
+    var $photoPopup = $('#popupPhoto')
+    $('#popupPhoto .photopopup__img').attr("src", this.model.get('b_img'))
+    $photoPopup.popup('open')
+    $photoPopup.popup("reposition", {positionTo: 'window'})
     var $abuseBtn = $('#popupPhoto .abuse')
     $abuseBtn.attr("data-id", this.model.get('id'))
     $abuseBtn.click(function(){

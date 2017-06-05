@@ -22,6 +22,9 @@ var OrgLayerView = Backbone.Marionette.ItemView.extend({
     'chk': '.org_layer__chk input',
     'pin': '.org_item__pin'
   },
+  triggerMethod: _.noop,
+  // delegateEvents: _.noop,
+  // undelegateEvents: _.noop,
   events: {
     'change @ui.chk': 'onChk',
     'click @ui.pin': 'onPin'
@@ -93,6 +96,9 @@ var OrgView = Backbone.Marionette.CompositeView.extend({
     'change @ui.chk': 'onCheck',
     'click @ui.pin': 'onPin'
   },
+  triggerMethod: _.noop,
+  // delegateEvents: _.noop,
+  // undelegateEvents: _.noop,
   collectionEvents: {
     'change': 'onCollectionChange'
   },
@@ -104,7 +110,8 @@ var OrgView = Backbone.Marionette.CompositeView.extend({
       this.model.set('chkd', 0)
       this.setModelCheckedTo(false)
     }
-    this.trigger('render:me', this.$el.collapsible('option', 'collapsed'))
+    this.options.parent_renderMe(this, this.$el.collapsible('option', 'collapsed'))
+    // this.trigger('render:me', this.$el.collapsible('option', 'collapsed'))
   },
   onPin: function(){
     if( this.ui.pin.hasClass('ui-icon-pin_on') ){
@@ -114,7 +121,8 @@ var OrgView = Backbone.Marionette.CompositeView.extend({
       this.pin()
       this.setModelPinedTo(true)
     }
-    this.trigger('render:me', this.$el.collapsible('option', 'collapsed'))
+    this.options.parent_renderMe(this, this.$el.collapsible('option', 'collapsed'))
+    // this.trigger('render:me', this.$el.collapsible('option', 'collapsed'))
   },
   onCollectionChange: function(e){
     if( e.changed.hasOwnProperty('chkd') ){
@@ -133,7 +141,8 @@ var OrgView = Backbone.Marionette.CompositeView.extend({
     }
     this.syncModelWithCollection()
     if( !this.filter(e) ) {
-      this.trigger('render:expand')
+      this.options.parent_renderMe(this, false)
+      // this.trigger('render:expand')
     }
   },
   syncModelWithCollection: function(){
@@ -189,6 +198,9 @@ var SearchView = Backbone.Marionette.ItemView.extend({
   ui: {
     'input': 'input'
   },
+  triggerMethod: _.noop,
+  // delegateEvents: _.noop,
+  // undelegateEvents: _.noop,
   events: {
     'keyup @ui.input': 'keyup',
     'click .ui-input-clear': 'search'
@@ -337,7 +349,6 @@ var ListOrgCollection = Backbone.Collection.extend({
       }
       return memo
     },[])
-    window.state.sendGET(window.state.urlMarkers)
     if( window.state.user.id ) {
       var promise = $.ajax({
         type: "POST",
@@ -356,6 +367,7 @@ var ListOrgCollection = Backbone.Collection.extend({
       });
     }
     window.state.filter4 = result
+    window.state.sendGET(window.state.urlMarkers)
   }
 })
 var OrgsCollectionView = Backbone.Marionette.CollectionView.extend({
@@ -365,16 +377,23 @@ var OrgsCollectionView = Backbone.Marionette.CollectionView.extend({
   childView: OrgView,
   initialize: function(options){
     this.collection = listOrgCollection
-    $.extend(options, { searchStr: this.searchStr })
+    $.extend(options, {
+      searchStr: this.searchStr,
+      parent_renderMe: this.renderOnChildViewRequest.bind(this)
+    })
     this.childViewOptions = options
   },
+  sort: false,
+  triggerMethod: _.noop,
+  delegateEvents: _.noop,
+  undelegateEvents: _.noop,
   filter: function (child, index, collection) {
     var that = this
     var childCollection = _.filter(child.get('layers'), function(item){
       var isGrandChildPinedOrChecked = ( item.pined===1 || item.chkd===1 )
       return that.childViewOptions.isPinnable ? isGrandChildPinedOrChecked : !isGrandChildPinedOrChecked
     })
-    var isChildVisible = childCollection.length===0 ? false : true
+    var isChildVisible = childCollection.length !== 0
     if(isChildVisible && this.searchStr!==''){
       var isSearchStrInChildModel =
        child.get('layer_owner_name').toLowerCase().indexOf(this.searchStr) !== -1
@@ -382,7 +401,7 @@ var OrgsCollectionView = Backbone.Marionette.CollectionView.extend({
       childCollection = _.filter(childCollection, function(item){
         return item.layer_name.toLowerCase().indexOf(that.searchStr) !== -1
       }) 
-      var isSearchStrInChildCollection = childCollection.length===0 ? false : true
+      var isSearchStrInChildCollection = childCollection.length !== 0
       return isSearchStrInChildModel || isSearchStrInChildCollection
     } else {
       return isChildVisible
@@ -394,14 +413,14 @@ var OrgsCollectionView = Backbone.Marionette.CollectionView.extend({
     this.render().$el.collapsibleset().trigger('create')
   },
   searchStr: '',
-  childEvents: {
-    'render:expand': 'onChildRenderExpand',
-    'render:me': 'renderOnChildViewRequest'
-  },
+  // childEvents: {
+  //   'render:expand': 'onChildRenderExpand',
+  //   'render:me': 'renderOnChildViewRequest'
+  // },
   twin: 'is set by fourthFilterView.onShow',
-  onChildRenderExpand: function (childView) {
-    this.renderOnChildViewRequest(childView, false)
-  },
+  // onChildRenderExpand: function (childView) {
+  //   this.renderOnChildViewRequest(childView, false)
+  // },
   renderOnChildViewRequest: function(childView, isChildViewCollapsed){
     var cid = childView.model.cid
     var that = this
@@ -413,7 +432,7 @@ var OrgsCollectionView = Backbone.Marionette.CollectionView.extend({
         if ( targetChild = that.children.findByModelCid(cid) ) targetChild.expand()
         if ( targetChild = that.twin.children.findByModelCid(cid) ) targetChild.expand()
       }
-    }, 500)
+    }, 400)
   }
 })
 var FourthFilterView = Backbone.Marionette.LayoutView.extend({
@@ -424,6 +443,9 @@ var FourthFilterView = Backbone.Marionette.LayoutView.extend({
     'search': '.search_wrapper',
     'unselected': '.unselected_layers'
   },
+  // triggerMethod: _.noop,
+  delegateEvents: _.noop,
+  undelegateEvents: _.noop,
   onShow: function(){
     this.$el.trigger('create')
     this.selected.currentView.twin = this.unselected.currentView

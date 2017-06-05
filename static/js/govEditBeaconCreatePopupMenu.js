@@ -13,8 +13,9 @@ var ChangeGovMenuItemModel = Backbone.Model.extend({
       var fd = new FormData();   //  http://stackoverflow.com/questions/6974684/how-to-send-formdata-objects-with-ajax-requests-in-jquery    
       fd.append( 'picture', this.get('file') );
       var promise = $.ajax({
-        url: "https://gurtom.mobi/i/up.php?type=1000",
+        url: "https://gurtom.mobi/i/up.php?type=1000&target=1",
         data: fd,
+        dataType: "json",
         crossDomain: true,
         processData: false,
         contentType: false,
@@ -26,7 +27,7 @@ var ChangeGovMenuItemModel = Backbone.Model.extend({
           alert(window.localeMsg[window.localeLang][response.error])
           return
         }
-        that.set({ img: response })
+        that.set({ img: response.img })
         that.unset('file')
       })
       promise.fail(function(){

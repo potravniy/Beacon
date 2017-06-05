@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!--<base href="https://gurtom.mobi/">-->
+    <meta charset="utf-8">
+    <title>Get Translation</title>
+  </head>
+  <body>
+
+    <script src="/static/js/vendor/underscore-min.js"></script>
+    <script src="/static/js/vendor/jquery-1.11.1.min.js"></script>
+    <script>
+      window.old_localeMsg = {}
+      var oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        window.commonMsg = JSON.parse( this.responseText )
+        mergeCommonMsgWithLocaleMsg()
+      });
+      oReq.open("GET", "/static/js/lang/commonMsg.json");
+      oReq.send();
+      var oReq_en = new XMLHttpRequest();
+      oReq_en.addEventListener("load", function() {
+        window.old_localeMsg.en = JSON.parse( this.responseText )
+        mergeCommonMsgWithLocaleMsg()
+      });
+      oReq_en.open("GET", "/static/js/lang/local_en.json");
+      oReq_en.send();
+      var oReq_uk = new XMLHttpRequest();
+      oReq_uk.addEventListener("load", function() {
+        window.old_localeMsg.uk = JSON.parse( this.responseText )
+        mergeCommonMsgWithLocaleMsg()
+      });
+      oReq_uk.open("GET", "/static/js/lang/local_uk.json");
+      oReq_uk.send();
+      var oReq_ru = new XMLHttpRequest();
+      oReq_ru.addEventListener("load", function() {
+        window.old_localeMsg.ru = JSON.parse( this.responseText )
+        mergeCommonMsgWithLocaleMsg()
+      });
+      oReq_ru.open("GET", "/static/js/lang/local_ru.json");
+      oReq_ru.send();
+
+      function mergeCommonMsgWithLocaleMsg(){
+        if(!window.old_localeMsg.en || !window.old_localeMsg.uk || !window.old_localeMsg.ru || !window.commonMsg){
+          return
+        }
+        window.normalisedCommonMsg = _.reduce(window.commonMsg, function( memo, val, key){
+          if(val.msg) memo[key] = val.msg
+          return memo
+        }, {})
+        console.log('commonMsg.msg.length=', Object.keys(window.normalisedCommonMsg).length)
+        var langs = ['en', 'uk', 'ru']
+        
+        window.new_localeMsg = _.mapObject(langs, function(lang){
+          var oldLocale =_.clone(window.old_localeMsg[lang][lang])
+          var obj = {}
+          obj[lang] = $.extend({}, window.normalisedCommonMsg, _.pick(oldLocale, Object.keys(window.normalisedCommonMsg)))
+          console.log('local_'+ lang +'.json.length=', Object.keys(obj[lang]).length)
+          console.log('Omitted: ', _.omit(oldLocale, Object.keys(window.normalisedCommonMsg)))
+          download(obj, 'local_'+ lang +'.json');
+          return obj
+        })
+        function download(text, name) {
+          var a = document.createElement("a");
+          var file = new Blob([JSON.stringify(text)], {type: 'application/json'});
+          a.href = URL.createObjectURL(file);
+          a.download = name;
+          a.click();
+        }
+      }
+    </script>
+
+  </body>
+</html>
+

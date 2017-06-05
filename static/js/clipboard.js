@@ -18,7 +18,7 @@ var ClipboardModel = Backbone.Model.extend({
 })
 
 var ClipboardView = Backbone.Marionette.CompositeView.extend({
-  template: '#clipboard__tpl',
+  template: _.template(window.tpl.clipboard),  //  _.template(window.tpl.clipboard)  vs   '#clipboard__tpl'
   className: "clipboard_view",
   childViewContainer: ".clipboard_collection",
   childView: window.BeaconView,
@@ -190,7 +190,7 @@ var ClipboardView = Backbone.Marionette.CompositeView.extend({
   },
   collapse: function(){
     this.model.set({
-      clipboardTitle: window.localeMsg[window.localeLang].CLIPBOARD_TITLE,
+      clipboardTitle: window.localeMsg[window.localeLang].CLIPBOARD_TITLE + window.beaconsCount,
       isExpanded: false,
       isLinking: false,
       linkingParentModel: null
@@ -274,7 +274,7 @@ var ClipboardView = Backbone.Marionette.CompositeView.extend({
           : false
     })
   },
-  getLinkableCollection(clickedModel){
+  getLinkableCollection: function(clickedModel){
     return this.collection.filter(function(model){
       var authorship = window.lib.isDemand(model)
           ? true

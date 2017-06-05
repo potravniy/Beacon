@@ -45,10 +45,11 @@ var BeaconsList = Backbone.Collection.extend({
       reset: true,
       success: function(res){
         $.mobile.loading('hide')
-        window.clipboardView.setWidth()
         if(res.error){
           alert(window.localeMsg[window.localeLang][res.error])
         }
+        if(!window.clipboardView) window.showClipboard()
+        window.clipboardView.setWidth()
       },
       error: function(){
         $.mobile.loading('hide')
@@ -158,9 +159,8 @@ var BeaconView = Backbone.Marionette.ItemView.extend({
     var obj = {
       full: this.model.get('full') || '',
       link_icon: this.model.get('linked') === '0' ? 'unlinked' : 'linked',
-      // title: window.lib.htmlEntityDecode(this.model.get('title')),
-      // details: window.lib.htmlEntityDecode(this.model.get('details')),
       b_status: i,
+      title: window.localeMsg[window.localeLang][this.model.get('title')],
       color: bs[i]>0 ? 'green' : bs[i]<0 ? 'red' : '',
       icon_url: this.model.get('img') || window.getIconURL(this.model.attributes, true),
       showBreakLinkBtn: window.state.b_link === this.model.get('id')

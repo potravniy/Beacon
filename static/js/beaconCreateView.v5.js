@@ -22,20 +22,25 @@ var LatLngView = Backbone.Marionette.ItemView.extend({
     this.addressLookUp()
   },
   addressLookUp: function() {
-    var latlng = {lat: this.model.get('lat'), lng: this.model.get('lng')};
-    window.geocoder.geocode({'location': latlng}, function(results, status) {
-      if (status === google.maps.GeocoderStatus.OK) {
-        if (results[0]) {
-          window.infowindow.setContent(results[0].formatted_address);
-          window.infowindow.open(window.state.map, window.markers[window.markers.length-1]);
+    var latlng = new google.maps.LatLng(this.model.get('lat'), this.model.get('lng'))
+    var Crimea = new google.maps.Polygon({paths: window.state.crimeanCoords})
+    if(window.google.maps.geometry.poly.containsLocation(latlng, Crimea)){
+      window.infowindow.setContent(window.localeMsg[window.localeLang].RUSSIA_OCCUPIED_TERRITORY)
+      window.infowindow.open(window.state.map, window.markers[window.markers.length-1]);
+    } else {
+      window.geocoder.geocode({'location': latlng}, function(results, status) {
+        if (status === window.google.maps.GeocoderStatus.OK) {
+          if (results[0]) {
+            window.infowindow.setContent(results[0].formatted_address);
+          } else {
+            window.infowindow.setContent(window.localeMsg[window.localeLang].NO_ADDRESS_FOUND);
+          }
         } else {
-          window.alert('No results found');
+          window.infowindow.setContent(window.localeMsg[window.localeLang].NO_ADDRESS_FOUND);
         }
-      } else {
-        window.infowindow.setContent(window.localeMsg[window.localeLang].RUSSIA_OCCUPIED_TERRITORY);
         window.infowindow.open(window.state.map, window.markers[window.markers.length-1]);
-      }
-    });
+      });
+    }
   }
 })
 var TitleView = Backbone.Marionette.ItemView.extend({
@@ -728,11 +733,29 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     })
   },
   events: {
-    'click @ui.submitBtn': 'sendPhoto',
+    'click @ui.submitBtn': 'checkBeaconPosition',
     'click @ui.closeBtn': 'exit'
   },
-  sendPhoto: function(e){
+  checkBeaconPosition: function(e){
     e.preventDefault()
+    var $warn = $('.warning'),
+        that = this
+    $warn.empty()
+    window.mainRegion.showMap()
+    var msg = window.localeMsg[window.localeLang].IS_BEACON_IN_PROPER_POSITION
+    $warn.append('<p class="cofirmation">'
+      + msg
+      +'</p><button class="confirm">'
+      + window.localeMsg[window.localeLang].YES
+      +'</button>')
+    $warn.css({ "top": "60px" }).show()
+    $('.warning .confirm').click(function(){
+      $warn.empty().hide()
+      window.mainRegion.showBeaconsCards()
+      that.sendPhoto()
+    })
+  },
+  sendPhoto: function(e){
     if(!this.verifyInputs(this)) return
     var file = this.photo.currentView.ui.photo[0].files[0]
     if (file){
@@ -825,18 +848,6 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         return validationFailed()
       }
     }
-    // if(this.layerType.currentView){
-    //   var val = '',
-    //       layerTypeView = this.layerType.currentView 
-    //   if(val = layerTypeView.getLayerType()) {
-    //     $('#layer_type').val(val)
-    //   } else if(layerTypeView.model && layerTypeView.model.get('required')) {
-    //     alert(window.localeMsg[window.localeLang].CATEGORY_REQUIRED)
-    //     return validationFailed()
-    //   } else {
-    //     $('#layer_type').val(null)
-    //   }
-    // }
     if(this.private.currentView){
       var privateView = this.private.currentView,
           val = privateView.getPrivate()
@@ -947,6 +958,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   },
   exit: function(){
     window.closeSingleBeaconMode()
+    $('.warning').empty().hide()
   },
   initialize: function(options){
     this.model = new Backbone.Model(options.model)

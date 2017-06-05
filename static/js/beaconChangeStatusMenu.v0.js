@@ -193,7 +193,6 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
               } else {
                 window.state.sendGET(window.state.urlMarkers)
                 if (window.state.singleBeacon) closeSingleBeaconMode()
-                alert(window.localeMsg[window.localeLang].BEACON_REMOVED)
                 that.exit()
               }
             },

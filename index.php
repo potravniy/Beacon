@@ -15,7 +15,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
   <head>
     <!--<base href="https://gurtom.mobi/">-->
     <meta charset="utf-8">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.v0.json">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="<?php echo META_DESCRIPTION ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -62,7 +62,8 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         oReq.send();
       })()
     </script>
-    <script src="<?php echo "https://maps.googleapis.com/maps/api/js?key=AIzaSyD9GrBwQ_NFlEMzjrAkE4KzsZcTsqf0_h8&language=".$l_lang."&libraries=places"; ?>"></script>
+    <script src="/static/js/getTpl.js"></script>
+    <script src="<?php echo "https://maps.googleapis.com/maps/api/js?key=AIzaSyD9GrBwQ_NFlEMzjrAkE4KzsZcTsqf0_h8&language=".$l_lang."&libraries=places,geometry"; ?>"></script>
 
     <style>
       h1 {display: none;}
@@ -70,7 +71,8 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
       .page {display: none;}
     </style>
     <link rel="stylesheet" href="/static/css/vendor/jquery.mobile-1.4.5_modified.css">
-    <link rel="stylesheet" href="/static/css/beacon.css">
+    <link rel="stylesheet" href="/static/css/vendor/pikaday.css">
+    <link rel="stylesheet" href="/static/css/beacon.v3.css">
 
   </head>
   <body>
@@ -81,7 +83,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <h1><?php echo GUEST ?></h1>
         <a class="ui-btn ui-btn-right ui-btn-inline ui-icon-more_vert ui-btn-icon-notext ui-nodisc-icon" href="#right-panel"><?php echo OPTIONS ?></a>
       </div>
-      <div id="container" data-role="main" class="ui-panel-wrapper">
+      <div id="container" data-role="main" class="ui-panel-wrapper" data-update-page-padding="false" data-fullscreen="true">
         <div id="beacons-map__the-map">
 
           <div id="the-map"></div>
@@ -158,16 +160,11 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <div id="right_popup__region"></div>
         <div data-role="popup" id="create_beacon__geo_region"></div>
 
-      </div>    <!-- /container -->
-      
-      <div id="footer" data-role="footer" data-position="fixed" data-update-page-padding="false" data-fullscreen="true" data-tap-toggle="false"> 
-        <div data-role="navbar">
-          <ul>
-            <li><a href="#" id="btn__the-map" class="footer_buttons ui-btn-active"><?php echo MAP ?></a></li>
-            <li><a href="#" id="btn__the-beacons" class="footer_buttons"><?php echo BEACONS ?></a></li>
-          </ul>
+        <div class="mapToCardsSwitcher">
+          <button class="mapToCardsSwitcher__btn btn-2-right"></button>
+          <button class="mapToCardsSwitcher__btn btn-2-left"></button>
         </div>
-      </div>    <!-- /footer -->
+      </div>    <!-- /container -->
 
       <div data-role="panel" id="left-panel" data-position="left" data-display="overlay" class="auth-panel" >
         <div class="panel-head">
@@ -255,28 +252,30 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
             <fieldset data-role="controlgroup">
               <input type="radio" name="radio-time" id="any" value="any">
               <label for="any"><?php echo LAST_ANY ?></label>
-              <input type="radio" name="radio-time" id="last_hour" value="hour">
-              <label for="last_hour"><?php echo LAST_HOUR ?></label>
-              <input type="radio" name="radio-time" id="last_day" value="day">
-              <label for="last_day"><?php echo LAST_DAY ?></label>
-              <input type="radio" name="radio-time" id="last_week" value="week">
-              <label for="last_week"><?php echo LAST_WEEK ?></label>
-              <input type="radio" name="radio-time" id="last_month" value="month">
-              <label for="last_month"><?php echo LAST_MONTH ?></label>
-              <input type="radio" name="radio-time" id="last_hundred" value="hundred">
-              <label for="last_hundred"><?php echo LAST_HUNDRED ?></label>
               <input type="radio" name="radio-time" id="last_year" value="year">
               <label for="last_year"><?php echo LAST_YEAR ?></label>
+              <input type="radio" name="radio-time" id="last_hundred" value="hundred">
+              <label for="last_hundred"><?php echo LAST_HUNDRED ?></label>
+              <input type="radio" name="radio-time" id="last_month" value="month">
+              <label for="last_month"><?php echo LAST_MONTH ?></label>
+              <input type="radio" name="radio-time" id="last_week" value="week">
+              <label for="last_week"><?php echo LAST_WEEK ?></label>
+              <input type="radio" name="radio-time" id="last_day" value="day">
+              <label for="last_day"><?php echo LAST_DAY ?></label>
+              <!--
+                <input type="radio" name="radio-time" id="last_hour" value="hour">
+                <label for="last_hour"><?php echo LAST_HOUR ?></label>
+              -->
               <input type="radio" name="radio-time" id="custom_range" value="custom">
               <label for="custom_range"><?php echo CUSTOM_RANGE ?></label>
               <div class="date_picker">
                 <div class="ui-field-contain">
                   <label for="low_limit"><?php echo FROM ?></label>
-                  <input type="date" data-clear-btn="false" data-mini="true" name="low_limit" id="low_limit" value="" placeholder="<?php echo DATE_PLACEHOLDER ?>">
+                  <input type="text" data-clear-btn="false" data-mini="true" name="low_limit" id="low_limit" value="" placeholder="<?php echo DATE_PLACEHOLDER ?>" readonly="readonly">
                 </div>
                 <div class="ui-field-contain">
-                  <label for="hight_limit"><?php echo TO ?></label>
-                  <input type="date" data-clear-btn="false" data-mini="true" name="hight_limit" id="hight_limit" value="" placeholder="<?php echo DATE_PLACEHOLDER ?>">
+                  <label for="high_limit"><?php echo TO ?></label>
+                  <input type="text" data-clear-btn="false" data-mini="true" name="high_limit" id="high_limit" value="" placeholder="<?php echo DATE_PLACEHOLDER ?>" readonly="readonly">
                 </div>
               </div>
             </fieldset>
@@ -443,9 +442,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
       </div>
     </div>
 
-    <span class='warning'><h2><?php echo PROTOTYPE ?></h2></span>
-
-    <div class="profile_page__wrapper"></div>
+    <div class='warning'><h2><?php echo PROTOTYPE ?></h2></div>
 
 
     <script id="object_create_tpl" type="text/template">
@@ -623,7 +620,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     </script>
     <script id="phone_tpl" type="text/template">
       <label for="phone_num__input"><strong><?php echo PHONE_NUMBER ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
-      <input type="tel" data-clear-btn="true" name="phone" id="phone_num__input" value="" placeholder="380ХХХХХХХХХХ" data-wrapper-class="input" <%-required%>>
+      <input type="tel" data-clear-btn="true" name="phone" id="phone_num__input" value="" placeholder="" data-wrapper-class="input" <%-required%>>
     </script>
     <script id="admin_level__tpl" type="text/template">
       <label for="admin_level__select"><strong><?php echo ADMIN_LEVEL_SELECT ?>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
@@ -698,11 +695,14 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         </div>
         <div data-role="content" class="beacon-content clearfix">
           <h3><%- title %></h3>
-          <p><img class="photo" src="<%-b_img%>" alt="<?php echo PHOTO ?>"><strong><%- details %></strong></p>
-          <p class="tags"><%- tagList %></p>
-          <div class="expanding_view click_transparent">
-            <div class="btn_wrapper ui-input-btn ui-btn ui-icon-more_horiz ui-btn-icon-notext ui-btn-right">
-              <input class="expanding_btn ui-btn" type="button" data-enhanced="true" value="<?php echo ENHANCED_ICON_ONLY ?>">
+          <div>
+            <img class="photo" src="<%-b_img%>" alt="<?php echo PHOTO ?>">
+            <strong><%- details %></strong>
+            <p class="tags"><%- tagList %></p>
+            <div class="expanding_view click_transparent">
+              <div class="btn_wrapper ui-input-btn ui-btn ui-icon-more_horiz ui-btn-icon-notext ui-btn-right">
+                <input class="expanding_btn ui-btn" type="button" data-enhanced="true" value="<?php echo ENHANCED_ICON_ONLY ?>">
+              </div>
             </div>
           </div>
         </div>
@@ -872,10 +872,10 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
 
     <script id="admin_nco_view" type="text/template">
       <h3><%- subject_administration %></h3>
-      <% if( nco_acceptance === 0 && nco_id === 0 ){ %>
+      <% if( nco_acceptance === 0 && +nco_id === 0 ){ %>
         <p class="project"><?php echo NCO_NOT_SELECTED_BY_AUTHOR ?></p>
       <% } %>
-      <% if( nco_acceptance === 0 && nco_id !== 0 ){ %>
+      <% if( nco_acceptance === 0 && +nco_id > 0 ){ %>
         <p class="project"><?php echo NCO_SELECTED_BY_AUTHOR ?>
           <strong> <%- ncoName %> </strong>
         </p>
@@ -885,7 +885,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <p class="project"><%- no_nco %></p>
       <% } %>
       <% if( nco_acceptance !== 0 ){ %>
-        <p class="project"><%- nco_defined %></p>
+        <p class="project"><%- nco_defined %> <strong><%- ncoName %></strong> </p>
       <% } %>
       <% if( nco_acceptance === 0 && nco_bids.length !== 0 ){ %>
         <p class="project"><%- nco_list %>:</p>
@@ -911,15 +911,21 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
       <tbody></tbody>
     </script>
     <script id="funds_item_view" type="text/template">
-      <td>  
-        <strong class="saldo"><%- saldo %></strong>
+      <td class="fund_name">
+        <span><%- fund_name %></span>
       </td>
       <td>  
-        <strong class="curr"><%- lib.currency.getName(curr) %></strong>
+        <strong class="saldo"><%- parseFloat(saldo).toFixed(2) %></strong>
       </td>
-      <td>  
+      <td>
+        <span class="curr"><%- lib.currency.getName(curr) %></span>
+      </td>
+      <td>
         <% if( withdrawable ) { %>
           <a href="#" class="withdraw ui-btn ui-icon-block ui-corner-all ui-btn-icon-left ui-mini ui-btn-inline" title="<?php echo CALL_OFF ?>"><?php echo CALL_OFF ?></a>
+        <% } %>
+        <% if( replenishable ) { %>
+          <a href="#" class="replenish ui-btn ui-icon-add ui-corner-all ui-btn-icon-left ui-mini ui-btn-inline" data-id="<%- id %>" title="Replenishment"><%- window.localeMsg[window.localeLang].REPLENISH %></a>
         <% } %>
       </td>
     </script>
@@ -966,7 +972,13 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <h1><%-header%></h1>
         <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
       </div>
-      <div data-role="main" class="main__right_popup__component"></div>
+      <div data-role="main" class="main__right_popup__component">
+        <p><%- welcome %></p>
+        <button id="btn_pay">
+          <img src="/static/img/liqpay_btn_icon.png" alt="" class="liqpay_btn_icon">
+          <p class="btn_text"><%- pay %></p>
+        </button>
+      </div>
     </script>
 
     <script id="right_popup__share_tpl" type="text/template">
@@ -977,10 +989,6 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
           data-ajax="false" class="ui-btn ui-icon-facebook ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Facebook</a>
         <a target="_blank" href="https://www.linkedin.com/cws/share?url=<%-link%>"
           data-ajax="false" class="ui-btn ui-icon-linkedin ui-btn-icon-notext ui-nodisc-icon ui-corner-all">LinkedIn</a>
-<!--
-        <a target="_blank" href="https://twitter.com/intent/tweet?url=<%-link%>&text=<%-title%>"
-          data-ajax="false" class="tw ui-btn ui-icon-twitter_box ui-btn-icon-notext ui-nodisc-icon ui-corner-all">Twitter</a>
--->
       </div>
     </script>
 
@@ -1095,25 +1103,79 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
 
     <script id="profile_popup__tpl" type="text/template">
       <div data-role="header" class="header">
-        <h1><?php echo YOUR_PROFILE ?></h1>
+        <h1><%- window.localeMsg[window.localeLang].YOUR_PROFILE %></h1>
         <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
       </div>
       <div data-role="main" class="listview_wrapper">
         <div class="profile_info clearfix">
-          <img class="avatar" src="<%- avatarSrc %>" alt="Photo">
-          <p class="name"><strong><?php echo NAME ?>:</strong> <%- name %> </p>
-          <p class="name"><strong><?php echo NICKNAME ?>:</strong> <%- login %> </p>
-          <p class="name"><strong>id:</strong> <%- id %> </p>
+          <img class="avatar" src="<%- window.state.user.avatar %>" alt="Photo">
+          <div class="profile_info names">
+            <p class="name">
+              <strong class="name_title"><%- window.localeMsg[window.localeLang].FIRST_NAME %>:</strong>
+              <input class="input_name first_name" type="text" value="<%- window.state.user.user_first %>" data-wrapper-class="first_name__wrapper">
+            </p>
+            <p class="name">
+              <strong class="name_title"><%- window.localeMsg[window.localeLang].LAST_NAME %>:</strong>
+              <input class="input_name last_name" type="text" value="<%- window.state.user.user_last %>" data-wrapper-class="last_name__wrapper">
+            </p>
+          </div>
         </div>
-        <p class="name"><strong>email:</strong> <%- email %> </p>
-        <div class="address">
+        <p class="birthday">
+          <strong class="birthday_title"><%- window.localeMsg[window.localeLang].BIRTHDAY %>:</strong>
+          <input class="input_name nick_name" type="text" value="<%- window.state.user.birth %>" data-wrapper-class="birthday__wrapper">
+        </p>
+        <p class="nick_login_gender">
+          <strong class="nick_login_gender__inline nick" ><%- window.localeMsg[window.localeLang].NICKNAME%>: </strong>
+          <%- window.state.user.login %>
+          <strong class="nick_login_gender__inline login" >id: </strong>
+          <%- window.state.user.id %>
+          <strong class="nick_login_gender__inline gender" ><%- window.localeMsg[window.localeLang].GENDER%>:</strong>
+          <%- (new IntlMessageFormat(window.localeMsg[window.localeLang].MALE_FEMALE, window.localeLang)).format({gender: +window.state.user.gender}) %>
+        </p>
+        <p class="email">
+          <strong>email:</strong>
+          <%- window.state.user.email %>
+        </p>
+        <p class="my-funds"></p>
+        <table class="my-new-fund">
+          <tbody>
+            <td>
+              <input type="text" class="new_fund_name" placeholder="fund name">
+            </td>
+            <td></td>
+            <td class="new_currency">
+              <select name="curr" id="currency_only__select" data-iconpos="noicon" data-native-menu="false">
+                <option value="980" selected>UAH</option>
+                <% if( +window.state.user.gov > 0 || +window.state.user.nco > 0 ) { %>
+                  <option value="1980">vUAH</option>
+                <% } %>
+                <!--
+                <option value="840">USD</option>
+                <option value="978">EUR</option>
+                <option value="1">ICAN</option>
+                -->
+              </select>
+            </td>
+            <td>
+              <a href="#" class="add_fund__btn ui-btn ui-icon-add ui-corner-all ui-btn-icon-left ui-mini ui-btn-inline" title="Add new fund"><%- window.localeMsg[window.localeLang].ADD_FUND %></a>
+            </td>
+          </tbody>
+        </table>
+        <!--<div class="address">
           <p class="address_title"><?php echo YOUR_VOTING_ADDRESSES ?>:</p>
           <ul class="address_list"></ul>
-        </div>
+        </div>-->
+
       </div>
     </script>
 
-    <script id="clipboard__tpl" type="text/template">
+    <script id="profile-avatar__tpl" type="text/template">
+      <input data-wrapper-class="wrapper_map_search" type="<%- inputType %>" data-type="search" name="map_search" id="map_search" placeholder="<%- placeholder %>" data-enhanced="true" value="<%- value %>" autofocus>
+      <a href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden" title="<?php echo CLEAR_TEXT ?>"><?php echo CLEAR_TEXT ?></a>
+      <a href="#" tabindex="-2" class="ui-input-close ui-btn ui-icon-close ui-btn-icon-notext ui-corner-all" title="<?php echo CLOSE_INPUT ?>"><?php echo CLOSE_INPUT ?></a>
+    </script>
+
+    <!--<script id="clipboard__tpl" type="text/template">
       <% if( on_supply == 0 && on_demand == 0 || isExpanded || isLinking) { %>
         <div class="clipboard_title"><%- clipboardTitle %></div>
         <% if(isExpanded || isLinking){ %>
@@ -1147,7 +1209,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
           <p class="clipboard__help"><%- help %></p>
         <% } %>
       </div>
-    </script>
+    </script>-->
 
     <script>
       (function(){
@@ -1173,25 +1235,26 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
       });
     </script>
     <script src="/static/js/vendor/jquery.mobile-1.4.5.min.js"></script>
+    <script src="/static/js/vendor/pikaday.min.js"></script>
     <script src="/static/js/vendor/backbone-min.js"></script>
-    <script src="/static/js/vendor/backbone.marionette.min.js"></script>
-    <script src="/static/js/showMap.js"></script>
-    <script src="/static/js/init.js"></script>
-    <script src="/static/js/jQM_tweaks.js"></script>
-    <script src="/static/js/filtersService.js"></script>
-    <script src="/static/js/router.js"></script>
+    <script src="/static/js/vendor/backbone.marionette.js"></script>
+    <script src="/static/js/showMap.v4.js"></script>
+    <script src="/static/js/init.v0.js"></script>
+    <script src="/static/js/jQM_tweaks.v0.js"></script>
+    <script src="/static/js/filtersService.v2.js"></script>
+    <script src="/static/js/router.v1.js"></script>
     <script src="/static/js/beaconBriefCardsList.js"></script>
     <script src="/static/js/beaconsCreatePopupMenu.js"></script>
-    <script src="/static/js/beaconCreateView.js"></script>
+    <script src="/static/js/beaconCreateView.v5.js"></script>
     <script src="/static/js/beaconFullView.js"></script>
     <script src="/static/js/govEditBeaconCreatePopupMenu.js"></script>
-    <script src="/static/js/beaconChangeStatusMenu.js"></script>
+    <script src="/static/js/beaconChangeStatusMenu.v0.js"></script>
     <script src="/static/js/payByCardPopup.js"></script>
     <script src="/static/js/donate.js"></script>
     <script src="/static/js/clipboard.js"></script>
     <script src="/static/js/controller.js"></script>
     <script src="/static/js/authentification_manager.js"></script>
-    <script src="/static/js/fourthFilter.js"></script>
+    <script src="/static/js/fourthFilter.v1.js"></script>
     <script src="/static/js/shareInSocialNet.js"></script>
     <script src="/static/js/mapSearch.js"></script>
     <script src="/static/js/profilePopup.js"></script>

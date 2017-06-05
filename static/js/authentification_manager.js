@@ -284,11 +284,6 @@ function confirmVerification(usr_id, verif_code){
 //   window.checkLoggedIn()
 // }
 function checkLoggedIn(){
-  // if(window.state.latmin === 0){
-  //   window.state.oReq.addEventListener("load", window.runCheckLoggedIn)
-  //   console.log("checkLoggedIn біжить поперед батька в пекло")
-  //   return
-  // }
   return $.ajax({
     type: "GET",
     url: "https://gurtom.mobi/profile.php",
@@ -321,7 +316,6 @@ function checkLoggedIn(){
 
 function showUserInfo(){
   window.getListMenuOrg()
-  window.getListOrgs()
   window.getSpheresForVoting()
   var name = ''
   if(window.state.user.user_first && window.state.user.user_last){
