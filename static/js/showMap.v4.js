@@ -116,6 +116,7 @@ function init() {
 	window.mapListenerClick = undefined
 	window.state.oReq.addEventListener("load", renderMarkers)
 	window.state.oReq.addEventListener("error", function(){
+		console.log(window.state.urlRequest + ' request has been failed')
 		alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
 	})
 	mapInit()

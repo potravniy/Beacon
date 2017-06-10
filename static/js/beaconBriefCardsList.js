@@ -54,6 +54,7 @@ var BeaconsList = Backbone.Collection.extend({
       error: function(){
         $.mobile.loading('hide')
         window.clipboardView.setWidth()
+        console.log('https://gurtom.mobi/beacon_cards.php?' + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       }
     })
@@ -81,7 +82,8 @@ var BeaconsList = Backbone.Collection.extend({
           that.isFetching = false
           $.mobile.loading('hide')
           window.clipboardView.setWidth()
-        alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
+          console.log(that.url + ' request has been failed')
+          alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         }
       })
     }
@@ -143,6 +145,7 @@ var MsgView = Backbone.Marionette.ItemView.extend({
       }
     });
     promise.fail(function(response){
+      console.log("https://gurtom.mobi/chat_spam.php" + ' request has been failed')
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     });
     promise.always(function(response){
@@ -307,6 +310,7 @@ var BeaconView = Backbone.Marionette.ItemView.extend({
         }
       },
       error: function(){
+        console.log("https://gurtom.mobi/chain_rm.php" + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       }
     })

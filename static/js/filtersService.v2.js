@@ -270,6 +270,7 @@ function getListOrgs() {
         }
       })
       .fail(function(){
+        console.log("https://gurtom.mobi/filter_layers.php" + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       })
     

@@ -43,6 +43,7 @@ var MsgCollectionView = Backbone.Marionette.CompositeView.extend({
       } else that.collection.add(response.msg)
     });
     promise.fail(function(response){
+      console.log("https://gurtom.mobi/chat_add.php" + ' request has been failed')
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     });
     promise.always(function(response){
@@ -513,6 +514,7 @@ var VotingView = Backbone.Marionette.LayoutView.extend({
       }
     })
     promise.fail(function(){
+      console.log("https://gurtom.mobi/vote_simple_add.php" + ' request has been failed')
       alert( window.localeMsg[window.localeLang].CONNECTION_ERROR )
     })
     promise.always(function(){
@@ -649,6 +651,7 @@ var AdministrationNCOView = Backbone.Marionette.CompositeView.extend({
       }
     });
     promise.fail(function(response){
+      console.log((nco_id ? "/beacon_nco_ask.php" : "/beacon_nco_bid.php") + ' request has been failed')
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     });
     promise.always(function(response){

@@ -47,6 +47,7 @@ var ProfilePopupView = Backbone.Marionette.LayoutView.extend({
         }
       });
       promise.fail(function(response){
+        console.log("https://gurtom.mobi/fund_user_add.php" + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       });
       promise.always(function(response){

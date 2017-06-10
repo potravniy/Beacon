@@ -337,6 +337,7 @@ var ClipboardView = Backbone.Marionette.CompositeView.extend({
           }
         },
         error: function(){
+          console.log("https://gurtom.mobi/chain_add.php" + ' request has been failed')
           alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
           that.collapse()
         }

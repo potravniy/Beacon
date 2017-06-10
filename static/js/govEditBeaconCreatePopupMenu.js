@@ -31,6 +31,7 @@ var ChangeGovMenuItemModel = Backbone.Model.extend({
         that.unset('file')
       })
       promise.fail(function(){
+        console.log("https://gurtom.mobi/i/up.php?type=1000&target=1" + ' request has been failed')
         alert( window.localeMsg[window.localeLang].CONNECTION_ERROR )
       })
       return promise
@@ -267,6 +268,7 @@ ChangeGovMenuView = Backbone.Marionette.CompositeView.extend({
       $beaconCreatePopup.popup( "close" )
     })
     promise.fail(function(){
+      console.log("https://gurtom.mobi/beacon_list_layers.php" + ' request has been failed')
       alert( window.localeMsg[window.localeLang].CONNECTION_ERROR )
     })
   },

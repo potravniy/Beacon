@@ -271,6 +271,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
       }
     })
     promise.fail(function(response){
+      console.log(url + ' request has been failed')
       alert( window.localeMsg[window.localeLang].CONNECTION_ERROR )
     })
     promise.always(function(){

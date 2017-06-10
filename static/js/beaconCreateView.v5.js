@@ -245,6 +245,7 @@ var TagsView = Backbone.Marionette.ItemView.extend({
           that.ui.tagUl.trigger( "updatelayout");
         },
         error: function(){
+          console.log("https://gurtom.mobi/tags.php" + ' request has been failed')
           alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         }
       })
@@ -276,6 +277,7 @@ var TagsView = Backbone.Marionette.ItemView.extend({
         }
       })
       promise.error(function(){
+        console.log("https://gurtom.mobi/tags.php" + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       })
       promise.always(function(response){
@@ -494,6 +496,7 @@ var PrivateView = Backbone.Marionette.ItemView.extend({
           $ul.trigger( "updatelayout");
         },
         error: function(){
+          console.log("https://gurtom.mobi/groups.php" + ' request has been failed')
           alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         }
       })
@@ -757,6 +760,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   },
   sendPhoto: function(e){
     if(!this.verifyInputs(this)) return
+    var tha = this
     var file = this.photo.currentView.ui.photo[0].files[0]
     if (file){
       var client = new XMLHttpRequest(),
@@ -769,6 +773,8 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         }
       }
       client.onerror = function(){
+        console.log("https://gurtom.mobi/i/up.php?type="
+          + this.model.get('type') + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         that.ui.progressWrap.hide()
       }
@@ -950,6 +956,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
       }
     })
     promise.fail(function(){
+      console.log(url + ' request has been failed')
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     })
     promise.always(function(){

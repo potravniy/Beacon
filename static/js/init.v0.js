@@ -108,6 +108,7 @@ $.ajax({
     window.state.listNCO = response
   },
   error: function(){
+    console.log("https://gurtom.mobi/nco.php" + ' request has been failed')
     alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
   }
 })
@@ -548,6 +549,7 @@ function getSpheresForVoting(){
       window.state.sphereJSON = response
     },
     error: function(){
+      console.log("https://gurtom.mobi/sph.php" + ' request has been failed')
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     }
   })
@@ -571,6 +573,7 @@ function getListMenuOrg() {
         window.state.listMenuOrg = response
       },
       error: function(response){
+        console.log("https://gurtom.mobi/beacon_list_layers.php" + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       }
     })

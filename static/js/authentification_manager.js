@@ -25,8 +25,9 @@ $( '#reset_pass_dialog' ).one( "pagecreate", resetDialogInit)
 function emailAccountActivation(){
   var i = undefined
   if((i = location.href.indexOf('/index.php?m=5&id=')) > -1){
+    var url = 'https://gurtom.mobi/l' + location.href.substring(i, location.href.length)
     var promise = $.ajax({
-      url: 'https://gurtom.mobi/l' + location.href.substring(i, location.href.length),
+      url: url,
       type: "GET",
       dataType: "json",
       xhrFields: {
@@ -40,6 +41,7 @@ function emailAccountActivation(){
       } else alert(window.localeMsg[window.localeLang].PROFILE_CREATED_SUCCESSFULLY)
     })
     promise.fail(function( response ){
+      console.log(url + 'request has been failed')
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       alert(window.localeMsg[window.localeLang].PROFILE_IS_NOT_CREATED)
     })
@@ -242,6 +244,7 @@ function resetDialogInit(verif_code){
       Manager.trigger('home')
     });
     promise.fail(function(response){
+      console.log("https://gurtom.mobi/user_pass_reset.php" + ' request has been failed')
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     });
     promise.always(function(response){
@@ -272,6 +275,7 @@ function confirmVerification(usr_id, verif_code){
     } 
   });
   promise.fail(function(response){
+    console.log('https://gurtom.mobi/l/index.php' + ' request has been failed')
     alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     Manager.trigger('home')
   });
@@ -309,6 +313,7 @@ function checkLoggedIn(){
       window.showUserInfo()
     },
     error: function(){
+      console.log("https://gurtom.mobi/profile.php" + ' request has been failed')
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
     } 
   })

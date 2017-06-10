@@ -121,6 +121,8 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
       }
       client.onerror = function(){
         that.ui.progressWrap.hide()
+        console.log("https://gurtom.mobi/i/up.php?type="
+          + that.model.get('b_type') + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       }
       client.onreadystatechange = function(){
@@ -156,6 +158,7 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
         closeBeaconNew()    // showBeaconsListView()
       })
       promise.fail(function(response){
+        console.log("https://gurtom.mobi/beacon_add.php" + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       })
       promise.always(function(){
@@ -193,6 +196,7 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
           $ul.trigger( "updatelayout");
         },
         error: function(){
+          console.log("https://gurtom.mobi/tags.php" + ' request has been failed')
           alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         }
       })
@@ -264,6 +268,7 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
           $ul.trigger( "updatelayout");
         },
         error: function(){
+          console.log("https://gurtom.mobi/beacon_list.php" + ' request has been failed')
           alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         }
       })
@@ -317,6 +322,7 @@ BeaconCreateView = Backbone.Marionette.ItemView.extend({
           $ul.trigger( "updatelayout");
         },
         error: function(){
+          console.log("https://gurtom.mobi/groups.php" + ' request has been failed')
           alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         }
       })

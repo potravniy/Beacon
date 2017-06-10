@@ -197,6 +197,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
               }
             },
             error: function(){
+              console.log("https://gurtom.mobi/beacon_del.php" + ' request has been failed')
               alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
             }
           })
@@ -237,6 +238,7 @@ var PopupStatusBeacon = Backbone.Marionette.CompositeView.extend({
         theModel.set('b_status', response.status)
       },
       error: function(){
+        console.log("https://gurtom.mobi/beacon_status_change.php" + ' request has been failed')
         alert ( window.localeMsg[window.localeLang].CONNECTION_ERROR )
       }
     })

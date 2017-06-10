@@ -363,6 +363,7 @@ var ListOrgCollection = Backbone.Collection.extend({
         }
       });
       promise.fail(function(response){
+        console.log("https://gurtom.mobi/filter_layers_change_user.php" + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
       });
     }
