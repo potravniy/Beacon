@@ -106,7 +106,6 @@ function socialNetworkWindowClosed(){
     window.checkLoggedIn()
     .then(function(){
       window.Manager.trigger('home')
-      $.mobile.loading('hide')
     })
   }
 }
@@ -315,7 +314,10 @@ function checkLoggedIn(){
     error: function(){
       console.log("https://gurtom.mobi/profile.php" + ' request has been failed')
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
-    } 
+    },
+    complete: function(){
+      $.mobile.loading('hide')
+    }
   })
 }
 

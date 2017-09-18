@@ -72,7 +72,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     </style>
     <link rel="stylesheet" href="/static/css/vendor/jquery.mobile-1.4.5_modified.css">
     <link rel="stylesheet" href="/static/css/vendor/pikaday.css">
-    <link rel="stylesheet" href="/static/css/beacon.v3.css">
+    <link rel="stylesheet" href="/static/css/beacon.v8.css">
 
   </head>
   <body>
@@ -103,6 +103,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
             <a id="create_btn" href="#" data-rel="popup" data-transition="turn" data-position-to="origin" class="ui-btn ui-corner-all ui-icon-add-beacon ui-btn-icon-notext ui-btn-inline"><?php echo ADD ?></a><br>
             <a href="#" class="unused ui-btn ui-corner-all ui-icon-share ui-btn-icon-notext ui-btn-inline"><?php echo SHARE ?></a>
           </div>
+          <div class="stat_icon ui-icon-info_outline ui-nodisc-icon"></div>
         </div> <!-- /beacons-map__the-map -->
         
         <div id="beacons-map__the-beacons">
@@ -527,28 +528,36 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <legend><strong><%- ( label ? label : '<?php echo REQUIRED_AMOUNT ?>' ) %>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></legend>
         <input id="amount" type="number" name="amount" pattern=".{12,}" value="<%-parent_amount%>" <%-required%>>
         <label for="currency"><?php echo IN_CURRENCY ?></label>
+        <!-- Refactoring needed for single source of currency list -->
         <select id="currency" name="curr" data-inline="true" data-mini="true" data-iconpos="noicon" data-native-menu="false">
           <option value="980">UAH</option>
           <option value="840">USD</option>
           <option value="978">EUR</option>
           <% if( !realCurrencyOnly ) { %>
+            <option value="1840">vUSD</option>
+            <option value="1978">vEUR</option>
             <option value="1980">vUAH</option>
             <option value="1">ICAN</option>
           <% } %>
+        <!-- Refactoring needed for single source of currency list -->
 
         </select>
       </fieldset>
     </script>
     <script id="currency_only__tpl" type="text/template">
         <label for="currency_only__select"><strong><?php echo CHOOSE_CURRENCY ?></strong></label>
+        <!-- Refactoring needed for single source of currency list -->
         <select name="curr" id="currency_only__select" data-iconpos="noicon" data-native-menu="false">
           <option value="980" selected>UAH</option>
           <option value="1980">vUAH</option>
+          <option value="1978">vEUR</option>
+          <option value="1840">vUSD</option>
           <option value="840">USD</option>
           <option value="978">EUR</option>
           <option value="1">ICAN</option>
         </select>
-    </script>
+        <!-- Refactoring needed for single source of currency list -->
+        </script>
     <script id="start_date__tpl" type="text/template">
       <label for="start_date__input"><strong><%- ( label ? label : '<?php echo FUNDING_PERIOD ?>' ) %>&nbsp<% if(required=='required'){ %>*<% } else { %><% } %></strong></label>
       <input id="start_date__input" type="date" data-clear-btn="false" name="dtst" value="" placeholder="<?php echo DATE_PLACEHOLDER ?>" <%-required%>>
@@ -671,6 +680,26 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <input id="idc-<%- idc %>" name="sph" data-enhanced="true" type="radio" value="<%- idc %>">
       <% } %>
     </script>
+
+    <script id="stat_title__tpl" type="text/template">
+      <!--<div class="composite" data-role="collapsible-set" data-theme="a"></div>-->
+      <div data-role="header">
+        <h3><%- window.localeMsg[window.localeLang].STATISTIC %></h3>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
+      </div>
+      <div data-role="main" class="main composite" data-theme="a"></div>
+    </script>
+    <script id="stat_item__tpl" type="text/template">
+      <% if(list) { %>
+        <legend><%- name %>: </legend>
+        <div class="composite" data-theme="a"></div>
+      <% } else { %>
+        <p class="quantity">
+          <span class="float-left"><%- name %></span>
+          <span class="float-right"><%- q %></span>
+        </p>
+      <% } %>
+    </script>
     
 
     <!-- /object_create_tpl subViews -->
@@ -685,7 +714,14 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
           <% } %>
           
           <div class="beacon-header">
-            <h6><?php echo FROM ?>: <span><%- author_name %></span>, ID <%- author_id %></h6>                                                                     
+            <h6>
+              <span><%- author_name %></span>,
+              <% if(author_type > 99){ %>
+                <%- window.localeMsg[window.localeLang].LEGAL %>
+              <% } else { %>
+                <%- window.localeMsg[window.localeLang].PERSON %>
+              <% } %>
+            </h6>
             <div class="content-with-icon">
               <span class="icon ui-btn-left ui-icon-schedule ui-btn-icon-notext ui-btn-inline ui-nodisc-icon"><?php echo ICON ?></span>
               <p><%- ts %>; cardID <%- id %></p>                                                
@@ -727,7 +763,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     <script id="chat_tpl" type="text/template">
       <div class="input-message ui-field-contain">
         <label for="text-message" class="ui-hidden-accessible"><?php echo SEND ?></label>
-        <input type="text" data-clear-btn="true" data-mini="true" name="text-message" id="text-message" value="" placeholder="<?php echo MESSAGE_PLACEHOLDSER ?>">
+        <input type="text" data-clear-btn="true" data-mini="true" name="text-message" id="text-message" value="" placeholder="<%- placehold %>" maxlength="1000">
         <button class="input-message__send ui-shadow ui-btn ui-corner-all ui-btn-inline ui-icon-send ui-btn-icon-notext ui-btn-a"><?php echo POST ?></button>
       </div>
       <div class="sent-message__wrapper"></div>
@@ -835,7 +871,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     </script>
 
     <script id="objects2-5_full_view" type="text/template">
-      <p class="project"><%- subject_description_title %>:<br><%- description %></p>
+      <p class="project"><%- subject_description_title %>:<br><%- descript %></p>
       <p class="project"><%- subject_id %>: <strong><%- id %></strong></p>
       <% if( type === "3" ){ %>
         <p class="project">
@@ -914,11 +950,11 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
       <td class="fund_name">
         <span><%- fund_name %></span>
       </td>
-      <td>  
-        <strong class="saldo"><%- parseFloat(saldo).toFixed(2) %></strong>
+      <td class="saldo_wrapper" data-id="<%- id %>">
+        <strong class="saldo" data-id="<%- id %>"><%- parseFloat(saldo).toFixed(2) %></strong>
       </td>
       <td>
-        <span class="curr"><%- lib.currency.getName(curr) %></span>
+        <span class="curr"><%- window.lib.currency.getName(curr) %></span>
       </td>
       <td>
         <% if( withdrawable ) { %>
@@ -926,8 +962,57 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <% } %>
         <% if( replenishable ) { %>
           <a href="#" class="replenish ui-btn ui-icon-add ui-corner-all ui-btn-icon-left ui-mini ui-btn-inline" data-id="<%- id %>" title="Replenishment"><%- window.localeMsg[window.localeLang].REPLENISH %></a>
+          <div class="replanishement_amount-popup <%- id %>"></div>
         <% } %>
       </td>
+    </script>
+    <script id="replanishement_amount-popup" type="text/template">
+      <div class="replanishement_amount__screen"></div>
+      <label class="ui-hidden-accessible" for="replanishement_amount"><%- window.localeMsg[window.localeLang].REPLENISH %></label>
+      <input type="number" data-clear-btn="true" name="replanishement_amount" pattern="^\d+(\.|\,)\d{2}$" id="replanishement_amount<%-id%>" value="">
+      <a href="#" class="replenish__amount ui-btn ui-corner-all ui-mini ui-btn-inline" data-id="<%- id %>" title="Replenishment"><%- window.localeMsg[window.localeLang].REPLENISH %></a>
+    </script>
+
+    <script id="funds_history_view" type="text/template">
+      <div data-role="header" class="header">
+        <h1><%- window.localeMsg[window.localeLang].FUND_HISTORY %> <%- fundName %></h1>
+        <% if( collectionLength !== 0 ) { %>
+          <label for="history-search" class="ui-hidden-accessible"></label>
+          <input type="search" name="history-search" id="history-search" value="" data-mini="true">
+        <% } %>
+        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-close ui-btn-icon-notext ui-btn-right ui-nodisc-icon"><?php echo CLOSE ?></a>
+      </div>
+      <div data-role="main" class="history__list">
+      </div>
+      <% if( collectionLength === 0 ) { %>
+        <p class="empty_history">
+          <%- window.localeMsg[window.localeLang].FUND_HISTORY_IS_EMPTY %>
+        </p>
+      <% } %>
+    </script>
+    <script id="funds_history_item_view" type="text/template">
+      <div class="ui-grid-a ui-responsive">
+          <div class="ui-block-a">
+            <p class="funds_history__item_paragraph">
+              <span class="funds_history__ts"><%- ts %></span>
+              <span class="funds_history__action"><%- action %></span>
+              <span class="amount_curr">
+                <span class="funds_history__amount"><%- amount %></span>
+                <span class="funds_history__curr"><%- curr %></span>
+              </span>
+            </p>
+          </div>
+          <div class="ui-block-b">
+            <p class="funds_history__item_paragraph title">
+              <%- pretitle %>: <%- title %>
+              <% if(returnable > 0){%>
+                <button class="funds_history__withdraw ui-btn ui-corner-all ui-mini ui-btn-inline" data-id="<%-id%>">
+                  <%- btnTitle %>
+                </button>
+              <%}%>
+            </p>
+          </div>
+      </div>
     </script>
 
     <script id="create_beacon__geo_tpl" type="text/template">
@@ -1140,27 +1225,29 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
         <table class="my-new-fund">
           <tbody>
             <td>
-              <input type="text" class="new_fund_name" placeholder="fund name">
+              <input type="text" class="new_fund_name" placeholder="<%- window.localeMsg[window.localeLang].FUND_NAME%>">
             </td>
             <td></td>
             <td class="new_currency">
+              <!-- Refactoring needed for single source of currency list -->
               <select name="curr" id="currency_only__select" data-iconpos="noicon" data-native-menu="false">
                 <option value="980" selected>UAH</option>
                 <% if( +window.state.user.gov > 0 || +window.state.user.nco > 0 ) { %>
+                  <option value="1978">vEUR</option>
                   <option value="1980">vUAH</option>
+                  <option value="1840">vUSD</option>
                 <% } %>
-                <!--
-                <option value="840">USD</option>
-                <option value="978">EUR</option>
-                <option value="1">ICAN</option>
-                -->
               </select>
+              <!-- Refactoring needed for single source of currency list -->
             </td>
             <td>
               <a href="#" class="add_fund__btn ui-btn ui-icon-add ui-corner-all ui-btn-icon-left ui-mini ui-btn-inline" title="Add new fund"><%- window.localeMsg[window.localeLang].ADD_FUND %></a>
             </td>
           </tbody>
         </table>
+        <p class="tip">
+          <%- window.localeMsg[window.localeLang].TIP_SHOW_HISTORY %>
+        </p>
         <!--<div class="address">
           <p class="address_title"><?php echo YOUR_VOTING_ADDRESSES ?>:</p>
           <ul class="address_list"></ul>
@@ -1238,26 +1325,28 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     <script src="/static/js/vendor/pikaday.min.js"></script>
     <script src="/static/js/vendor/backbone-min.js"></script>
     <script src="/static/js/vendor/backbone.marionette.js"></script>
-    <script src="/static/js/showMap.v4.js"></script>
-    <script src="/static/js/init.v0.js"></script>
-    <script src="/static/js/jQM_tweaks.v0.js"></script>
-    <script src="/static/js/filtersService.v2.js"></script>
-    <script src="/static/js/router.v1.js"></script>
-    <script src="/static/js/beaconBriefCardsList.js"></script>
-    <script src="/static/js/beaconsCreatePopupMenu.js"></script>
-    <script src="/static/js/beaconCreateView.v5.js"></script>
-    <script src="/static/js/beaconFullView.js"></script>
-    <script src="/static/js/govEditBeaconCreatePopupMenu.js"></script>
-    <script src="/static/js/beaconChangeStatusMenu.v0.js"></script>
-    <script src="/static/js/payByCardPopup.js"></script>
-    <script src="/static/js/donate.js"></script>
-    <script src="/static/js/clipboard.js"></script>
-    <script src="/static/js/controller.js"></script>
-    <script src="/static/js/authentification_manager.js"></script>
-    <script src="/static/js/fourthFilter.v1.js"></script>
-    <script src="/static/js/shareInSocialNet.js"></script>
-    <script src="/static/js/mapSearch.js"></script>
-    <script src="/static/js/profilePopup.js"></script>
+
+    <script src="/static/js/showMap.v6.js"></script>
+    <script src="/static/js/init.v1.js"></script>
+    <script src="/static/js/jQM_tweaks.v1.js"></script>
+    <script src="/static/js/filtersService.v3.js"></script>
+    <script src="/static/js/router.v2.js"></script>
+    <script src="/static/js/beaconBriefCardsList.v1.js"></script>
+    <script src="/static/js/beaconsCreatePopupMenu.v1.js"></script>
+    <script src="/static/js/beaconCreateView.v10.js"></script>
+    <script src="/static/js/beaconFullView.v2.js"></script>
+    <script src="/static/js/govEditBeaconCreatePopupMenu.v1.js"></script>
+    <script src="/static/js/beaconChangeStatusMenu.v1.js"></script>
+    <script src="/static/js/payByCardPopup.v1.js"></script>
+    <script src="/static/js/donate.v2.js"></script>
+    <script src="/static/js/clipboard.v1.js"></script>
+    <script src="/static/js/controller.v1.js"></script>
+    <script src="/static/js/authentification_manager.v1.js"></script>
+    <script src="/static/js/fourthFilter.v2.js"></script>
+    <script src="/static/js/shareInSocialNet.v1.js"></script>
+    <script src="/static/js/mapSearch.v1.js"></script>
+    <script src="/static/js/profilePopup.v3.js"></script>
+    <script src="/static/js/statistics.v4.js"></script>
     <!--<script>
       'use strict';   //  https://github.com/GoogleChrome/sw-precache/blob/master/demo/app/js/service-worker-registration.js#L20
       if ('serviceWorker' in navigator) {
@@ -1307,6 +1396,27 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
           })
         });
       }
+    </script>
+    <script>
+      'use strict'
+      setInterval(function(){
+        $.ajax({
+          url: "https://gurtom.mobi/news.php",
+          dataType: "json",
+          crossDomain: true,
+          success: function (response) {
+            if(response.error){
+              console.log(window.localeMsg[window.localeLang][response.error])
+              return
+            } else {
+              console.log("https://gurtom.mobi/news.php" +' returned '+ response.msg)
+            }
+          },
+          error: function(){
+            console.log("https://gurtom.mobi/news.php" + ' request has been failed')
+          }
+        })
+      }, 19*60*1000)
     </script>
 
   </body>

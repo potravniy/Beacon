@@ -239,6 +239,45 @@ function showProfile(){
   console.log('Switch to profileView')
 }
 
+function showFundHistory(options){
+  window.fundHistoryView = new FundsHistoryView(options)
+  window.fundHistoryView.render()
+  console.log('Switch to fundHistoryView')
+}
+
+function showLiqpayReplenishPopup(options){
+  var View = PayByCardView.extend({
+    onRender: function(){
+      var that = this,
+          $background = $('#beacons-map')
+      this.$el.appendTo('body')
+      this.$el.popup({
+        transition: "slidedown",
+        theme: "a",
+        overlayTheme: "b"
+      })
+      this.$el.one("popupafterclose", function( event, ui ) {
+        $background.removeClass('blur')
+        that.destroy()
+      })
+      this.$el.popup('open')
+      this.$el.trigger("create")
+      $background.addClass('blur')
+    },
+    exit: function(){
+      this.$el.popup('close')
+      window.checkLoggedIn()
+        .then(function(){
+          window.showProfile()
+        })
+      },
+    onDomRefresh: _.noop
+  })
+  window.popupPayByCardView = new View(options)
+  window.popupPayByCardView.render()
+  console.log('Switch to popupPayByCardView')
+}
+
 window.onpopstate = function(){
   var path = Manager.getCurrentRoute()
   if( window.defferedAfterLogin && window.defferedAfterLogin.state()==="pending" ){

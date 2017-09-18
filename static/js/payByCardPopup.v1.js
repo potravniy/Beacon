@@ -1,4 +1,5 @@
 "use strict"
+
 var PopupModel = Backbone.Model.extend({
   defaults: {
     header: window.localeMsg[window.localeLang].DONATION,
@@ -7,6 +8,7 @@ var PopupModel = Backbone.Model.extend({
     url: ''
   }
 })
+
 var PayByCardView = Backbone.Marionette.ItemView.extend({
   template: '#right_popup__component_tpl',
   id: 'pay_by_card',
@@ -21,7 +23,8 @@ var PayByCardView = Backbone.Marionette.ItemView.extend({
   },
   openLiqpayPage: function(){
     $.mobile.loading('show')
-    var that = this
+    var that = this,
+        msg = this.model.get('msg') || window.localeMsg[window.localeLang].THANKS_FOR_DONATE
     window.liqpay = window.open(this.model.get('url'))
     var id = setInterval(function(){
       try {
@@ -33,7 +36,7 @@ var PayByCardView = Backbone.Marionette.ItemView.extend({
               $.mobile.loading('hide')
               window.liqpay.close()
               that.exit()
-              alert(window.localeMsg[window.localeLang].THANKS_FOR_DONATE)
+              alert(msg)
             } else {
               $.mobile.loading('hide')
               console.log("NOT SUCCESS")

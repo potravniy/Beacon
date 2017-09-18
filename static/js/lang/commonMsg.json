@@ -92,6 +92,12 @@
   "UNABLE_TO_UNLINK": {
     "msg": "Unable to unlink."
   },
+  "LEGAL": {
+    "msg": "юридична особа"
+  },
+  "PERSON": {
+    "msg": "фізична особа"
+  },
 
   "file3": "beaconChangeStatusMenu.js",
   
@@ -469,6 +475,9 @@
     "where": "SOS_Info_Emo_View templateHelpers phone line 765",
     "msg": "Перегляд доступний лише юридичним особам."
   },
+  "MESSAGE_PLACEHOLDSER": {
+    "msg": "message"
+  },
 
 
   "file6": "beaconsCreatePopupMenu.js",
@@ -586,12 +595,16 @@
     "msg": "У цьому фонді менше коштів, ніж Ви хочете пожертвувати.\nВи можете:\n - скористатись банківською карткою,\n - поповнити свій фонд,\n - зменшити суму пожертви."
   },
   "YOU_HAVE_NOT_FUND_CHOOSEN": {
-    "where": "DonateView verifyInputs alert line 297",
+    "where": "DonateView verifyInputs alert line 292",
     "msg": "Ви не вибрали фонд"
   },
   "YOU_HAVE_OMITTED_AMOUNT": {
-    "where": "DonateView verifyInputs alert line 297",
+    "where": "DonateView verifyInputs alert line 296",
     "msg": "Ви не вказали суму"
+  },
+  "ENTER_EMAIL": {
+    "where": "DonateView verifyInputs alert line 297",
+    "msg": "Вкажіть Ваш email для продовження."
   },
 
 
@@ -844,6 +857,10 @@
     "where": "PayByCardView onBeforeShow html line 19",
     "msg": "Натиснувши на зелену кнопку 'Пожертвувати', Ви перейдете на сайт www.liqpay.com для пожертвування коштів. Будьте готові ввести дані банківської картки."
   },
+  "PRESSING_BUTTON_REPLENISH_YOU_WILL_BE_REDIRECTED_TO_PAYING_SYSTEM_LIQPAY": {
+    "where": "PayByCardView onBeforeShow html line 19",
+    "msg": "Натиснувши на зелену кнопку 'Поповнити', Ви перейдете з нашого сайту на спеціалізований сервіс для безпечних онлайн платежів на сайті www.liqpay.com. Як і для звичайних онлайн платежів, Вам буде потрібно там ввести дані банківської картки."
+  },
 
   "file17": "profilePopup.js",
   
@@ -1080,6 +1097,14 @@
     "where": "",
     "msg": "Replenish"
   },
+  "REPLENISHMENT": {
+    "where": "",
+    "msg": "REPLENISHMENT"
+  },
+  "REPLENISHED": {
+    "where": "",
+    "msg": "REPLENISHED"
+  },
   "MALE_FEMALE": {
     "where": "",
     "msg": "{gender, plural, =0 {male} =1 {female}}"
@@ -1091,5 +1116,80 @@
   "YOUR_VOTING_ADDRESSES": {
     "where": "",
     "msg": "Adresses for access to local votings"
+  },
+  "MAX_VUAH_EMISSION": {
+    "where": "",
+    "msg": "максимальна сумма еміссії 1 млрд "
+  },
+  "MIN_VUAH_EMISSION": {
+    "where": "",
+    "msg": "мінімальна  сумма еміссії 1"
+  },
+  "FUND_ID_NOT_SET": {
+    "where": "",
+    "msg": "не вказано ідентифікатор фонду"
+  },
+  "WRONG_FUND_STATUS": {
+    "where": "",
+    "msg": "помилковий статус фонду (фонд закритий або блокований)"
+  },
+  "UNAUTHORIZED_USER_FOR_EMISSION": {
+    "where": "",
+    "msg": "користувач не може випускати цю валюту"
+  },
+  "WRONG_CURRENCY": {
+    "where": "",
+    "msg": "не вірна валюта"
+  },
+  "MULTIPLE_FUNDS_OF_OBJECT": {
+    "where": "",
+    "msg": "MULTIPLE_FUNDS_OF_OBJECT"
+  },
+  "INSUFFICIENT_FUNDS": {
+    "where": "",
+    "msg": "INSUFFICIENT_FUNDS"
+  },
+  "WRONG_SOURCE_FOND_ID": {
+    "where": "",
+    "msg": "WRONG_SOURCE_FOND_ID"
+  },
+  "OBJECT_ID_IS_NOT_SET": {
+    "where": "",
+    "msg": "OBJECT_ID_IS_NOT_SET"
+  },
+  "WRONG_AMOUNT_SET": {
+    "where": "",
+    "msg": "WRONG_AMOUNT_SET"
+  },
+  "TIP_SHOW_HISTORY": {
+    "where": "",
+    "msg": "Tip: Click amount to see history of the fund."
+  },
+  "FUND_HISTORY": {
+    "where": "",
+    "msg": "History of fund"
+  },
+  "FUND_HISTORY_IS_EMPTY": {
+    "where": "",
+    "msg": "Fund history is empty"
+  },
+  "INCOME": {
+    "where": "",
+    "msg": "income"
+  },
+  "OUTCOME": {
+    "where": "",
+    "msg": "outcome"
+  },
+  "FUND_NAME": {
+    "where": "",
+    "msg": "fund name"
+  },
+
+  "file23": "statistics.js",
+
+  "STATISTIC": {
+    "where": "index.php line ",
+    "msg": "Statistic"
   }
 }

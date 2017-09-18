@@ -1,6 +1,11 @@
 "use strict"
 var MsgCollectionView = Backbone.Marionette.CompositeView.extend({
   template: '#chat_tpl',
+  templateHelpers: function () {
+    return {
+      placehold: window.localeMsg[window.localeLang].MESSAGE_PLACEHOLDSER
+    }
+  },
   className: 'chat',
   attributes: {
     'data-role': "chat"
@@ -532,7 +537,13 @@ var FundModel =  Backbone.Model.extend({
 var FundItemView = Backbone.Marionette.ItemView.extend({
   template: "#funds_item_view",
   tagName: 'tr',
-  model: FundModel
+  model: FundModel,
+  modelEvents: {
+    'change': 'onModelChange'
+  },
+  onModelChange: function(){
+    this.render()
+  }
 })
 var FundsLabelModel = Backbone.Model.extend({
   defaults: {
@@ -713,6 +724,7 @@ var Objects2_5View = Backbone.Marionette.LayoutView.extend({
       closed: window.localeMsg[window.localeLang].SUBJECT_CLOSED[+this.model.get('type')],
       dt_expired: this.model.get('dt_expired') || false,
       ts_closed: this.model.get('ts_closed') || false,
+      descript: window.lib.htmlEntityDecode(this.model.get('description')),
       currency: window.lib.currency.getName(this.model.get('currency_asking')),
       subject_description_title: window.localeMsg[window.localeLang].SUBJECT_DESCRIPTION_TITLE[+this.model.get('type')]
     }

@@ -166,8 +166,8 @@ var BeaconView = Backbone.Marionette.ItemView.extend({
       title: window.localeMsg[window.localeLang][this.model.get('title')],
       color: bs[i]>0 ? 'green' : bs[i]<0 ? 'red' : '',
       icon_url: this.model.get('img') || window.getIconURL(this.model.attributes, true),
-      showBreakLinkBtn: window.state.b_link === this.model.get('id')
-        && window.state.user.id === this.model.get('author_id')
+      showBreakLinkBtn: window.state.b_link != 0
+        // && window.state.user.id === this.model.get('author_id')
         && window.state.b_link !== this.model.get('id')
         && this.isBriefView
     }

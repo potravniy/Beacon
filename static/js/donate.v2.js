@@ -74,9 +74,9 @@ var UserFundslView = Backbone.Marionette.CompositeView.extend({
         this.triggerMethod('currency:deselected')
       } else {
         var curr = _.find(window.state.user.funds, function(item){
-          return item.id === newVal
-        }).currency
-        this.triggerMethod('currency:selected', curr)
+          return item.id == newVal
+        })
+        this.triggerMethod('currency:selected', curr.currency)
       }
     }
   },
@@ -230,7 +230,7 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
       obj[item.name] = item.value;
       return obj;
     }, {})
-    if( ! this.verifyInputs( formData ) ) return
+    if(!this.verifyInputs(formData)) return
     var url
     if ( window.state.user.id && this.fund.currentView.ui.input.val()!=='0') {
       url = 'fund_add_by_type.php'
@@ -254,20 +254,19 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
         alert(window.localeMsg[window.localeLang][response.error])
         return
       }
-      if(_.isArray(response.funds)){
-        var donatorFund = response.funds[0]
-        window.state.user.funds = _.map(window.state.user.funds, function(fund){
-          if(fund.id === donatorFund.fund_id){
-            fund.saldo = donatorFund.saldo
-          }
-          return fund
-        })
-        window.showBeaconFullView({ id: that.model.get('beaconID') })
-        alert(window.localeMsg[window.localeLang].THANKS_FOR_DONATE)
-      } else {
+      if(response.url){
         showPayByCardView({
           url: response.url
         })
+      } else {
+        window.state.user.funds = _.map(window.state.user.funds, function(fund){
+          if(fund.id == response.user_fund_id){
+            fund.saldo = response.user_fund_saldo
+          }
+          return fund
+        })
+        window.showBeaconFullView({ id: +that.model.get('beaconID') })
+        alert(window.localeMsg[window.localeLang].THANKS_FOR_DONATE)
       }
     })
     promise.fail(function(response){
@@ -279,9 +278,10 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
     })
   },
   verifyInputs: function( formData ){
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; // https://stackoverflow.com/questions/46155/validate-email-address-in-javascript
     if ( window.state.user.id && +formData.fund_id > 0 ){
       var fund = _.find(window.state.user.funds, function(item){
-        return item.id === formData.fund_id
+        return item.id == formData.fund_id
       })
       if (+fund.saldo < +formData.amount){
         alert(window.localeMsg[window.localeLang].DONATION_IS_BIGGER_THAN_FUND_AMOUNT)
@@ -293,6 +293,10 @@ var DonateView = Backbone.Marionette.LayoutView.extend({
     }
     if( +formData.amount === 0 ) {
       alert(window.localeMsg[window.localeLang].YOU_HAVE_OMITTED_AMOUNT)
+      return false
+    }
+    if( !window.state.user.id && (formData.email === '' || !re.test(formData.email)) ) {
+      alert(window.localeMsg[window.localeLang].ENTER_EMAIL)
       return false
     }
     return true

@@ -60,7 +60,9 @@ var MoneyView = Backbone.Marionette.ItemView.extend({
   template: '#money__tpl',
   templateHelpers: function(){
     var obj = {
-      parent_amount: this.options.model.attributes.parent_model ? this.options.model.attributes.parent_model.full[0].amount : '',
+      parent_amount: this.options.model.attributes.parent_model
+                       ? this.options.model.attributes.parent_model.full[0].amount
+                       : '',
       realCurrencyOnly: !!this.model.get('realCurrencyOnly') 
     }
     return obj
@@ -723,6 +725,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     }
   },
   onShow: function(){
+    this.isSubmitBtnActive = true
     var that = this
     this.$el.one('create', function(){
       if ( that.options.targetId && +that.options.targetId > 0 ){
@@ -741,6 +744,8 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   },
   checkBeaconPosition: function(e){
     e.preventDefault()
+    if(!this.isSubmitBtnActive) return
+    this.isSubmitBtnActive = false
     var $warn = $('.warning'),
         that = this
     $warn.empty()
@@ -760,11 +765,10 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
   },
   sendPhoto: function(e){
     if(!this.verifyInputs(this)) return
-    var tha = this
+    var that = this
     var file = this.photo.currentView.ui.photo[0].files[0]
     if (file){
-      var client = new XMLHttpRequest(),
-          that = this
+      var client = new XMLHttpRequest()
       client.upload.onprogress = function(e) {
         if (e.lengthComputable) {
           var percentCompleted = (100 * e.loaded / e.total).toFixed(0) + '%';
@@ -777,14 +781,17 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
           + this.model.get('type') + ' request has been failed')
         alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
         that.ui.progressWrap.hide()
+        debugger
       }
       client.onreadystatechange = function(){
+        console.log('onreadystatechange', client)
         if (client.readyState == 4 && client.status == 200){
           var response = JSON.parse(client.response)
           if(response.error){
             that.ui.progressWrap.hide()
             console.log(response.msg)
             alert(window.localeMsg[window.localeLang][response.error] || response.error)
+            debugger
           } else {
             $('#img').val(response.img)
             that.sendForm()
@@ -866,7 +873,7 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         $('#private_group').val(null)
       }
     }
-    if(this.phone.currentView){
+    /*if(this.phone.currentView){
       var val = this.phone.currentView.ui.input.val(),
           reg = /^\d+$/
       if(reg.test(val) && val.length >= 12 && val.length <= 16) {
@@ -879,14 +886,16 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         alert(window.localeMsg[window.localeLang].CORRECT_PHONE_NUMBER)
         return validationFailed()
       }
-    }
+    }*/
     return true
     function validationFailed(){
       that.ui.progressWrap.hide()
+      that.isSubmitBtnActive = true
       return false
     }
   },
   sendForm: function(){
+    console.log('sendForm start')
     $('#object_create').children(':input[value=""]').attr("disabled", "disabled")   //  http://stackoverflow.com/questions/5904437/jquery-how-to-remove-blank-fields-from-a-form-before-submitting
     var that = this,
         url = ''
@@ -926,10 +935,12 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     promise.done(function( response ){
       if(typeof response !== "object"){
         alert( window.localeMsg[window.localeLang].FAIL )
+        debugger
         return
       }
       if(response.error){
         alert(window.localeMsg[window.localeLang][response.error] || response.error)
+        debugger
         return
       }
       window.state.singleBeacon = true
@@ -955,9 +966,10 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
         that.exit()
       }
     })
-    promise.fail(function(){
-      console.log(url + ' request has been failed')
+    promise.fail(function(e){
+      console.log(url + ' request has been failed: ', e)
       alert(window.localeMsg[window.localeLang].CONNECTION_ERROR)
+      debugger
     })
     promise.always(function(){
       $(that.ui.progressWrap).hide()
@@ -974,6 +986,5 @@ var ObjectCreateView = Backbone.Marionette.LayoutView.extend({
     this.childViewOptions = function() {
       return this.options
     }
-    // if ( this.options )
   }
 })

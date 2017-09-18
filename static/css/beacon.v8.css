@@ -236,6 +236,7 @@ img[src=""] {
   position: absolute;
   top: 0;
   width: 100%;
+  z-index: 1;
 }
 .wrapper_map_search.ui-input-search {
   position: relative;
@@ -260,6 +261,9 @@ img[src=""] {
   border: none;
   width: 36px;
   height: 36px;
+}
+.searsh-buttons.google-search:after {
+    z-index: 0;
 }
 
    /* icon size overwrite start */
@@ -1117,14 +1121,14 @@ img.photo {
   position: relative;
 }
 #money .ui-input-text {
-  margin-right: 4em;
+  margin-right: 5em;
 }
 #money .ui-select {
   position: absolute;
   top: 0;
   right: 0;
   margin-top: 0.7em;
-  width: 5em;
+  width: 6em;
 }
 #select_group {
   display: none;
@@ -1691,7 +1695,8 @@ hr {
     white-space: normal;
 }
 .composite,
-.idc-input {
+.idc-input,
+.quantity {
   margin: 0.1em 0;
 }
 p.voting {
@@ -1911,13 +1916,48 @@ strong.curr {
 }
 .my-funds .funds_table .replenish:after,
 .profile .add_fund__btn:after {
-  top: 52px;
+  top: 55px;
   left: 0;
   width: 32px;
   background-color: transparent;
 }
+.replanishement_amount-popup {
+  display: none;
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  background-color: #bbccff;
+  text-align: center;
+  white-space: nowrap;
+  border-radius: 0.25em;
+  box-shadow: 0 0 3px 3px #88aaff;
+}
+.replanishement_amount__screen {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.4);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+[id^=replanishement_amount] {
+  width: 7em;
+}
 .profile .add_fund__btn:after {
-  top: 50px;
+  top: 64px;
+}
+.profile .saldo_wrapper:hover {
+  cursor: pointer;
+  box-shadow: 0 0 8px 3px #bbb;
+  border-radius: 4px;
+}
+.profile .tip {
+  margin: 0.5em;
+  font-size: 0.9em;
+  font-style: italic;
 }
 .birthday {
   text-align: center;
@@ -1942,6 +1982,37 @@ strong.curr {
 .funds_table td {
   padding: 0 0.25em;
 }
+.funds_history__item_paragraph {
+  height: 40px;
+  padding: 0 1em;
+}
+.amount_curr,
+.funds_history__withdraw {
+  float: right;
+}
+.fund-history .ui-grid-a {
+  border-bottom: 1px solid #ddd;
+}
+.history__list {
+  overflow-y: auto;
+}
+.funds_history__withdraw {
+  margin: 3px -0.5em 3px 3px;
+}
+.empty_history {
+  text-align: center;
+}
+.funds_history__action {
+  padding: 0 1em;
+}
+.funds_history__ts{
+  font-size: 0.9em;
+}
+.fund-history .ui-input-search:after {
+  width: 18px;
+  height: 18px;
+}
+
 .new_currency .ui-select {
   margin: 0;
 }
@@ -2116,4 +2187,35 @@ img.ui-btn-icon-notext.ui-btn-inline {
 }
 .nco_choise #nco__wrapper {
   margin-top: 5px; 
+}
+
+.stat_icon {
+  position: absolute;
+  top: 3em;
+  left: 0.2em;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+.stat_icon:after {
+  display: block;
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.statistic {
+  min-width: 200px;
+}
+.main.composite {
+  padding: 0.25em 0.5em;
+  overflow-y: auto;
+}
+.composite {
+  padding-left: 1em;
+}
+.float-right {
+  float: right;
+  margin-left: 1em;
 }

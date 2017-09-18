@@ -152,6 +152,8 @@ window.Lib = Marionette.Object.extend({
       USD: '840',
       EUR: '978',
       UAH: '980',
+      vUSD: '1840',
+      vEUR: '1978',
       vUAH: '1980'
     },
     getCode: function(name){
@@ -207,7 +209,10 @@ window.Lib = Marionette.Object.extend({
     })
   },
   getNameNCObyID: function(id){
-    if(+id !== 0) return window.lib.getNCObyID(id).nco_name
+    if(+id !== 0) {
+      var nco = window.lib.getNCObyID(id)
+      return nco ? nco.nco_name : 'undefined'
+    }
     else return 'undefined'
   }
 })
@@ -666,7 +671,9 @@ function updateLocaleFilesWithNewCommonMsg(){
       var obj = {}
       obj[lang] = $.extend({}, window.normalisedCommonMsg, _.pick(oldLocale, Object.keys(window.normalisedCommonMsg)))
       console.log('local_'+ lang +'.json.length=', Object.keys(obj[lang]).length)
-      console.log('Omitted: ', _.omit(oldLocale, Object.keys(window.normalisedCommonMsg)))
+      var omitted = _.omit(oldLocale, Object.keys(window.normalisedCommonMsg))
+      console.log('Omitted: ', Object.keys(omitted).length)
+      console.log('Added: ', Object.keys(obj[lang]).length - Object.keys(oldLocale).length + Object.keys(omitted).length)
       download(obj, 'local_'+ lang +'.json');
       return obj
     })

@@ -134,7 +134,7 @@ function init() {
 	if(!window.state.initFromURL) tryGeoLocation()
 	$(":mobile-pagecontainer").pagecontainer({
   	beforechange: function( event, ui ) {
-    	if(ui.toPage.attr('id') === 'beacons-map'){
+    	if(ui.toPage.attr && ui.toPage.attr('id') === 'beacons-map'){
 				_.debounce(window.state.map.on, 500)()
 			} else if(ui.prevPage.attr('id') === 'beacons-map'){
 				_.debounce(window.state.map.off, 500)()
