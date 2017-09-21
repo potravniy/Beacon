@@ -984,11 +984,6 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
       </div>
       <div data-role="main" class="history__list">
       </div>
-      <% if( collectionLength === 0 ) { %>
-        <p class="empty_history">
-          <%- window.localeMsg[window.localeLang].FUND_HISTORY_IS_EMPTY %>
-        </p>
-      <% } %>
     </script>
     <script id="funds_history_item_view" type="text/template">
       <div class="ui-grid-a ui-responsive">
@@ -1345,7 +1340,7 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/lang_'.$l_lang.'.php');
     <script src="/static/js/fourthFilter.v2.js"></script>
     <script src="/static/js/shareInSocialNet.v1.js"></script>
     <script src="/static/js/mapSearch.v1.js"></script>
-    <script src="/static/js/profilePopup.v3.js"></script>
+    <script src="/static/js/profilePopup.v4.js"></script>
     <script src="/static/js/statistics.v4.js"></script>
     <!--<script>
       'use strict';   //  https://github.com/GoogleChrome/sw-precache/blob/master/demo/app/js/service-worker-registration.js#L20

@@ -30,6 +30,10 @@ var FundsHistoryItemView = Backbone.Marionette.ItemView.extend({
   }
 })
 
+var EmptyFundView = Backbone.Marionette.ItemView.extend({
+  template: _.template('<p class="empty_history">'+ window.localeMsg[window.localeLang].FUND_HISTORY_IS_EMPTY +'</p>')
+})
+
 var FundsHistoryView = Backbone.Marionette.CompositeView.extend({
   template: '#funds_history_view',
   templateHelpers: function(){
@@ -47,14 +51,15 @@ var FundsHistoryView = Backbone.Marionette.CompositeView.extend({
   className: 'fund-history',
   childView: FundsHistoryItemView,
   childViewContainer: ".history__list",
+  emptyView: EmptyFundView,
   initialize: function(options){
     this.model = new Backbone.Model({
       fund_id: options.fund_id
     })
-    var list = _.filter(options.list, function(it){
-      return it.corr_type !== 0 && it.corr_id !== 0
-    })
-    list = list.map(function(it){
+    // var list = _.filter(options.list, function(it){
+    //   return it.corr_type !== 0 && it.corr_id !== 0
+    // })
+    var list = options.list.map(function(it){
       var row = _.clone(it)
       row.amount = Math.abs(it.amount).toFixed(2)
       row.curr = window.lib.currency.getName(it.cur)
@@ -102,7 +107,30 @@ var FundsHistoryView = Backbone.Marionette.CompositeView.extend({
       promise.always(function(response){
         $.mobile.loading('hide')
       })
+    },
+    'input #history-search': function(e){
+      this.search(e)
+    },
+    'change #history-search': function(e){
+      this.search(e)
     }
+  },
+  search: function(e){
+    var searchString = e.target.value.toLowerCase()
+    if(searchString === '') {
+      this.filter = true
+    } else {
+      this.filter = function(childModel){
+        if(childModel.get('ts').toLowerCase().includes(searchString)) return true
+        if(childModel.get('action').toLowerCase().includes(searchString)) return true
+        if(childModel.get('amount').toString().includes(searchString)) return true
+        if(childModel.get('pretitle').toLowerCase().includes(searchString)) return true
+        if(childModel.get('title').toLowerCase().includes(searchString)) return true
+        if(childModel.get('btnTitle').toLowerCase().includes(searchString)) return true
+        return false
+      }
+    }
+    this.collection.trigger('reset')
   },
   withdraw: function(resp){
     var model = this.collection.get(resp.old_history_item.id)
